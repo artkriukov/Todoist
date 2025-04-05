@@ -9,28 +9,8 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-    private var toDoItems: [ToDoItem] = [
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-        ToDoItem(title: "Купить молоко", description: "2 литра"),
-        ToDoItem(title: "Позвонить куда нибудь", description: nil),
-    ]
+    private var toDoItems: [ToDoItem] = []
+    
     
     // MARK: - UI
     private lazy var toDoList: UITableView = {
@@ -70,7 +50,16 @@ final class ViewController: UIViewController {
     
     @objc private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController()
-        newToDoVC.modalPresentationStyle = .popover
+        if let sheet = newToDoVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+        }
+        
+        newToDoVC.saveItem = { [weak self] newItem in
+            guard let self else { return }
+            toDoItems.append(newItem)
+            toDoList.reloadData()
+        }
+        
         present(newToDoVC, animated: true)
     }
 }
@@ -102,7 +91,6 @@ extension ViewController: UITableViewDataSource {
 private extension ViewController {
     func setupViews() {
         view.backgroundColor = .white
-        
         view.addSubview(toDoList)
         view.addSubview(addItemButton)
     }

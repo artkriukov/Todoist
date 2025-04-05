@@ -7,10 +7,10 @@
 
 import UIKit
 
-class NewToDoViewController: UIViewController {
-
-    // MARK: - UI
+final class NewToDoViewController: UIViewController {
     
+    var saveItem: ((ToDoItem) -> Void)?
+    // MARK: - UI
     private lazy var titleTextField: UITextField = {
         let element = UITextField()
         element.placeholder = "ToDo title"
@@ -18,9 +18,9 @@ class NewToDoViewController: UIViewController {
         return element
     }()
     
-    private lazy var descriptionTextView: UITextView = {
-        let element = UITextView()
-        element.text = "Hello"
+    private lazy var descriptionTextField: UITextField = {
+        let element = UITextField()
+        element.placeholder = "Описание"
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -32,10 +32,10 @@ class NewToDoViewController: UIViewController {
         element.tintColor = .white
         element.layer.cornerRadius = 8
         element.addTarget(
-                self,
-                action: #selector(addNewItemTapped),
-                for: .touchUpInside
-            )
+            self,
+            action: #selector(addNewItemTapped),
+            for: .touchUpInside
+        )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -49,6 +49,12 @@ class NewToDoViewController: UIViewController {
     }
     
     @objc private func addNewItemTapped() {
+        guard let title = titleTextField.text, !title.isEmpty else { return }
+        guard let descr = descriptionTextField.text, !descr.isEmpty else { return }
+        
+        let newItem = ToDoItem(title: title, description: descr)
+        saveItem?(newItem)
+        
         dismiss(animated: true)
     }
 }
@@ -58,13 +64,12 @@ private extension NewToDoViewController {
         view.backgroundColor = .white
         
         view.addSubview(titleTextField)
-        view.addSubview(descriptionTextView)
+        view.addSubview(descriptionTextField)
         view.addSubview(addNewItemButton)
     }
     
     func setupConstraints() {
-        NSLayoutConstraint.activate(
-[
+        NSLayoutConstraint.activate([
             titleTextField.topAnchor
                 .constraint(equalTo: view.topAnchor,constant: 15),
             titleTextField.leadingAnchor
@@ -73,19 +78,19 @@ private extension NewToDoViewController {
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             titleTextField.heightAnchor.constraint(equalToConstant: 40),
             
-            descriptionTextView.topAnchor
+            descriptionTextField.topAnchor
                 .constraint(equalTo: titleTextField.bottomAnchor, constant: 5),
-            descriptionTextView.leadingAnchor
+            descriptionTextField.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
-            descriptionTextView.trailingAnchor
+            descriptionTextField.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 140),
+            descriptionTextField.heightAnchor.constraint(equalToConstant: 40),
             
-            addNewItemButton.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 15),
+            addNewItemButton.topAnchor
+                .constraint(equalTo: descriptionTextField.bottomAnchor, constant: 15),
             addNewItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             addNewItemButton.widthAnchor.constraint(equalToConstant: 60),
             addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
-        ]
-)
+        ])
     }
 }
