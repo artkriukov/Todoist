@@ -9,7 +9,10 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-    private var toDoItems = [ToDoItem]()
+    private var toDoItems: [ToDoItem] = [
+        ToDoItem(title: "Купить молоко", description: "2 литра"),
+        ToDoItem(title: "Позвонить куда нибудь", description: nil)
+    ]
     
     // MARK: - UI
     private lazy var toDoList: UITableView = {
@@ -17,7 +20,7 @@ final class ViewController: UIViewController {
         element.dataSource = self
         element.register(
             ToDoTableViewCell.self,
-            forCellReuseIdentifier: ToDoTableViewCell.indetifer
+            forCellReuseIdentifier: ToDoTableViewCell.identifier
         )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -30,6 +33,8 @@ final class ViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        
+        toDoItems.append(ToDoItem(title: "Hello", description: "World"))
     }
 }
 
@@ -37,16 +42,20 @@ final class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        3
+        toDoItems.count
     }
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: ToDoTableViewCell.indetifer,
+        guard let cell = tableView.dequeueReusableCell(withIdentifier:ToDoTableViewCell.identifier,
             for: indexPath
-        )
+        ) as? ToDoTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let item = toDoItems[indexPath.row]
+        cell.configureCell(title: item.title, description: item.description)
         
         return cell
     }
