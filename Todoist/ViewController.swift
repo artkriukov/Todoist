@@ -7,16 +7,23 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
+    private var toDoItems = [ToDoItem]()
+    
+    // MARK: - UI
     private lazy var toDoList: UITableView = {
         let element = UITableView()
         element.dataSource = self
-        element.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        element.register(
+            ToDoTableViewCell.self,
+            forCellReuseIdentifier: ToDoTableViewCell.indetifer
+        )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
+    // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
@@ -24,10 +31,9 @@ class ViewController: UIViewController {
         setupViews()
         setupConstraints()
     }
-    
-    
 }
 
+// MARK: - UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
@@ -37,15 +43,16 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell",
-                                                 for: indexPath)
-        
-        cell.textLabel?.text = "Hello, World!"
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: ToDoTableViewCell.indetifer,
+            for: indexPath
+        )
         
         return cell
     }
 }
 
+// MARK: - Setup Views & Setup Constraints
 private extension ViewController {
     func setupViews() {
         view.addSubview(toDoList)
