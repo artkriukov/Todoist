@@ -8,12 +8,59 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
+    private lazy var toDoList: UITableView = {
+        let element = UITableView()
+        element.dataSource = self
+        element.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .red
+        
+        setupViews()
+        setupConstraints()
     }
-
-
+    
+    
 }
 
+extension ViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        3
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell",
+                                                 for: indexPath)
+        
+        cell.textLabel?.text = "Hello, World!"
+        
+        return cell
+    }
+}
+
+private extension ViewController {
+    func setupViews() {
+        view.addSubview(toDoList)
+    }
+    
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            toDoList.topAnchor
+                .constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
+            toDoList.leadingAnchor
+                .constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
+            toDoList.trailingAnchor
+                .constraint(equalTo:view.safeAreaLayoutGuide.trailingAnchor),
+            toDoList.bottomAnchor
+                .constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+}
