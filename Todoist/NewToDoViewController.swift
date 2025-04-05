@@ -50,7 +50,7 @@ final class NewToDoViewController: UIViewController {
     
     @objc private func addNewItemTapped() {
         guard let title = titleTextField.text, !title.isEmpty else { return }
-        guard let descr = descriptionTextField.text, !descr.isEmpty else { return }
+        let descr = descriptionTextField.text
         
         let newItem = ToDoItem(title: title, description: descr)
         saveItem?(newItem)
