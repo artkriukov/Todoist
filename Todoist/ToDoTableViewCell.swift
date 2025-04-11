@@ -22,6 +22,7 @@ final class ToDoTableViewCell: UITableViewCell {
     private lazy var toDoTitleLabel: UILabel = {
         let element = UILabel()
         element.text = "Title"
+        element.font = .systemFont(ofSize: 17, weight: .medium)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -30,6 +31,7 @@ final class ToDoTableViewCell: UITableViewCell {
         let element = UILabel()
         element.text = "Description"
         element.numberOfLines = 0
+        element.font = .systemFont(ofSize: 14, weight: .regular)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -64,7 +66,7 @@ private extension ToDoTableViewCell {
             toDoMainSV.topAnchor.constraint(equalTo: topAnchor, constant: 4),
             toDoMainSV.leadingAnchor
                 .constraint(equalTo: leadingAnchor, constant: 16),
-            toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor),
+            toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
         ])
     }

@@ -30,7 +30,7 @@ final class NewToDoViewController: UIViewController {
         element.setImage(UIImage(systemName: "arrow.up"), for: .normal)
         element.backgroundColor = .systemRed
         element.tintColor = .white
-        element.layer.cornerRadius = 8
+        element.layer.cornerRadius = 15
         element.addTarget(
             self,
             action: #selector(addNewItemTapped),
@@ -88,8 +88,9 @@ private extension NewToDoViewController {
             
             addNewItemButton.topAnchor
                 .constraint(equalTo: descriptionTextField.bottomAnchor, constant: 15),
-            addNewItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addNewItemButton.widthAnchor.constraint(equalToConstant: 60),
+            addNewItemButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
+            addNewItemButton.widthAnchor.constraint(equalToConstant: 30),
             addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
         ])
     }

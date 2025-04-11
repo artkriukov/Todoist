@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ToDoListViewController.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 05.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ViewController: UIViewController {
+final class ToDoListViewController: UIViewController {
     
     private var toDoItems: [ToDoItem] = []
     
@@ -50,9 +50,8 @@ final class ViewController: UIViewController {
     
     @objc private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController()
-        if let sheet = newToDoVC.sheetPresentationController {
-            sheet.detents = [.medium()]
-        }
+
+        configureSheet(with: newToDoVC)
         
         newToDoVC.saveItem = { [weak self] newItem in
             guard let self else { return }
@@ -62,10 +61,26 @@ final class ViewController: UIViewController {
         
         present(newToDoVC, animated: true)
     }
+    
+    private func configureSheet(with viewController: UIViewController) {
+        if #available(iOS 16.0, *) {
+            if let sheet = viewController.sheetPresentationController {
+                let customDetent = UISheetPresentationController.Detent.custom { context in
+                    context.maximumDetentValue * 0.2
+                }
+                
+                sheet.detents = [customDetent]
+                
+            } else if let sheet = viewController.sheetPresentationController {
+                sheet.detents = [.medium()]
+            }
+        }
+    }
+    
 }
 
 // MARK: - UITableViewDataSource
-extension ViewController: UITableViewDataSource {
+extension ToDoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         toDoItems.count
@@ -74,8 +89,9 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier:ToDoTableViewCell.identifier,
-                                                       for: indexPath
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier:ToDoTableViewCell.identifier,
+            for: indexPath
         ) as? ToDoTableViewCell else {
             return UITableViewCell()
         }
@@ -88,7 +104,7 @@ extension ViewController: UITableViewDataSource {
 }
 
 // MARK: - Setup Views & Setup Constraints
-private extension ViewController {
+private extension ToDoListViewController {
     func setupViews() {
         view.backgroundColor = .white
         view.addSubview(toDoList)
