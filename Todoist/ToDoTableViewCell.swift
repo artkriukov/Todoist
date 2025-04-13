@@ -35,6 +35,15 @@ final class ToDoTableViewCell: UITableViewCell {
         return element
     }()
     
+    private lazy var expirationDateLabel: UILabel = {
+        let element = UILabel()
+        element.text = "Expiration date"
+        element.font = .systemFont(ofSize: 13, weight: .regular)
+        element.textColor = .systemGreen
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -46,9 +55,10 @@ final class ToDoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(title: String, description: String?) {
+    func configureCell(title: String, description: String?, date: Date?) {
         toDoTitleLabel.text = title
         toDoDescrLabel.text = description
+        
     }
     
     override func prepareForReuse() {
@@ -63,6 +73,7 @@ private extension ToDoTableViewCell {
         addSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)
+        toDoMainSV.addArrangedSubview(expirationDateLabel)
     }
     
     func setupConstraints() {

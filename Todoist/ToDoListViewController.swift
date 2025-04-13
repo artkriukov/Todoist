@@ -108,7 +108,11 @@ extension ToDoListViewController: UITableViewDataSource {
         }
         
         let item = toDoItems[indexPath.row]
-        cell.configureCell(title: item.title, description: item.description)
+        cell.configureCell(
+                title: item.title,
+                description: item.description,
+                date: nil
+            )
         
         return cell
     }

@@ -38,10 +38,10 @@ final class NewToDoViewController: UIViewController {
     private lazy var actionStackView: UIStackView = {
         let element = UIStackView()
         element.axis = .horizontal
+        element.distribution = .fillEqually
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
-    
     
     private lazy var addNewItemButton: UIButton = {
         let element = UIButton(type: .system)
@@ -55,6 +55,19 @@ final class NewToDoViewController: UIViewController {
                 },
                 for: .touchUpInside
             )
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var datePickerContainer: UIView = {
+        let element = UIView()
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var datePicker: UIDatePicker = {
+        let element = UIDatePicker()
+        element.minimumDate = Date()
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -80,8 +93,13 @@ final class NewToDoViewController: UIViewController {
     private func addNewItemTapped() {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
+        let date = datePicker.date
         
-        let newItem = ToDoItem(title: title, description: descr)
+        let newItem = ToDoItem(
+            title: title,
+            description: descr,
+            expirationDate: date
+        )
         saveItem?(newItem)
         
         dismiss(animated: true)
@@ -98,7 +116,11 @@ private extension NewToDoViewController {
         
         
         view.addSubview(actionStackView)
-        actionStackView.addArrangedSubview(addNewItemButton)
+        actionStackView.addArrangedSubview(datePicker)
+        actionStackView.addArrangedSubview(datePickerContainer)
+        datePickerContainer.addSubview(addNewItemButton)
+
+
     }
     
     func setupConstraints() {
@@ -121,6 +143,9 @@ private extension NewToDoViewController {
 
             addNewItemButton.widthAnchor.constraint(equalToConstant: 30),
             addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            addNewItemButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15)
         ])
     }
 }
