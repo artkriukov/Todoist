@@ -18,7 +18,7 @@ final class ToDoListViewController: UIViewController {
         element.dataSource = self
         element.register(
             ToDoTableViewCell.self,
-            forCellReuseIdentifier: ToDoTableViewCell.identifier
+            forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
         )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -30,10 +30,10 @@ final class ToDoListViewController: UIViewController {
         element.backgroundColor = .systemRed
         element.layer.cornerRadius = 25
         element.tintColor = .white
-        element
-            .addTarget(
-                self,
-                action: #selector(addNewItemTapped),
+        element.addAction(
+                UIAction { [weak self] _ in
+                    self?.addNewItemTapped()
+                },
                 for: .touchUpInside
             )
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -43,41 +43,50 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupViews()
         setupConstraints()
     }
     
-    @objc private func addNewItemTapped() {
-        let newToDoVC = NewToDoViewController()
-
-        configureSheet(with: newToDoVC)
-        
-        newToDoVC.saveItem = { [weak self] newItem in
+    private func addNewItemTapped() {
+        let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
             toDoItems.append(newItem)
-            toDoList.reloadData()
-        }
+            
+            DispatchQueue.main.async {
+                self.toDoList.reloadData()
+            }
+        })
         
+        configureSheet(with: newToDoVC)
+
         present(newToDoVC, animated: true)
     }
     
     private func configureSheet(with viewController: UIViewController) {
         if #available(iOS 16.0, *) {
+            
             if let sheet = viewController.sheetPresentationController {
                 let customDetent = UISheetPresentationController.Detent.custom { context in
                     context.maximumDetentValue * 0.2
                 }
-                
                 sheet.detents = [customDetent]
                 
-            } else if let sheet = viewController.sheetPresentationController {
+            } else {
+                assertionFailure("Не удалось получить sheetPresentationController")
+            }
+        } else {
+
+            if let sheet = viewController.sheetPresentationController {
                 sheet.detents = [.medium()]
+            } else {
+                assertionFailure("Не удалось получить sheetPresentationController")
             }
         }
+        
     }
-    
 }
+
 
 // MARK: - UITableViewDataSource
 extension ToDoListViewController: UITableViewDataSource {
@@ -86,11 +95,13 @@ extension ToDoListViewController: UITableViewDataSource {
         toDoItems.count
     }
     
-    func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier:ToDoTableViewCell.identifier,
+            withIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell,
             for: indexPath
         ) as? ToDoTableViewCell else {
             return UITableViewCell()

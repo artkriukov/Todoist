@@ -8,7 +8,6 @@
 import UIKit
 
 final class ToDoTableViewCell: UITableViewCell {
-    static let identifier = "ToDoTableViewCell"
     
     // MARK: - UI
     
@@ -50,6 +49,11 @@ final class ToDoTableViewCell: UITableViewCell {
     func configureCell(title: String, description: String?) {
         toDoTitleLabel.text = title
         toDoDescrLabel.text = description
+    }
+    
+    override func prepareForReuse() {
+        toDoTitleLabel.text = nil
+        toDoDescrLabel.text = nil
     }
 }
 

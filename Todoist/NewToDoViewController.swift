@@ -11,6 +11,15 @@ final class NewToDoViewController: UIViewController {
     
     var saveItem: ((ToDoItem) -> Void)?
     // MARK: - UI
+    
+    private lazy var infoStackView: UIStackView = {
+        let element = UIStackView()
+        element.axis = .vertical
+        element.spacing = 10
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var titleTextField: UITextField = {
         let element = UITextField()
         element.placeholder = "ToDo title"
@@ -21,9 +30,18 @@ final class NewToDoViewController: UIViewController {
     private lazy var descriptionTextField: UITextField = {
         let element = UITextField()
         element.placeholder = "Описание"
+        element.font = .systemFont(ofSize: 14)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var actionStackView: UIStackView = {
+        let element = UIStackView()
+        element.axis = .horizontal
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     
     private lazy var addNewItemButton: UIButton = {
         let element = UIButton(type: .system)
@@ -31,14 +49,25 @@ final class NewToDoViewController: UIViewController {
         element.backgroundColor = .systemRed
         element.tintColor = .white
         element.layer.cornerRadius = 15
-        element.addTarget(
-            self,
-            action: #selector(addNewItemTapped),
-            for: .touchUpInside
-        )
+        element.addAction(
+                UIAction { [weak self] _ in
+                    self?.addNewItemTapped()
+                },
+                for: .touchUpInside
+            )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    // MARK: - Init
+    init(saveItem: @escaping (ToDoItem) -> Void) {
+        self.saveItem = saveItem
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Circle
     override func viewDidLoad() {
@@ -48,7 +77,7 @@ final class NewToDoViewController: UIViewController {
         setupConstraints()
     }
     
-    @objc private func addNewItemTapped() {
+    private func addNewItemTapped() {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
         
@@ -63,33 +92,33 @@ private extension NewToDoViewController {
     func setupViews() {
         view.backgroundColor = .white
         
-        view.addSubview(titleTextField)
-        view.addSubview(descriptionTextField)
-        view.addSubview(addNewItemButton)
+        view.addSubview(infoStackView)
+        infoStackView.addArrangedSubview(titleTextField)
+        infoStackView.addArrangedSubview(descriptionTextField)
+        
+        
+        view.addSubview(actionStackView)
+        actionStackView.addArrangedSubview(addNewItemButton)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor
-                .constraint(equalTo: view.topAnchor,constant: 15),
-            titleTextField.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 15),
-            titleTextField.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15),
-            titleTextField.heightAnchor.constraint(equalToConstant: 40),
             
-            descriptionTextField.topAnchor
-                .constraint(equalTo: titleTextField.bottomAnchor, constant: 5),
-            descriptionTextField.leadingAnchor
+            infoStackView.topAnchor
+                .constraint(equalTo: view.topAnchor, constant: 10),
+            infoStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
-            descriptionTextField.trailingAnchor
+            infoStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
-            descriptionTextField.heightAnchor.constraint(equalToConstant: 40),
+
+            actionStackView.topAnchor
+                .constraint(equalTo: infoStackView.bottomAnchor, constant: 15),
+            actionStackView.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15),
+            actionStackView.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
             
-            addNewItemButton.topAnchor
-                .constraint(equalTo: descriptionTextField.bottomAnchor, constant: 15),
-            addNewItemButton.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15),
+
             addNewItemButton.widthAnchor.constraint(equalToConstant: 30),
             addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
         ])
