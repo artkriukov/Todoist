@@ -1,0 +1,13 @@
+//
+//  ToDoItem.swift
+//  Todoist
+//
+//  Created by Artem Kriukov on 05.04.2025.
+//
+
+import Foundation
+
+struct ToDoItem {
+    let title: String
+    let description: String?
+}
