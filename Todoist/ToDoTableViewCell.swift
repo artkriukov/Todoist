@@ -55,10 +55,10 @@ final class ToDoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(title: String, description: String?, date: Date?) {
+    func configureCell(title: String, description: String?, date: String) {
         toDoTitleLabel.text = title
         toDoDescrLabel.text = description
-        
+        expirationDateLabel.text = date
     }
     
     override func prepareForReuse() {

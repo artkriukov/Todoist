@@ -8,8 +8,10 @@
 import UIKit
 
 final class NewToDoViewController: UIViewController {
-    
+#warning("расположить переменные по гайду")
     var saveItem: ((ToDoItem) -> Void)?
+    
+    private var isDateChanged = false
     // MARK: - UI
     
     private lazy var infoStackView: UIStackView = {
@@ -68,6 +70,12 @@ final class NewToDoViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let element = UIDatePicker()
         element.minimumDate = Date()
+        element.addAction(
+            UIAction { [weak self] _ in
+                self?.datePickerValueChanged(element)
+            },
+            for: .valueChanged
+        )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -90,19 +98,36 @@ final class NewToDoViewController: UIViewController {
         setupConstraints()
     }
     
+    // MARK: - Private Methods
     private func addNewItemTapped() {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
-        let date = datePicker.date
+        
+        
+        let expirationDate = isDateChanged ? dateFormatter(date: datePicker.date) : nil
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: date
+            expirationDate: expirationDate
         )
         saveItem?(newItem)
         
         dismiss(animated: true)
+    }
+    
+    private func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let formattedString = dateFormatter(date: selectedDate)
+        isDateChanged = true
+        print(formattedString)
+    }
+    
+    private func dateFormatter(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
 
