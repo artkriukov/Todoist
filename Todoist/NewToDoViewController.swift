@@ -8,10 +8,10 @@
 import UIKit
 
 final class NewToDoViewController: UIViewController {
-#warning("расположить переменные по гайду")
-    var saveItem: ((ToDoItem) -> Void)?
-    
     private var isDateChanged = false
+    
+    var saveItem: ((ToDoItem) -> Void)?
+
     // MARK: - UI
     
     private lazy var infoStackView: UIStackView = {
@@ -44,6 +44,7 @@ final class NewToDoViewController: UIViewController {
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
     
     private lazy var addNewItemButton: UIButton = {
         let element = UIButton(type: .system)
@@ -104,30 +105,43 @@ final class NewToDoViewController: UIViewController {
         let descr = descriptionTextField.text
         
         
-        let expirationDate = isDateChanged ? dateFormatter(date: datePicker.date) : nil
+        let expirationDate = isDateChanged ? datePicker.date : nil
+        let status = checkTaskStatus(expirationDate: expirationDate)
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: expirationDate
+            expirationDate: expirationDate,
+            statusColor: status.color,
+            statusText: status.status
         )
         saveItem?(newItem)
         
         dismiss(animated: true)
     }
     
-    private func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        let formattedString = dateFormatter(date: selectedDate)
-        isDateChanged = true
-        print(formattedString)
+    private func checkTaskStatus(expirationDate: Date?) -> (
+        color: UIColor,
+        status: String?
+    ) {
+        guard let expirationDate else {
+            return (.systemGreen, "")
+        }
+        
+        let currentDate = Date()
+        let timeInterval = currentDate.distance(to: expirationDate)
+        
+        if timeInterval < 0 {
+            return (.systemRed, "Просрочено")
+        } else if timeInterval <= 30 * 60 {
+            return (.systemYellow, nil)
+        } else {
+            return (.systemGreen, nil)
+        }
     }
     
-    private func dateFormatter(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+    private func datePickerValueChanged(_ sender: UIDatePicker) {
+        isDateChanged = true
     }
 }
 

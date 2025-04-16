@@ -55,10 +55,21 @@ final class ToDoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(title: String, description: String?, date: String) {
-        toDoTitleLabel.text = title
-        toDoDescrLabel.text = description
-        expirationDateLabel.text = date
+    func configureCell(with item: ToDoItem) {
+        toDoTitleLabel.text = item.title
+        toDoDescrLabel.text = item.description
+        
+        if let statusText = item.statusText {
+            expirationDateLabel.text = statusText
+            expirationDateLabel.textColor = item.statusColor ?? .systemRed
+        } else if let expirationDate = item.expirationDate {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, HH:mm"
+            expirationDateLabel.text = formatter.string(from: expirationDate)
+            expirationDateLabel.textColor = item.statusColor ?? .systemGreen
+        } else {
+            expirationDateLabel.textColor = .systemGray
+        }
     }
     
     override func prepareForReuse() {

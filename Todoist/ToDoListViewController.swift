@@ -108,11 +108,7 @@ extension ToDoListViewController: UITableViewDataSource {
         }
         
         let item = toDoItems[indexPath.row]
-        cell.configureCell(
-                title: item.title,
-                description: item.description,
-                date: item.expirationDate ?? ""
-            )
+        cell.configureCell(with: item)
         
         return cell
     }

@@ -22,8 +22,7 @@ final class RoundedActionButton: UIControl {
     }
     
     private func setup(configuration: Configuration) {
-        imageView.image = configuration.image
-//        addAction(configuration.action, for: .touchUpInside)
+
     }
 }
 

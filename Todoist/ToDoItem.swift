@@ -5,10 +5,12 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
-import Foundation
+import UIKit
 
 struct ToDoItem {
     let title: String
     let description: String?
-    let expirationDate: String?
+    let expirationDate: Date?
+    let statusColor: UIColor?
+    let statusText: String?
 }
