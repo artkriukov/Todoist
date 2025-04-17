@@ -8,7 +8,6 @@
 import UIKit
 
 final class ToDoTableViewCell: UITableViewCell {
-    
     // MARK: - UI
     
     private lazy var toDoMainSV: UIStackView = {
@@ -49,6 +48,19 @@ final class ToDoTableViewCell: UITableViewCell {
         
         setupViews()
         setupConstraints()
+        
+        NotificationCenter.default
+            .addObserver(
+                self,
+                selector: #selector(handleNotification),
+                name: UIApplication.didBecomeActiveNotification,
+                object: nil
+            )
+    }
+
+    @objc func handleNotification() {
+ 
+        print("handleNotification")
     }
     
     required init?(coder: NSCoder) {
@@ -72,9 +84,11 @@ final class ToDoTableViewCell: UITableViewCell {
         }
     }
     
+    
     override func prepareForReuse() {
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
+        expirationDateLabel.text = nil
     }
 }
 

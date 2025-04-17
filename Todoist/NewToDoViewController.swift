@@ -10,6 +10,7 @@ import UIKit
 final class NewToDoViewController: UIViewController {
     private var isDateChanged = false
     
+    var expirationDate: Date?
     var saveItem: ((ToDoItem) -> Void)?
 
     // MARK: - UI
@@ -91,6 +92,9 @@ final class NewToDoViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,7 +109,7 @@ final class NewToDoViewController: UIViewController {
         let descr = descriptionTextField.text
         
         
-        let expirationDate = isDateChanged ? datePicker.date : nil
+        expirationDate = isDateChanged ? datePicker.date : nil
         let status = checkTaskStatus(expirationDate: expirationDate)
         
         let newItem = ToDoItem(
@@ -138,6 +142,7 @@ final class NewToDoViewController: UIViewController {
         } else {
             return (.systemGreen, nil)
         }
+
     }
     
     private func datePickerValueChanged(_ sender: UIDatePicker) {

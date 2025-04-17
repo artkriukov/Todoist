@@ -11,7 +11,6 @@ final class ToDoListViewController: UIViewController {
     
     private var toDoItems: [ToDoItem] = []
     
-    
     // MARK: - UI
     private lazy var toDoList: UITableView = {
         let element = UITableView()
@@ -46,6 +45,7 @@ final class ToDoListViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        
     }
     
     private func addNewItemTapped() {
