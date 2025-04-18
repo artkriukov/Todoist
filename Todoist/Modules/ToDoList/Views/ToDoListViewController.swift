@@ -45,9 +45,9 @@ final class ToDoListViewController: UIViewController {
         
         setupViews()
         setupConstraints()
-        
     }
     
+    // MARK: - Private Methods
     private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
@@ -83,8 +83,8 @@ final class ToDoListViewController: UIViewController {
                 assertionFailure("Не удалось получить sheetPresentationController")
             }
         }
-        
     }
+    
 }
 
 

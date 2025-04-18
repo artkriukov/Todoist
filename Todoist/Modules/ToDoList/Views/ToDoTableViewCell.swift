@@ -8,8 +8,10 @@
 import UIKit
 
 final class ToDoTableViewCell: UITableViewCell {
-    // MARK: - UI
     
+    private var item: ToDoItem?
+    
+    // MARK: - UI
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
@@ -57,19 +59,15 @@ final class ToDoTableViewCell: UITableViewCell {
                 object: nil
             )
     }
-
-    @objc func handleNotification() {
- 
-        print("handleNotification")
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(with item: ToDoItem) {
-        toDoTitleLabel.text = item.title
-        toDoDescrLabel.text = item.description
+
+    // MARK: - Private Method
+    private func updateExpirationDateLabel() {
+        guard let item else { return }
         
         if let statusText = item.statusText {
             expirationDateLabel.text = statusText
@@ -84,6 +82,20 @@ final class ToDoTableViewCell: UITableViewCell {
         }
     }
     
+    // MARK: - Public Method
+    func configureCell(with item: ToDoItem) {
+        self.item = item
+        toDoTitleLabel.text = item.title
+        toDoDescrLabel.text = item.description
+        
+        updateExpirationDateLabel()
+    }
+    
+    // MARK: - @objc Method
+    @objc func handleNotification() {
+        updateExpirationDateLabel()
+        print("handleNotification")
+    }
     
     override func prepareForReuse() {
         toDoTitleLabel.text = nil
