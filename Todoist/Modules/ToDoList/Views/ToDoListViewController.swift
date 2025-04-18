@@ -23,18 +23,14 @@ final class ToDoListViewController: UIViewController {
         return element
     }()
     
-    private lazy var addItemButton: UIButton = {
-        let element = UIButton(type: .system)
-        element.setImage(UIImage(systemName: "plus"), for: .normal)
-        element.backgroundColor = .systemRed
-        element.layer.cornerRadius = 25
-        element.tintColor = .white
-        element.addAction(
-                UIAction { [weak self] _ in
-                    self?.addNewItemTapped()
-                },
-                for: .touchUpInside
-            )
+    private lazy var addItemButton: RoundedActionButton = {
+        let config = RoundedActionButton.Configuration(
+            image: UIImage(systemName: "plus"),
+            backgroundColor: .systemRed,
+            action: { [weak self] in
+                self?.addNewItemTapped()
+            })
+        let element = RoundedActionButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()

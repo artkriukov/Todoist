@@ -47,18 +47,16 @@ final class NewToDoViewController: UIViewController {
     }()
     
     
-    private lazy var addNewItemButton: UIButton = {
-        let element = UIButton(type: .system)
-        element.setImage(UIImage(systemName: "arrow.up"), for: .normal)
-        element.backgroundColor = .systemRed
-        element.tintColor = .white
+    private lazy var addNewItemButton: RoundedActionButton = {
+        let config = RoundedActionButton.Configuration(
+            image: UIImage(systemName: "arrow.up"),
+            backgroundColor: .systemRed,
+            action: { [weak self] in
+                self?.addNewItemTapped()
+            })
+        
+        let element = RoundedActionButton(configuration: config)
         element.layer.cornerRadius = 15
-        element.addAction(
-                UIAction { [weak self] _ in
-                    self?.addNewItemTapped()
-                },
-                for: .touchUpInside
-            )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
