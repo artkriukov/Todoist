@@ -50,33 +50,36 @@ final class ToDoTableViewCell: UITableViewCell {
         
         setupViews()
         setupConstraints()
-        
-        NotificationCenter.default
-            .addObserver(
-                self,
-                selector: #selector(handleNotification),
-                name: UIApplication.didBecomeActiveNotification,
-                object: nil
-            )
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    
     // MARK: - Private Method
     private func updateExpirationDateLabel() {
         guard let item else { return }
         
-        if let statusText = item.statusText {
-            expirationDateLabel.text = statusText
-            expirationDateLabel.textColor = item.statusColor ?? .systemRed
-        } else if let expirationDate = item.expirationDate {
+        let checker = DefaultExpirationChecker()
+        
+        if let expirationDate = item.expirationDate {
+            
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM d, HH:mm"
-            expirationDateLabel.text = formatter.string(from: expirationDate)
-            expirationDateLabel.textColor = item.statusColor ?? .systemGreen
+            let timeLabel = formatter.string(from: expirationDate)
+            
+            switch checker.check(date: expirationDate) {
+            case .moreThanHalfHour:
+                expirationDateLabel.text = timeLabel
+                expirationDateLabel.textColor = .systemGreen
+            case .lessThanHalfHour:
+                expirationDateLabel.text = timeLabel
+                expirationDateLabel.textColor = .systemYellow
+            case .failed:
+                expirationDateLabel.text = "Просрочено"
+                expirationDateLabel.textColor = .systemRed
+            }
         } else {
             expirationDateLabel.textColor = .systemGray
         }
@@ -89,12 +92,6 @@ final class ToDoTableViewCell: UITableViewCell {
         toDoDescrLabel.text = item.description
         
         updateExpirationDateLabel()
-    }
-    
-    // MARK: - @objc Method
-    @objc func handleNotification() {
-        updateExpirationDateLabel()
-        print("handleNotification")
     }
     
     override func prepareForReuse() {

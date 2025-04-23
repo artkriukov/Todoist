@@ -89,10 +89,6 @@ final class NewToDoViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,42 +102,18 @@ final class NewToDoViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
         
-        
         expirationDate = isDateChanged ? datePicker.date : nil
-        let status = checkTaskStatus(expirationDate: expirationDate)
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: expirationDate,
-            statusColor: status.color,
-            statusText: status.status
+            expirationDate: expirationDate
         )
         saveItem?(newItem)
         
         dismiss(animated: true)
     }
     
-    private func checkTaskStatus(expirationDate: Date?) -> (
-        color: UIColor,
-        status: String?
-    ) {
-        guard let expirationDate else {
-            return (.systemGreen, "")
-        }
-        
-        let currentDate = Date()
-        let timeInterval = currentDate.distance(to: expirationDate)
-        
-        if timeInterval < 0 {
-            return (.systemRed, "Просрочено")
-        } else if timeInterval <= 30 * 60 {
-            return (.systemYellow, nil)
-        } else {
-            return (.systemGreen, nil)
-        }
-
-    }
     
     private func datePickerValueChanged(_ sender: UIDatePicker) {
         isDateChanged = true
