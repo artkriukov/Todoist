@@ -9,8 +9,8 @@ import UIKit
 
 final class ToDoListViewController: UIViewController {
     
-    private var toDoItems: [ToDoItem] = []
-    
+    private let itemsProvider: ToDoItemsProvider
+    private var observer: Any?
     
     // MARK: - UI
     private lazy var toDoList: UITableView = {
@@ -24,34 +24,64 @@ final class ToDoListViewController: UIViewController {
         return element
     }()
     
-    private lazy var addItemButton: UIButton = {
-        let element = UIButton(type: .system)
-        element.setImage(UIImage(systemName: "plus"), for: .normal)
-        element.backgroundColor = .systemRed
+    private lazy var addItemButton: RoundedActionButton = {
+        let config = RoundedActionButton.Configuration(
+            image: UIImage(systemName: "plus"),
+            backgroundColor: .systemRed,
+            action: { [weak self] in
+                self?.addNewItemTapped()
+            })
+        let element = RoundedActionButton(configuration: config)
         element.layer.cornerRadius = 25
-        element.tintColor = .white
-        element.addAction(
-                UIAction { [weak self] _ in
-                    self?.addNewItemTapped()
-                },
-                for: .touchUpInside
-            )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
+    
+    // MARK: - Init
+    
+    init(
+        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider()
+    ) {
+        self.itemsProvider = itemsProvider
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
         setupConstraints()
+        
+        observer = NotificationCenter.default
+            .addObserver(
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: .main,
+                using: handleNotification
+            )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func handleNotification(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            self?.toDoList.reloadData()
+        }
     }
     
     private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
-            toDoItems.append(newItem)
+            try? itemsProvider.save(with: newItem)
             
             DispatchQueue.main.async {
                 self.toDoList.reloadData()
@@ -83,8 +113,8 @@ final class ToDoListViewController: UIViewController {
                 assertionFailure("Не удалось получить sheetPresentationController")
             }
         }
-        
     }
+    
 }
 
 
@@ -92,7 +122,7 @@ final class ToDoListViewController: UIViewController {
 extension ToDoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        toDoItems.count
+        itemsProvider.getAllToDoItems().count
     }
     
     func tableView(
@@ -107,8 +137,8 @@ extension ToDoListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let item = toDoItems[indexPath.row]
-        cell.configureCell(title: item.title, description: item.description)
+        let item = itemsProvider.getAllToDoItems()[indexPath.row]
+        cell.configureCell(with: item)
         
         return cell
     }

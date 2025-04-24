@@ -9,8 +9,9 @@ import UIKit
 
 final class ToDoTableViewCell: UITableViewCell {
     
-    // MARK: - UI
+    private var item: ToDoItem?
     
+    // MARK: - UI
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
@@ -35,6 +36,15 @@ final class ToDoTableViewCell: UITableViewCell {
         return element
     }()
     
+    private lazy var expirationDateLabel: UILabel = {
+        let element = UILabel()
+        element.text = "Expiration date"
+        element.font = .systemFont(ofSize: 13, weight: .regular)
+        element.textColor = .systemGreen
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -46,14 +56,40 @@ final class ToDoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(title: String, description: String?) {
-        toDoTitleLabel.text = title
-        toDoDescrLabel.text = description
+    // MARK: - Public Method
+    func configureCell(with item: ToDoItem) {
+        self.item = item
+        toDoTitleLabel.text = item.title
+        toDoDescrLabel.text = item.description
+        
+        let checker = DefaultExpirationChecker()
+        
+        if let expirationDate = item.expirationDate {
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, HH:mm"
+            let timeLabel = formatter.string(from: expirationDate)
+            
+            switch checker.check(date: expirationDate) {
+            case .moreThanHalfHour:
+                expirationDateLabel.text = timeLabel
+                expirationDateLabel.textColor = .systemGreen
+            case .lessThanHalfHour:
+                expirationDateLabel.text = timeLabel
+                expirationDateLabel.textColor = .systemYellow
+            case .failed:
+                expirationDateLabel.text = "Просрочено"
+                expirationDateLabel.textColor = .systemRed
+            }
+        } else {
+            expirationDateLabel.textColor = .systemGray
+        }
     }
     
     override func prepareForReuse() {
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
+        expirationDateLabel.text = nil
     }
 }
 
@@ -63,6 +99,7 @@ private extension ToDoTableViewCell {
         addSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)
+        toDoMainSV.addArrangedSubview(expirationDateLabel)
     }
     
     func setupConstraints() {
