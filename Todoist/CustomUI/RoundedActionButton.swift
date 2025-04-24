@@ -24,7 +24,7 @@ final class RoundedActionButton: UIControl {
     private func setup(configuration: Configuration) {
         addSubview(imageView)
         
-        self.backgroundColor = configuration.backgroundColor
+        backgroundColor = configuration.backgroundColor
         imageView.image = configuration.image
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
@@ -39,7 +39,6 @@ final class RoundedActionButton: UIControl {
             imageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
             imageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5)
         ])
-#warning("Подумать как задавать размер кнопки в инициализаторе класса, и тут закруглять ее")
 
         addAction(
             UIAction( handler: { _ in

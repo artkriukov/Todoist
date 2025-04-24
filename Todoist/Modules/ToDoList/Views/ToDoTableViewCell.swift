@@ -56,10 +56,11 @@ final class ToDoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    // MARK: - Private Method
-    private func updateExpirationDateLabel() {
-        guard let item else { return }
+    // MARK: - Public Method
+    func configureCell(with item: ToDoItem) {
+        self.item = item
+        toDoTitleLabel.text = item.title
+        toDoDescrLabel.text = item.description
         
         let checker = DefaultExpirationChecker()
         
@@ -83,15 +84,6 @@ final class ToDoTableViewCell: UITableViewCell {
         } else {
             expirationDateLabel.textColor = .systemGray
         }
-    }
-    
-    // MARK: - Public Method
-    func configureCell(with item: ToDoItem) {
-        self.item = item
-        toDoTitleLabel.text = item.title
-        toDoDescrLabel.text = item.description
-        
-        updateExpirationDateLabel()
     }
     
     override func prepareForReuse() {

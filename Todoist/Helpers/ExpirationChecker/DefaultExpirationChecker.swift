@@ -20,7 +20,7 @@ struct DefaultExpirationChecker: ExpirationChecker {
         
         if timeInterval < 0 {
             return .failed
-        } else if timeInterval <= 30 * 60 {
+        } else if timeInterval <= 1800 { // 30 minute
             return .lessThanHalfHour
         } else {
             return .moreThanHalfHour
