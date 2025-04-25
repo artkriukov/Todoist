@@ -95,6 +95,7 @@ final class NewToDoViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        configureNavigationBar()
     }
     
     // MARK: - Private Methods
@@ -112,6 +113,28 @@ final class NewToDoViewController: UIViewController {
         saveItem?(newItem)
         
         dismiss(animated: true)
+    }
+    
+    private func cancelButtonTapped() {
+        dismiss(animated: true)
+    }
+    
+    private func configureNavigationBar() {
+        title = "Новое напоминание"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Отменить",
+            primaryAction: UIAction { [weak self] _ in
+                self?.cancelButtonTapped()
+            }
+        )
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Добавить",
+            primaryAction: UIAction { [weak self] _ in
+                self?.addNewItemTapped()
+            }
+        )
     }
     
     
