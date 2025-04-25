@@ -64,10 +64,36 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
+    private lazy var expirationDateStackView: UIStackView = {
+        let element = UIStackView()
+        element.axis = .vertical
+        element.backgroundColor = .white
+        element.layer.cornerRadius = 10
+        element.spacing = 15
+        element.isLayoutMarginsRelativeArrangement = true
+        element.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var dataPicker: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "calendar"),
-            title: "Дата"
+            title: "Дата",
+            backgroundColor: .red
+        )
+        
+        let element = ExpirationDateStackView(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        
+        return element
+    }()
+    
+    private lazy var timePicker: ExpirationDateStackView = {
+        let config = ExpirationDateStackView.Configuration(
+            image: UIImage(systemName: "clock"),
+            title: "Время",
+            backgroundColor: .systemBlue
         )
         
         let element = ExpirationDateStackView(configuration: config)
@@ -153,12 +179,16 @@ private extension NewToDoViewController {
         actionStackView.addArrangedSubview(datePicker)
         actionStackView.addArrangedSubview(datePickerContainer)
         
-        view.addSubview(dataPicker)
+        view.addSubview(expirationDateStackView)
+        
+        expirationDateStackView.addArrangedSubview(dataPicker)
+        expirationDateStackView.addArrangedSubview(timePicker)
 
     }
     
     func setupConstraints() {
-        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate(
+[
             
             infoStackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
@@ -180,11 +210,13 @@ private extension NewToDoViewController {
             actionStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             
-            dataPicker.topAnchor.constraint(equalTo: actionStackView.bottomAnchor, constant: 15),
-            dataPicker.leadingAnchor
+            expirationDateStackView.topAnchor.constraint(equalTo: actionStackView.bottomAnchor, constant: 15),
+            expirationDateStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
-            dataPicker.trailingAnchor
+            expirationDateStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
-        ])
+            
+        ]
+)
     }
 }

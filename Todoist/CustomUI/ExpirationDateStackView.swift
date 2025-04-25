@@ -27,12 +27,11 @@ final class ExpirationDateStackView: UIView {
     
     private func setup(configuration: Configuration) {
         let imageBackgroundView = UIView()
-        imageBackgroundView.backgroundColor = .red
+        imageBackgroundView.backgroundColor = configuration.backgroundColor
         imageBackgroundView.layer.cornerRadius = 8
         imageBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         
         imageView.image = configuration.image
-        imageView.backgroundColor = .red
         imageView.tintColor = .white
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -74,6 +73,7 @@ extension ExpirationDateStackView {
     struct Configuration {
         let image: UIImage?
         let title: String
+        let backgroundColor: UIColor
 #warning("add subtitle.")
     }
 }
