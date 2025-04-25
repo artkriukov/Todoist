@@ -19,21 +19,20 @@ final class NewToDoViewController: UIViewController {
         let element = UIStackView()
         element.axis = .vertical
         element.spacing = 10
+        element.backgroundColor = .white
+        element.layer.cornerRadius = 10
+        element.isLayoutMarginsRelativeArrangement = true
+        element.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var titleTextField: UITextField = {
-        let element = UITextField()
-        element.placeholder = "ToDo title"
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
+    private lazy var titleTextField = UITextField(placeholder: "Название")
+    private lazy var descriptionTextField = UITextField(placeholder: "Заметка")
     
-    private lazy var descriptionTextField: UITextField = {
-        let element = UITextField()
-        element.placeholder = "Описание"
-        element.font = .systemFont(ofSize: 14)
+    private lazy var lineView: UIView = {
+        let element = UIView()
+        element.backgroundColor = UIConstants.grayColor
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -42,21 +41,6 @@ final class NewToDoViewController: UIViewController {
         let element = UIStackView()
         element.axis = .horizontal
         element.distribution = .fillEqually
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    
-    private lazy var addNewItemButton: RoundedActionButton = {
-        let config = RoundedActionButton.Configuration(
-            image: UIImage(systemName: "arrow.up"),
-            backgroundColor: .systemRed,
-            action: { [weak self] in
-                self?.addNewItemTapped()
-            })
-        
-        let element = RoundedActionButton(configuration: config)
-        element.layer.cornerRadius = 15
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -145,18 +129,17 @@ final class NewToDoViewController: UIViewController {
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIConstants.grayColor
         
         view.addSubview(infoStackView)
         infoStackView.addArrangedSubview(titleTextField)
+        infoStackView.addArrangedSubview(lineView)
         infoStackView.addArrangedSubview(descriptionTextField)
         
         
         view.addSubview(actionStackView)
         actionStackView.addArrangedSubview(datePicker)
         actionStackView.addArrangedSubview(datePickerContainer)
-        datePickerContainer.addSubview(addNewItemButton)
-
 
     }
     
@@ -164,25 +147,24 @@ private extension NewToDoViewController {
         NSLayoutConstraint.activate([
             
             infoStackView.topAnchor
-                .constraint(equalTo: view.topAnchor, constant: 10),
+                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                            constant: 10),
             infoStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
             infoStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
 
+            titleTextField.heightAnchor.constraint(equalToConstant: 40),
+            lineView.heightAnchor.constraint(equalToConstant: 2),
+            descriptionTextField.heightAnchor.constraint(equalToConstant: 40),
+
+            
             actionStackView.topAnchor
                 .constraint(equalTo: infoStackView.bottomAnchor, constant: 15),
             actionStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
             actionStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
-            
-
-            addNewItemButton.widthAnchor.constraint(equalToConstant: 30),
-            addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
-            
-            addNewItemButton.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15)
         ])
     }
 }
