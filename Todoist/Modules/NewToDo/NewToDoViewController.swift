@@ -64,6 +64,18 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
+    private lazy var dataPicker: ExpirationDateStackView = {
+        let config = ExpirationDateStackView.Configuration(
+            image: UIImage(systemName: "calendar"),
+            title: "Дата"
+        )
+        
+        let element = ExpirationDateStackView(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        
+        return element
+    }()
+    
     // MARK: - Init
     init(saveItem: @escaping (ToDoItem) -> Void) {
         self.saveItem = saveItem
@@ -140,6 +152,8 @@ private extension NewToDoViewController {
         view.addSubview(actionStackView)
         actionStackView.addArrangedSubview(datePicker)
         actionStackView.addArrangedSubview(datePickerContainer)
+        
+        view.addSubview(dataPicker)
 
     }
     
@@ -164,6 +178,12 @@ private extension NewToDoViewController {
             actionStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
             actionStackView.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
+            
+            dataPicker.topAnchor.constraint(equalTo: actionStackView.bottomAnchor, constant: 15),
+            dataPicker.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15),
+            dataPicker.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
         ])
     }
