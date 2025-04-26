@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+#warning("ксли задач нет надпись задач нет в центре")
 final class ToDoListViewController: UIViewController {
     
     private let itemsProvider: ToDoItemsProvider

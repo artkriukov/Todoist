@@ -15,17 +15,10 @@ final class NewToDoViewController: UIViewController {
 
     // MARK: - UI
     
-    private lazy var infoStackView: UIStackView = {
-        let element = UIStackView()
-        element.axis = .vertical
-        element.spacing = 10
-        element.backgroundColor = .white
-        element.layer.cornerRadius = 10
-        element.isLayoutMarginsRelativeArrangement = true
-        element.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
+    private lazy var infoStackView = UIStackView(
+        spacing: 10,
+        layoutMargins: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+    )
     
     private lazy var titleTextField = UITextField(placeholder: "Название")
     private lazy var descriptionTextField = UITextField(placeholder: "Заметка")
@@ -45,62 +38,66 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
-    private lazy var datePickerContainer: UIView = {
-        let element = UIView()
+    private lazy var expirationDateStackView = UIStackView(
+        spacing: 15,
+        layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    )
+    
+    private lazy var datePickerSV: ExpirationDateStackView = {
+        let config = ExpirationDateStackView.Configuration(
+            image: UIImage(systemName: "calendar"),
+            title: "Дата",
+            backgroundColor: .red,
+            switcherAction: { [weak self] in
+                self?.dataSwitcherValueChanged()
+            })
+        
+        let element = ExpirationDateStackView(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
+        
         return element
     }()
     
     private lazy var datePicker: UIDatePicker = {
-        let element = UIDatePicker()
-        element.minimumDate = Date()
-        element.addAction(
-            UIAction { [weak self] _ in
-                self?.datePickerValueChanged(element)
-            },
-            for: .valueChanged
+        let picker = UIDatePicker(
+            datePickerMode: .date,
+            datePickerStyle: .inline,
+            handler: { [weak self] date in
+                self?.datePickerValueChanged(date)
+            }
         )
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
     }()
     
-    private lazy var expirationDateStackView: UIStackView = {
-        let element = UIStackView()
-        element.axis = .vertical
-        element.backgroundColor = .white
-        element.layer.cornerRadius = 10
-        element.spacing = 15
-        element.isLayoutMarginsRelativeArrangement = true
-        element.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var dataPicker: ExpirationDateStackView = {
-        let config = ExpirationDateStackView.Configuration(
-            image: UIImage(systemName: "calendar"),
-            title: "Дата",
-            backgroundColor: .red
-        )
-        
-        let element = ExpirationDateStackView(configuration: config)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        
-        return element
-    }()
-    
-    private lazy var timePicker: ExpirationDateStackView = {
+    private lazy var timePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "clock"),
             title: "Время",
-            backgroundColor: .systemBlue
-        )
+            backgroundColor: .systemBlue,
+            switcherAction: { [weak self] in
+                self?.timeSwitcherValueChanged()
+            })
         
         let element = ExpirationDateStackView(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         
         return element
     }()
+    
+    
+    private lazy var timePicker: UIDatePicker = {
+        let picker = UIDatePicker(
+            datePickerMode: .time,
+            datePickerStyle: .wheels,
+            handler: { [weak self] date in
+                self?.datePickerValueChanged(date)
+            }
+        )
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
+    
     
     // MARK: - Init
     init(saveItem: @escaping (ToDoItem) -> Void) {
@@ -159,9 +156,26 @@ final class NewToDoViewController: UIViewController {
         )
     }
     
+#warning("refact dataSwitcherValueChanged and timeSwitcherValueChanged")
+    private func dataSwitcherValueChanged() {
+        if datePickerSV.switcher.isOn {
+            datePicker.isHidden = false
+        } else {
+            datePicker.isHidden = true
+        }
+    }
     
-    private func datePickerValueChanged(_ sender: UIDatePicker) {
+    private func timeSwitcherValueChanged() {
+        if timePickerSV.switcher.isOn {
+            timePicker.isHidden = false
+        } else {
+            timePicker.isHidden = true
+        }
+    }
+    
+    private func datePickerValueChanged(_ date: Date) {
         isDateChanged = true
+        print("Selected date:", date)
     }
 }
 
@@ -176,12 +190,13 @@ private extension NewToDoViewController {
         
         
         view.addSubview(actionStackView)
-        actionStackView.addArrangedSubview(datePicker)
-        actionStackView.addArrangedSubview(datePickerContainer)
         
         view.addSubview(expirationDateStackView)
         
-        expirationDateStackView.addArrangedSubview(dataPicker)
+        expirationDateStackView.addArrangedSubview(datePickerSV)
+        expirationDateStackView.addArrangedSubview(datePicker)
+        
+        expirationDateStackView.addArrangedSubview(timePickerSV)
         expirationDateStackView.addArrangedSubview(timePicker)
 
     }

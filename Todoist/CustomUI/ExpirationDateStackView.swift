@@ -6,15 +6,15 @@
 //
 
 import UIKit
-#warning("add action for switcher, if switcher isOn show datePicker on NewToDoVC")
 
 final class ExpirationDateStackView: UIView {
     
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
-    private let switcher = UISwitch()
     private let hStackView = UIStackView()
     
+    public let switcher = UISwitch()
+
     init(configuration: Configuration) {
         super.init(frame: .zero)
         
@@ -43,6 +43,12 @@ final class ExpirationDateStackView: UIView {
         hStackView.alignment = .center
         hStackView.spacing = 12
         hStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        switcher.addAction(
+            UIAction( handler: { _ in
+                configuration.switcherAction()
+            }),
+            for: .touchUpInside)
         
         imageBackgroundView.addSubview(imageView)
         
@@ -74,6 +80,7 @@ extension ExpirationDateStackView {
         let image: UIImage?
         let title: String
         let backgroundColor: UIColor
+        let switcherAction: () -> Void
 #warning("add subtitle.")
     }
 }
