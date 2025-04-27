@@ -9,8 +9,13 @@ import UIKit
 
 final class NewToDoViewController: UIViewController {
     private var isDateChanged = false
+    private var isTimeChanged = false
+    
+    private var selectedDate: Date?
+    private var selectedTime: Date?
     
     var expirationDate: Date?
+    
     var saveItem: ((ToDoItem) -> Void)?
     
     // MARK: - UI
@@ -95,7 +100,7 @@ final class NewToDoViewController: UIViewController {
             datePickerMode: .time,
             datePickerStyle: .wheels,
             handler: { [weak self] date in
-                self?.datePickerValueChanged(date)
+                self?.timePickerValueChanged(date)
             }
         )
         picker.translatesAutoresizingMaskIntoConstraints = false
@@ -163,6 +168,7 @@ final class NewToDoViewController: UIViewController {
 #warning("refact dataSwitcherValueChanged and timeSwitcherValueChanged")
     private func dataSwitcherValueChanged() {
         if datePickerSV.switcher.isOn {
+#warning("animation")
             datePicker.isHidden = false
         } else {
             datePicker.isHidden = true
@@ -170,6 +176,7 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func timeSwitcherValueChanged() {
+#warning("animation")
         if timePickerSV.switcher.isOn {
             timePicker.isHidden = false
         } else {
@@ -179,7 +186,31 @@ final class NewToDoViewController: UIViewController {
     
     private func datePickerValueChanged(_ date: Date) {
         isDateChanged = true
-        print("Selected date:", date)
+        selectedDate = date
+        print("Selected time: \(date)")
+    }
+    
+    private func timePickerValueChanged(_ date: Date) {
+        isTimeChanged = true
+        selectedTime = date
+        print("Selected time: \(date)")
+    }
+    
+    private func combineDateAndTime() {
+        guard let selectedDate, let selectedTime else { return }
+        
+        let calendar = Calendar.current
+        
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        
+        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: selectedTime)
+        
+        dateComponents.hour = timeComponents.hour
+        dateComponents.minute = timeComponents.minute
+        dateComponents.second = timeComponents.second
+        
+        expirationDate = calendar.date(from: dateComponents)
+        print("Combined expirationDate: \(String(describing: expirationDate))")
     }
 }
 

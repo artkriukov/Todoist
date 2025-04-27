@@ -26,6 +26,4 @@ struct DefaultExpirationChecker: ExpirationChecker {
             return .moreThanHalfHour
         }
     }
-
-    
 }

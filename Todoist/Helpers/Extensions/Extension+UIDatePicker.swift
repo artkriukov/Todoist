@@ -13,7 +13,6 @@ extension UIDatePicker {
                      handler: @escaping (Date) -> Void)
     {
         self.init()
-        self.minimumDate = Date()
         self.datePickerMode = datePickerMode
         self.preferredDatePickerStyle = datePickerStyle
         self.isHidden = true
