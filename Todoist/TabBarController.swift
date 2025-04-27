@@ -19,11 +19,11 @@ class TabBarController: UITabBarController {
         let toDoListVC = ToDoListViewController()
         let settingsVC = SettingsViewController()
         
-        toDoListVC.title = "To Do"
+        toDoListVC.title = "Дела"
         toDoListVC.tabBarItem.image = UIImage(systemName: "calendar.circle")
         
-        settingsVC.title = "Settings"
-        settingsVC.tabBarItem.image = UIImage(systemName: "gear")
+        settingsVC.title = "Профиль"
+        settingsVC.tabBarItem.image = UIImage(systemName: "person.circle.fill")
         
         viewControllers = [toDoListVC, settingsVC]
     }

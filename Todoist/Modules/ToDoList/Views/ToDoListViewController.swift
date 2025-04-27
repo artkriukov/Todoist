@@ -27,7 +27,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: .systemRed,
+            backgroundColor: .systemBlue,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -166,10 +166,10 @@ private extension ToDoListViewController {
             addItemButton.widthAnchor.constraint(equalToConstant: 50),
             addItemButton.heightAnchor.constraint(equalToConstant: 50),
             addItemButton.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20
                            ),
             addItemButton.bottomAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20
                            ),
         ])
     }
