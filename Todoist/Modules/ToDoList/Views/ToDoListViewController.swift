@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+#warning("ксли задач нет надпись задач нет в центре")
 final class ToDoListViewController: UIViewController {
     
     private let itemsProvider: ToDoItemsProvider
@@ -88,33 +88,10 @@ final class ToDoListViewController: UIViewController {
             }
         })
         
-        configureSheet(with: newToDoVC)
+        let navController = UINavigationController(rootViewController: newToDoVC)
 
-        present(newToDoVC, animated: true)
+        present(navController, animated: true)
     }
-    
-    private func configureSheet(with viewController: UIViewController) {
-        if #available(iOS 16.0, *) {
-            
-            if let sheet = viewController.sheetPresentationController {
-                let customDetent = UISheetPresentationController.Detent.custom { context in
-                    context.maximumDetentValue * 0.2
-                }
-                sheet.detents = [customDetent]
-                
-            } else {
-                assertionFailure("Не удалось получить sheetPresentationController")
-            }
-        } else {
-
-            if let sheet = viewController.sheetPresentationController {
-                sheet.detents = [.medium()]
-            } else {
-                assertionFailure("Не удалось получить sheetPresentationController")
-            }
-        }
-    }
-    
 }
 
 

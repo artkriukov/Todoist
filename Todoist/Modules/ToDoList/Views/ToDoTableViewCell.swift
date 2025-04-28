@@ -68,6 +68,7 @@ final class ToDoTableViewCell: UITableViewCell {
             
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM d, HH:mm"
+            formatter.timeZone = .current
             let timeLabel = formatter.string(from: expirationDate)
             
             switch checker.check(date: expirationDate) {

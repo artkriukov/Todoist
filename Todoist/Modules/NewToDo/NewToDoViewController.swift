@@ -9,83 +9,111 @@ import UIKit
 
 final class NewToDoViewController: UIViewController {
     private var isDateChanged = false
+    private var isTimeChanged = false
+    
+    private var selectedDate: Date?
+    private var selectedTime: Date?
     
     var expirationDate: Date?
+    
     var saveItem: ((ToDoItem) -> Void)?
-
+    
     // MARK: - UI
     
-    private lazy var infoStackView: UIStackView = {
-        let element = UIStackView()
-        element.axis = .vertical
-        element.spacing = 10
+    private lazy var scrollView: UIScrollView = {
+        let element = UIScrollView()
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var titleTextField: UITextField = {
-        let element = UITextField()
-        element.placeholder = "ToDo title"
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var descriptionTextField: UITextField = {
-        let element = UITextField()
-        element.placeholder = "Описание"
-        element.font = .systemFont(ofSize: 14)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var actionStackView: UIStackView = {
-        let element = UIStackView()
-        element.axis = .horizontal
-        element.distribution = .fillEqually
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    
-    private lazy var addNewItemButton: RoundedActionButton = {
-        let config = RoundedActionButton.Configuration(
-            image: UIImage(systemName: "arrow.up"),
-            backgroundColor: .systemRed,
-            action: { [weak self] in
-                self?.addNewItemTapped()
-            })
-        
-        let element = RoundedActionButton(configuration: config)
-        element.layer.cornerRadius = 15
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var datePickerContainer: UIView = {
+    private lazy var contentView: UIView = {
         let element = UIView()
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var datePicker: UIDatePicker = {
-        let element = UIDatePicker()
-        element.minimumDate = Date()
-        element.addAction(
-            UIAction { [weak self] _ in
-                self?.datePickerValueChanged(element)
-            },
-            for: .valueChanged
-        )
+    private lazy var infoStackView = UIStackView(
+        spacing: 10,
+        layoutMargins: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+    )
+    
+    private lazy var titleTextField = UITextField(placeholder: "Название")
+    private lazy var descriptionTextField = UITextField(placeholder: "Заметка")
+    
+    private lazy var lineView: UIView = {
+        let element = UIView()
+        element.backgroundColor = UIConstants.grayColor
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var expirationDateStackView = UIStackView(
+        spacing: 15,
+        layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    )
+    
+    private lazy var datePickerSV: ExpirationDateStackView = {
+        let config = ExpirationDateStackView.Configuration(
+            image: UIImage(systemName: "calendar"),
+            title: "Дата",
+            backgroundColor: .red,
+            switcherAction: { [weak self] in
+                self?.dataSwitcherValueChanged()
+            })
+        
+        let element = ExpirationDateStackView(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        
+        return element
+    }()
+    
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker(
+            datePickerMode: .date,
+            datePickerStyle: .inline,
+            handler: { [weak self] date in
+                self?.datePickerValueChanged(date)
+            }
+        )
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
+    
+    private lazy var timePickerSV: ExpirationDateStackView = {
+        let config = ExpirationDateStackView.Configuration(
+            image: UIImage(systemName: "clock"),
+            title: "Время",
+            backgroundColor: .systemBlue,
+            switcherAction: { [weak self] in
+                self?.timeSwitcherValueChanged()
+            })
+        
+        let element = ExpirationDateStackView(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        
+        return element
+    }()
+    
+    
+    private lazy var timePicker: UIDatePicker = {
+        let picker = UIDatePicker(
+            datePickerMode: .time,
+            datePickerStyle: .wheels,
+            handler: { [weak self] date in
+                self?.timePickerValueChanged(date)
+            }
+        )
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
+    
     
     // MARK: - Init
     init(saveItem: @escaping (ToDoItem) -> Void) {
         self.saveItem = saveItem
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -95,6 +123,7 @@ final class NewToDoViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        configureNavigationBar()
     }
     
     // MARK: - Private Methods
@@ -114,52 +143,131 @@ final class NewToDoViewController: UIViewController {
         dismiss(animated: true)
     }
     
+    private func cancelButtonTapped() {
+        dismiss(animated: true)
+    }
     
-    private func datePickerValueChanged(_ sender: UIDatePicker) {
+    private func configureNavigationBar() {
+        title = "Новое напоминание"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Отменить",
+            primaryAction: UIAction { [weak self] _ in
+                self?.cancelButtonTapped()
+            }
+        )
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Добавить",
+            primaryAction: UIAction { [weak self] _ in
+                self?.addNewItemTapped()
+            }
+        )
+    }
+    
+#warning("refact dataSwitcherValueChanged and timeSwitcherValueChanged")
+    private func dataSwitcherValueChanged() {
+        if datePickerSV.switcher.isOn {
+#warning("animation")
+            datePicker.isHidden = false
+        } else {
+            datePicker.isHidden = true
+        }
+    }
+    
+    private func timeSwitcherValueChanged() {
+#warning("animation")
+        if timePickerSV.switcher.isOn {
+            timePicker.isHidden = false
+        } else {
+            timePicker.isHidden = true
+        }
+    }
+    
+    private func datePickerValueChanged(_ date: Date) {
         isDateChanged = true
+        selectedDate = date
+        print("Selected time: \(date)")
+    }
+    
+    private func timePickerValueChanged(_ date: Date) {
+        isTimeChanged = true
+        selectedTime = date
+        print("Selected time: \(date)")
+    }
+    
+    private func combineDateAndTime() {
+        guard let selectedDate, let selectedTime else { return }
+        
+        let calendar = Calendar.current
+        
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        
+        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: selectedTime)
+        
+        dateComponents.hour = timeComponents.hour
+        dateComponents.minute = timeComponents.minute
+        dateComponents.second = timeComponents.second
+        
+        expirationDate = calendar.date(from: dateComponents)
+        print("Combined expirationDate: \(String(describing: expirationDate))")
     }
 }
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIConstants.grayColor
         
-        view.addSubview(infoStackView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(infoStackView)
         infoStackView.addArrangedSubview(titleTextField)
+        infoStackView.addArrangedSubview(lineView)
         infoStackView.addArrangedSubview(descriptionTextField)
         
-        
-        view.addSubview(actionStackView)
-        actionStackView.addArrangedSubview(datePicker)
-        actionStackView.addArrangedSubview(datePickerContainer)
-        datePickerContainer.addSubview(addNewItemButton)
-
-
+        contentView.addSubview(expirationDateStackView)
+        expirationDateStackView.addArrangedSubview(datePickerSV)
+        expirationDateStackView.addArrangedSubview(datePicker)
+        expirationDateStackView.addArrangedSubview(timePickerSV)
+        expirationDateStackView.addArrangedSubview(timePicker)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
             
+            scrollView.topAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor
+                .constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
             infoStackView.topAnchor
-                .constraint(equalTo: view.topAnchor, constant: 10),
+                .constraint(equalTo: contentView.topAnchor, constant: 20),
             infoStackView.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 15),
+                .constraint(equalTo: contentView.leadingAnchor, constant: 15),
             infoStackView.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15),
-
-            actionStackView.topAnchor
-                .constraint(equalTo: infoStackView.bottomAnchor, constant: 15),
-            actionStackView.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 15),
-            actionStackView.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15),
+                .constraint(equalTo: contentView.trailingAnchor, constant: -15),
             
-
-            addNewItemButton.widthAnchor.constraint(equalToConstant: 30),
-            addNewItemButton.heightAnchor.constraint(equalToConstant: 30),
+            titleTextField.heightAnchor.constraint(equalToConstant: 44),
+            lineView.heightAnchor.constraint(equalToConstant: 1),
+            descriptionTextField.heightAnchor.constraint(equalToConstant: 44),
             
-            addNewItemButton.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -15)
+            expirationDateStackView.topAnchor
+                .constraint(equalTo: infoStackView.bottomAnchor, constant: 20),
+            expirationDateStackView.leadingAnchor
+                .constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            expirationDateStackView.trailingAnchor
+                .constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            expirationDateStackView.bottomAnchor
+                .constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
     }
 }
