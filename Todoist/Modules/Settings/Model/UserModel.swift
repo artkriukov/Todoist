@@ -13,7 +13,9 @@ enum SettingsKeys: String {
 
 struct UserSettings {
     let name: String
-    
+}
+
+extension UserSettings: UserProvider {
     func save() {
         UserDefaults.standard.set(name, forKey: SettingsKeys.userName.rawValue)
     }

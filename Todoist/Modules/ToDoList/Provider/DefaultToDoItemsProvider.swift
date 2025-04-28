@@ -11,11 +11,35 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     
     private var toDoItems: [ToDoItem] = []
     
+    private let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("ToDoItems.plist")
+
+    
     func getAllToDoItems() -> [ToDoItem] {
-        toDoItems
+        
+        if let jsonData = try? Data(contentsOf: dataFilePath) {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                toDoItems = try decoder.decode([ToDoItem].self, from: jsonData)
+                return toDoItems
+            } catch {
+                assertionFailure("Error decoding items: \(error)")
+                return []
+            }
+        }
+        return toDoItems
     }
 
     func save(with item: ToDoItem) throws {
         toDoItems.append(item)
+        
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(toDoItems)
+            try data.write(to: dataFilePath)
+        } catch {
+            assertionFailure("Error encoding items: \(error)")
+        }
     }
 }
