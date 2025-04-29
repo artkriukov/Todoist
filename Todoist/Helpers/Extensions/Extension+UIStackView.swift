@@ -8,10 +8,10 @@
 import UIKit
 
 extension UIStackView {
-    convenience init(spacing: CGFloat, layoutMargins: UIEdgeInsets){
+    convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat, layoutMargins: UIEdgeInsets){
         self.init()
 
-        self.axis = .vertical
+        self.axis = axis
         self.backgroundColor = .white
         self.layer.cornerRadius = 10
         self.spacing = spacing

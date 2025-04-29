@@ -16,6 +16,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var toDoList: UITableView = {
         let element = UITableView()
         element.dataSource = self
+        element.delegate = self
         element.register(
             ToDoTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
@@ -27,7 +28,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: .systemBlue,
+            backgroundColor: UIConstants.blueColor,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -118,6 +119,14 @@ extension ToDoListViewController: UITableViewDataSource {
         cell.configureCell(with: item)
         
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension ToDoListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

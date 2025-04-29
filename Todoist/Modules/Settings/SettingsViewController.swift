@@ -10,6 +10,13 @@ import UIKit
 final class SettingsViewController: UIViewController {
     
     // MARK: - UI
+    
+    private lazy var userInfoStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 5,
+        layoutMargins: UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
+    )
+    
     private lazy var userStackView: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
@@ -21,14 +28,13 @@ final class SettingsViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
         element.text = "Имя"
-        element.font = .systemFont(ofSize: 16, weight: .medium)
+        element.font = .systemFont(ofSize: 17, weight: .medium)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     private lazy var userNameTextField: UITextField = {
         let element = UITextField()
         element.placeholder = "Ваше имя"
-        element.borderStyle = .roundedRect
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -40,6 +46,9 @@ final class SettingsViewController: UIViewController {
             self?.saveButtonTapped()
         },
         for: .touchUpInside)
+        element.backgroundColor = UIConstants.blueColor
+        element.tintColor = .white
+        element.layer.cornerRadius = 10
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -66,24 +75,39 @@ final class SettingsViewController: UIViewController {
 }
 
 private extension SettingsViewController {
-    private func setupViews() {
+    func setupViews() {
+        view.backgroundColor = UIConstants.grayColor
         
-        view.addSubview(userStackView)
-        userStackView.addArrangedSubview(nameLabel)
-        userStackView.addArrangedSubview(userNameTextField)
-        userStackView.addArrangedSubview(saveButton)
+        view.addSubview(userInfoStackView)
+        
+        userInfoStackView.addArrangedSubview(nameLabel)
+        userInfoStackView.addArrangedSubview(userNameTextField)
+        view.addSubview(saveButton)
     }
     
-    private func setupConstraints() {
-        NSLayoutConstraint.activate(
-[
-            userStackView.topAnchor
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            userInfoStackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 10),
-            userStackView.leadingAnchor
+            userInfoStackView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            userStackView.trailingAnchor
+            userInfoStackView.trailingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-        ]
-)
+            
+            nameLabel.widthAnchor.constraint(equalToConstant: 60),
+            
+            saveButton.topAnchor
+                .constraint(equalTo: userInfoStackView.bottomAnchor, constant: 10),
+            saveButton.trailingAnchor
+                .constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -15
+                ),
+            saveButton.leadingAnchor
+                .constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: 15
+                ),
+        ])
     }
 }

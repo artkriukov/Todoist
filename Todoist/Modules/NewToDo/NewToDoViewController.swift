@@ -33,6 +33,7 @@ final class NewToDoViewController: UIViewController {
     }()
     
     private lazy var infoStackView = UIStackView(
+        axis: .vertical,
         spacing: 10,
         layoutMargins: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
     )
@@ -48,6 +49,7 @@ final class NewToDoViewController: UIViewController {
     }()
     
     private lazy var expirationDateStackView = UIStackView(
+        axis: .vertical,
         spacing: 15,
         layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     )
