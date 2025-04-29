@@ -176,13 +176,17 @@ private extension ToDoListViewController {
     }
     
     func setupConstraints() {
-        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate(
+[
             
             emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             toDoList.topAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
+                .constraint(
+                    equalTo:view.safeAreaLayoutGuide.topAnchor,
+                    constant: 15
+                ),
             toDoList.leadingAnchor
                 .constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
             toDoList.trailingAnchor
@@ -196,6 +200,7 @@ private extension ToDoListViewController {
                 .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addItemButton.bottomAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-        ])
+        ]
+)
     }
 }

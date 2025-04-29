@@ -19,12 +19,27 @@ class TabBarController: UITabBarController {
         let toDoListVC = ToDoListViewController()
         let settingsVC = UserSettingsViewController()
         
-        toDoListVC.title = "Дела"
-        toDoListVC.tabBarItem.image = UIImage(systemName: "calendar.circle")
+        viewControllers = [
+            configureNavigationBar(with: toDoListVC, title: "Список дел", image: "calendar.circle"),
+            configureNavigationBar(with: settingsVC, title: "Профиль", image: "person.circle.fill")
+        ]
         
-        settingsVC.title = "Профиль"
-        settingsVC.tabBarItem.image = UIImage(systemName: "person.circle.fill")
+    }
+    
+    private func configureNavigationBar(
+        with viewController: UIViewController,
+        title: String,
+        image: String
+    ) -> UIViewController {
         
-        viewControllers = [toDoListVC, settingsVC]
+        let navController = UINavigationController(rootViewController: viewController)
+        
+        navController.tabBarItem.title = title
+        navController.tabBarItem.image = UIImage(systemName: image)
+        navController.navigationBar.prefersLargeTitles = true
+        
+        viewController.navigationItem.title = title
+        
+        return navController
     }
 }

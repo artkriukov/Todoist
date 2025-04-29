@@ -88,7 +88,7 @@ private extension UserSettingsViewController {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             userInfoStackView.topAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 10),
+                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 15),
             userInfoStackView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             userInfoStackView.trailingAnchor
