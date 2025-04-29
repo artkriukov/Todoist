@@ -6,13 +6,24 @@
 //
 
 import UIKit
-#warning("ксли задач нет надпись задач нет в центре")
+
 final class ToDoListViewController: UIViewController {
     
     private let itemsProvider: ToDoItemsProvider
     private var observer: Any?
     
     // MARK: - UI
+    
+    private lazy var emptyLabel: UILabel = {
+        let element = UILabel()
+        element.text = "Задач нет"
+        element.textColor = .lightGray
+        element.isHidden = true
+        element.font = UIFont.systemFont(ofSize: 27, weight: .medium)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var toDoList: UITableView = {
         let element = UITableView()
         element.dataSource = self
@@ -57,6 +68,7 @@ final class ToDoListViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        checkTasks()
         
         observer = NotificationCenter.default
             .addObserver(
@@ -83,6 +95,7 @@ final class ToDoListViewController: UIViewController {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
             try? itemsProvider.save(with: newItem)
+            self.checkTasks()
             
             DispatchQueue.main.async {
                 self.toDoList.reloadData()
@@ -92,6 +105,10 @@ final class ToDoListViewController: UIViewController {
         let navController = UINavigationController(rootViewController: newToDoVC)
 
         present(navController, animated: true)
+    }
+    
+    private func checkTasks() {
+        emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
 }
 
@@ -139,6 +156,8 @@ extension ToDoListViewController: UITableViewDelegate {
             self.itemsProvider.removeItem(at: indexPath.row)
             
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            
+            self.checkTasks()
             completionHandler(true)
         }
         
@@ -150,12 +169,18 @@ extension ToDoListViewController: UITableViewDelegate {
 private extension ToDoListViewController {
     func setupViews() {
         view.backgroundColor = .white
+        
         view.addSubview(toDoList)
+        view.addSubview(emptyLabel)
         view.addSubview(addItemButton)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             toDoList.topAnchor
                 .constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
             toDoList.leadingAnchor
@@ -168,11 +193,9 @@ private extension ToDoListViewController {
             addItemButton.widthAnchor.constraint(equalToConstant: 50),
             addItemButton.heightAnchor.constraint(equalToConstant: 50),
             addItemButton.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20
-                           ),
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addItemButton.bottomAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20
-                           ),
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
     }
 }
