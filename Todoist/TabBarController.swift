@@ -17,7 +17,7 @@ class TabBarController: UITabBarController {
     
     private func setupTabBar() {
         let toDoListVC = ToDoListViewController()
-        let settingsVC = SettingsViewController()
+        let settingsVC = UserSettingsViewController()
         
         toDoListVC.title = "Дела"
         toDoListVC.tabBarItem.image = UIImage(systemName: "calendar.circle")

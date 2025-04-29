@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SettingsViewController: UIViewController {
+final class UserSettingsViewController: UIViewController {
     
     // MARK: - UI
     
@@ -74,7 +74,7 @@ final class SettingsViewController: UIViewController {
     }
 }
 
-private extension SettingsViewController {
+private extension UserSettingsViewController {
     func setupViews() {
         view.backgroundColor = UIConstants.grayColor
         

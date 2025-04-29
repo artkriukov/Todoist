@@ -1,5 +1,5 @@
 //
-//  UserProvider.swift
+//  UserSettingsProvider.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 28.04.2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol UserProvider {
+protocol UserSettingsProvider {
     func save()
     static func load() -> UserSettings?
 }

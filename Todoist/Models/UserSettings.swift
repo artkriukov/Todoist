@@ -15,7 +15,7 @@ struct UserSettings {
     let name: String
 }
 
-extension UserSettings: UserProvider {
+extension UserSettings: UserSettingsProvider {
     func save() {
         UserDefaults.standard.set(name, forKey: SettingsKeys.userName.rawValue)
     }

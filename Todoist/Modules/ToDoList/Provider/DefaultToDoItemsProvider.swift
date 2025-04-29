@@ -33,8 +33,18 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     func save(with item: ToDoItem) throws {
         toDoItems.append(item)
         
-        let encoder = PropertyListEncoder()
+        encodingData()
+    }
+    
+    func removeItem(at index: Int) {
+        guard index < toDoItems.count  else { return }
         
+        toDoItems.remove(at: index)
+        encodingData()
+    }
+    
+    private func encodingData() {
+        let encoder = PropertyListEncoder()
         do {
             let data = try encoder.encode(toDoItems)
             try data.write(to: dataFilePath)
