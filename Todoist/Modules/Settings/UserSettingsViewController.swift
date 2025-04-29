@@ -76,7 +76,7 @@ final class UserSettingsViewController: UIViewController {
 
 private extension UserSettingsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.grayColor
+        view.backgroundColor = UIConstants.mainBackground
         
         view.addSubview(userInfoStackView)
         

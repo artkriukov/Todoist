@@ -32,6 +32,7 @@ final class ToDoListViewController: UIViewController {
             ToDoTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
         )
+        element.backgroundColor = UIConstants.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -168,7 +169,7 @@ extension ToDoListViewController: UITableViewDelegate {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoListViewController {
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIConstants.mainBackground
         
         view.addSubview(toDoList)
         view.addSubview(emptyLabel)

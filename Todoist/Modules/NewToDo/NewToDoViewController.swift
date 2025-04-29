@@ -43,7 +43,7 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var lineView: UIView = {
         let element = UIView()
-        element.backgroundColor = UIConstants.grayColor
+        element.backgroundColor = UIConstants.separatorLine
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -218,7 +218,7 @@ final class NewToDoViewController: UIViewController {
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.grayColor
+        view.backgroundColor = UIConstants.mainBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)

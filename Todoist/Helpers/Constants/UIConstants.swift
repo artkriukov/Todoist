@@ -8,6 +8,10 @@
 import UIKit
 
 enum UIConstants {
-    static let grayColor = UIColor(red: 242/255, green: 242/255, blue: 247/255, alpha: 1)
+    static let mainBackground = UIColor.systemGroupedBackground
+    static let secondaryBackground = UIColor.secondarySystemGroupedBackground
+    static let separatorLine = UIColor.separator
+    static let cardBackground = UIColor.tertiarySystemGroupedBackground
+    
     static let blueColor = UIColor.systemBlue
 }

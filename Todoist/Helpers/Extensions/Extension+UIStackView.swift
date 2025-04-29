@@ -12,7 +12,7 @@ extension UIStackView {
         self.init()
 
         self.axis = axis
-        self.backgroundColor = .white
+        self.backgroundColor = UIConstants.secondaryBackground
         self.layer.cornerRadius = 10
         self.spacing = spacing
         self.isLayoutMarginsRelativeArrangement = true

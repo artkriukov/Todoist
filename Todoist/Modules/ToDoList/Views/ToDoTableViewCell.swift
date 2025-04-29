@@ -97,6 +97,7 @@ final class ToDoTableViewCell: UITableViewCell {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoTableViewCell {
     func setupViews() {
+        backgroundColor = UIConstants.mainBackground
         addSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)
