@@ -167,28 +167,17 @@ final class NewToDoViewController: UIViewController {
         )
     }
     
-#warning("refact dataSwitcherValueChanged and timeSwitcherValueChanged")
     private func dataSwitcherValueChanged() {
-        if datePickerSV.switcher.isOn {
-            UIView.animate(withDuration: 0.3) {
-                self.datePicker.isHidden = false
-            }
-        } else {
-            UIView.animate(withDuration: 0.3) {
-                self.datePicker.isHidden = true
-            }
-        }
+        handlePickerSwitch(isOn: datePickerSV.switcher.isOn, picker: datePicker)
     }
     
     private func timeSwitcherValueChanged() {
-        if timePickerSV.switcher.isOn {
-            UIView.animate(withDuration: 0.3) {
-                self.timePicker.isHidden = false
-            }
-        } else {
-            UIView.animate(withDuration: 0.3) {
-                self.timePicker.isHidden = true
-            }
+        handlePickerSwitch(isOn: timePickerSV.switcher.isOn, picker: timePicker)
+    }
+    
+    private func handlePickerSwitch(isOn: Bool, picker: UIView){
+        UIView.animate(withDuration: 0.3) {
+            picker.isHidden = !isOn
         }
     }
     
