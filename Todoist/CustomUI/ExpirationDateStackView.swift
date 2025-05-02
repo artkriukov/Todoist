@@ -12,7 +12,9 @@ final class ExpirationDateStackView: UIView {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let hStackView = UIStackView()
+    private let vDateStackView = UIStackView()
     
+    public let subtitleLabel = UILabel()
     public let switcher = UISwitch()
 
     init(configuration: Configuration) {
@@ -35,10 +37,21 @@ final class ExpirationDateStackView: UIView {
         imageView.tintColor = .white
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
+        // MARK: - vDateStackView
+        vDateStackView.axis = .vertical
+        vDateStackView.spacing = 4
+        
         titleLabel.text = configuration.title
         titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
         
+        subtitleLabel.text = configuration.subtitle
+        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
+        [titleLabel, subtitleLabel].forEach {
+            vDateStackView.addArrangedSubview($0)
+        }
+        
+        // MARK: - hStackView
         hStackView.axis = .horizontal
         hStackView.alignment = .center
         hStackView.spacing = 12
@@ -52,7 +65,7 @@ final class ExpirationDateStackView: UIView {
         
         imageBackgroundView.addSubview(imageView)
         
-        [imageBackgroundView, titleLabel, UIView(), switcher].forEach {
+        [imageBackgroundView, vDateStackView, UIView(), switcher].forEach {
             hStackView.addArrangedSubview($0)
         }
         
@@ -71,6 +84,7 @@ final class ExpirationDateStackView: UIView {
             imageView.centerYAnchor.constraint(equalTo: imageBackgroundView.centerYAnchor),
             imageView.widthAnchor.constraint(equalToConstant: 25),
             imageView.heightAnchor.constraint(equalToConstant: 25),
+            
         ])
     }
 }
@@ -79,6 +93,7 @@ extension ExpirationDateStackView {
     struct Configuration {
         let image: UIImage?
         let title: String
+        let subtitle: String?
         let backgroundColor: UIColor
         let switcherAction: () -> Void
 #warning("add subtitle.")

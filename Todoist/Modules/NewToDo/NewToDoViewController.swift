@@ -58,6 +58,7 @@ final class NewToDoViewController: UIViewController {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "calendar"),
             title: "Дата",
+            subtitle: nil,
             backgroundColor: .red,
             switcherAction: { [weak self] in
                 self?.dataSwitcherValueChanged()
@@ -85,6 +86,7 @@ final class NewToDoViewController: UIViewController {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "clock"),
             title: "Время",
+            subtitle: nil,
             backgroundColor: .systemBlue,
             switcherAction: { [weak self] in
                 self?.timeSwitcherValueChanged()
@@ -182,16 +184,33 @@ final class NewToDoViewController: UIViewController {
         }
     }
     
+#warning("DRY: datePickerValueChanged and timePickerValueChanged")
     private func datePickerValueChanged(_ date: Date) {
         isDateChanged = true
         selectedDate = date
-        print("Selected time: \(date)")
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        formatter.timeZone = .current
+        let timeLabel = formatter.string(from: date)
+        
+        DispatchQueue.main.async {
+            self.datePickerSV.subtitleLabel.text = timeLabel
+        }
     }
     
     private func timePickerValueChanged(_ date: Date) {
         isTimeChanged = true
         selectedTime = date
-        print("Selected time: \(date)")
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = .current
+        let timeLabel = formatter.string(from: date)
+        
+        DispatchQueue.main.async {
+            self.timePickerSV.subtitleLabel.text = timeLabel
+        }
     }
     
     private func combineDateAndTime(with selectedDate: Date?, and selectedTime: Date?) -> Date? {
