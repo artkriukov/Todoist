@@ -132,13 +132,14 @@ final class NewToDoViewController: UIViewController {
     private func addNewItemTapped() {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
+        let date = combineDateAndTime(with: selectedDate, and: selectedTime)
         
-        expirationDate = isDateChanged ? datePicker.date : nil
+//        expirationDate = isDateChanged ? datePicker.date : nil
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: expirationDate
+            expirationDate: date
         )
         saveItem?(newItem)
         
@@ -193,8 +194,8 @@ final class NewToDoViewController: UIViewController {
         print("Selected time: \(date)")
     }
     
-    private func combineDateAndTime() {
-        guard let selectedDate, let selectedTime else { return }
+    private func combineDateAndTime(with selectedDate: Date?, and selectedTime: Date?) -> Date? {
+        guard let selectedDate, let selectedTime else { return nil }
         
         let calendar = Calendar.current
         
@@ -208,6 +209,8 @@ final class NewToDoViewController: UIViewController {
         
         expirationDate = calendar.date(from: dateComponents)
         print("Combined expirationDate: \(String(describing: expirationDate))")
+        
+        return expirationDate
     }
 }
 
