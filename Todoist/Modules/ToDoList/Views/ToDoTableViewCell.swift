@@ -38,7 +38,6 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private lazy var expirationDateLabel: UILabel = {
         let element = UILabel()
-        element.text = "Expiration date"
         element.font = .systemFont(ofSize: 13, weight: .regular)
         element.textColor = .systemGreen
         element.translatesAutoresizingMaskIntoConstraints = false
