@@ -1,0 +1,71 @@
+//
+//  FactoryUI.swift
+//  Todoist
+//
+//  Created by Artem Kriukov on 03.05.2025.
+//
+
+import UIKit
+
+final class FactoryUI {
+    static let shared = FactoryUI()
+    private init() {}
+    
+    func makeStackView(
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 10,
+        layoutMargins: UIEdgeInsets = .init(top: 0, left: 10, bottom: 0, right: 0),
+        backgroundColor: UIColor = UIConstants.secondaryBackground,
+        cornerRadius: CGFloat = 10,
+        tamic: Bool = false
+    ) -> UIStackView {
+        
+        let stackView = UIStackView()
+        stackView.axis = axis
+        stackView.spacing = spacing
+        stackView.backgroundColor = backgroundColor
+        stackView.layer.cornerRadius = cornerRadius
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = layoutMargins
+        stackView.translatesAutoresizingMaskIntoConstraints = tamic
+        return stackView
+        
+    }
+    
+    func makeTetxField(placeholder: String, tamic: Bool = false) -> UITextField {
+        let textField = UITextField()
+        textField.placeholder = placeholder
+        textField.translatesAutoresizingMaskIntoConstraints = tamic
+        return textField
+    }
+    
+    func makeDatePicker(
+        mode: UIDatePicker.Mode = .date,
+        style: UIDatePickerStyle = .automatic,
+        minDate: Date? = nil,
+        maxDate: Date? = nil,
+        initialDate: Date = Date(),
+        isHidden: Bool = true,
+        handler: ((Date) -> Void)? = nil
+    ) -> UIDatePicker {
+        let picker = UIDatePicker()
+        picker.datePickerMode = mode
+        picker.preferredDatePickerStyle = style
+        picker.minimumDate = minDate
+        picker.maximumDate = maxDate
+        picker.date = initialDate
+        picker.isHidden = isHidden
+        
+        if let handler {
+            picker.addAction(
+                UIAction { [weak picker] _ in
+                    guard let picker else { return }
+                    handler(picker.date)
+                },
+                for: .valueChanged
+            )
+        }
+        
+        return picker
+    }
+}

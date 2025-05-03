@@ -13,13 +13,26 @@ final class ToDoListViewController: UIViewController {
     private var observer: Any?
     
     // MARK: - UI
+    
+    private lazy var emptyLabel: UILabel = {
+        let element = UILabel()
+        element.text = "Задач нет"
+        element.textColor = .lightGray
+        element.isHidden = true
+        element.font = UIFont.systemFont(ofSize: 27, weight: .medium)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var toDoList: UITableView = {
         let element = UITableView()
         element.dataSource = self
+        element.delegate = self
         element.register(
             ToDoTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
         )
+        element.backgroundColor = UIConstants.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -27,7 +40,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: .systemRed,
+            backgroundColor: UIConstants.blueColor,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -56,6 +69,7 @@ final class ToDoListViewController: UIViewController {
         
         setupViews()
         setupConstraints()
+        checkTasks()
         
         observer = NotificationCenter.default
             .addObserver(
@@ -82,39 +96,21 @@ final class ToDoListViewController: UIViewController {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
             try? itemsProvider.save(with: newItem)
+            self.checkTasks()
             
             DispatchQueue.main.async {
                 self.toDoList.reloadData()
             }
         })
         
-        configureSheet(with: newToDoVC)
+        let navController = UINavigationController(rootViewController: newToDoVC)
 
-        present(newToDoVC, animated: true)
+        present(navController, animated: true)
     }
     
-    private func configureSheet(with viewController: UIViewController) {
-        if #available(iOS 16.0, *) {
-            
-            if let sheet = viewController.sheetPresentationController {
-                let customDetent = UISheetPresentationController.Detent.custom { context in
-                    context.maximumDetentValue * 0.2
-                }
-                sheet.detents = [customDetent]
-                
-            } else {
-                assertionFailure("Не удалось получить sheetPresentationController")
-            }
-        } else {
-
-            if let sheet = viewController.sheetPresentationController {
-                sheet.detents = [.medium()]
-            } else {
-                assertionFailure("Не удалось получить sheetPresentationController")
-            }
-        }
+    private func checkTasks() {
+        emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
-    
 }
 
 
@@ -144,18 +140,54 @@ extension ToDoListViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
+
+extension ToDoListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "Удалить"
+        ) { _, _, completionHandler in
+            
+            self.itemsProvider.removeItem(at: indexPath.row)
+            
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            
+            self.checkTasks()
+            completionHandler(true)
+        }
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+}
+
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoListViewController {
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIConstants.mainBackground
+        
         view.addSubview(toDoList)
+        view.addSubview(emptyLabel)
         view.addSubview(addItemButton)
     }
     
     func setupConstraints() {
-        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate(
+[
+            
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             toDoList.topAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
+                .constraint(
+                    equalTo:view.safeAreaLayoutGuide.topAnchor,
+                    constant: 15
+                ),
             toDoList.leadingAnchor
                 .constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
             toDoList.trailingAnchor
@@ -166,11 +198,10 @@ private extension ToDoListViewController {
             addItemButton.widthAnchor.constraint(equalToConstant: 50),
             addItemButton.heightAnchor.constraint(equalToConstant: 50),
             addItemButton.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10
-                           ),
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addItemButton.bottomAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10
-                           ),
-        ])
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+        ]
+)
     }
 }

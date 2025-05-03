@@ -38,7 +38,6 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private lazy var expirationDateLabel: UILabel = {
         let element = UILabel()
-        element.text = "Expiration date"
         element.font = .systemFont(ofSize: 13, weight: .regular)
         element.textColor = .systemGreen
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -68,6 +67,7 @@ final class ToDoTableViewCell: UITableViewCell {
             
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM d, HH:mm"
+            formatter.timeZone = .current
             let timeLabel = formatter.string(from: expirationDate)
             
             switch checker.check(date: expirationDate) {
@@ -96,6 +96,7 @@ final class ToDoTableViewCell: UITableViewCell {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoTableViewCell {
     func setupViews() {
+        backgroundColor = UIConstants.mainBackground
         addSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)

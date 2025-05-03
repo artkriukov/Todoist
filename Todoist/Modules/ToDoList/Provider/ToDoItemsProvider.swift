@@ -10,4 +10,5 @@ import Foundation
 protocol ToDoItemsProvider {
     func getAllToDoItems() -> [ToDoItem]
     func save(with item: ToDoItem) throws
+    func removeItem(at index: Int)
 }

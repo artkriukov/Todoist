@@ -16,8 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
         
-        let toDoListViewController = ToDoListViewController()
-        self.window?.rootViewController = toDoListViewController
+        self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
         
         return true
