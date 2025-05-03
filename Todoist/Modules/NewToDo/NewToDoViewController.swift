@@ -8,8 +8,6 @@
 import UIKit
 
 final class NewToDoViewController: UIViewController {
-    private var isDateChanged = false
-    private var isTimeChanged = false
     
     private var selectedDate: Date?
     private var selectedTime: Date?
@@ -176,7 +174,6 @@ final class NewToDoViewController: UIViewController {
     
 #warning("DRY: datePickerValueChanged and timePickerValueChanged")
     private func datePickerValueChanged(_ date: Date) {
-        isDateChanged = true
         selectedDate = date
         
         let formatter = DateFormatter()
@@ -190,7 +187,6 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func timePickerValueChanged(_ date: Date) {
-        isTimeChanged = true
         selectedTime = date
         
         let formatter = DateFormatter()
