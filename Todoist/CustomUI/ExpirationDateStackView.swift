@@ -96,6 +96,5 @@ extension ExpirationDateStackView {
         let subtitle: String?
         let backgroundColor: UIColor
         let switcherAction: () -> Void
-#warning("add subtitle.")
     }
 }

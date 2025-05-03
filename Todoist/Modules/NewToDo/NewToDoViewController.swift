@@ -32,14 +32,16 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
-    private lazy var infoStackView = UIStackView(
-        axis: .vertical,
-        spacing: 10,
-        layoutMargins: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+    private lazy var infoStackView = FactoryUI.shared.makeStackView()
+    
+    
+    private lazy var titleTextField = FactoryUI.shared.makeTetxField(
+        placeholder: "Название"
     )
     
-    private lazy var titleTextField = UITextField(placeholder: "Название")
-    private lazy var descriptionTextField = UITextField(placeholder: "Заметка")
+    private lazy var descriptionTextField = FactoryUI.shared.makeTetxField(
+        placeholder: "Заметка"
+    )
     
     private lazy var lineView: UIView = {
         let element = UIView()
@@ -48,9 +50,7 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
-    private lazy var expirationDateStackView = UIStackView(
-        axis: .vertical,
-        spacing: 15,
+    private lazy var expirationDateStackView = FactoryUI.shared.makeStackView(
         layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     )
     
@@ -70,17 +70,12 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
-    private lazy var datePicker: UIDatePicker = {
-        let picker = UIDatePicker(
-            datePickerMode: .date,
-            datePickerStyle: .inline,
-            handler: { [weak self] date in
-                self?.datePickerValueChanged(date)
-            }
-        )
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
-    }()
+    private lazy var datePicker = FactoryUI.shared.makeDatePicker(
+        style: .inline,
+        handler: { [weak self] date in
+            self?.datePickerValueChanged(date)
+        }
+    )
     
     private lazy var timePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
@@ -99,17 +94,13 @@ final class NewToDoViewController: UIViewController {
     }()
     
     
-    private lazy var timePicker: UIDatePicker = {
-        let picker = UIDatePicker(
-            datePickerMode: .time,
-            datePickerStyle: .wheels,
-            handler: { [weak self] date in
-                self?.timePickerValueChanged(date)
-            }
-        )
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
-    }()
+    private lazy var timePicker = FactoryUI.shared.makeDatePicker(
+        mode: .time,
+        style: .wheels,
+        handler: { [weak self] date in
+            self?.timePickerValueChanged(date)
+        }
+    )
     
     
     // MARK: - Init
@@ -136,7 +127,6 @@ final class NewToDoViewController: UIViewController {
         let descr = descriptionTextField.text
         let date = combineDateAndTime(with: selectedDate, and: selectedTime)
         
-//        expirationDate = isDateChanged ? datePicker.date : nil
         
         let newItem = ToDoItem(
             title: title,

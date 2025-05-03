@@ -11,7 +11,7 @@ final class UserSettingsViewController: UIViewController {
     
     // MARK: - UI
     
-    private lazy var userInfoStackView = UIStackView(
+    private lazy var userInfoStackView = FactoryUI.shared.makeStackView(
         axis: .horizontal,
         spacing: 5,
         layoutMargins: UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
