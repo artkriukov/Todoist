@@ -7,6 +7,11 @@
 
 import UIKit
 
+private enum PickerType {
+    case date
+    case time
+}
+
 final class NewToDoViewController: UIViewController {
     
     private var selectedDate: Date?
@@ -71,7 +76,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var datePicker = FactoryUI.shared.makeDatePicker(
         style: .inline,
         handler: { [weak self] date in
-            self?.datePickerValueChanged(date)
+            self?.pickerValueChanged(date, pickerType: .date)
         }
     )
     
@@ -96,7 +101,7 @@ final class NewToDoViewController: UIViewController {
         mode: .time,
         style: .wheels,
         handler: { [weak self] date in
-            self?.timePickerValueChanged(date)
+            self?.pickerValueChanged(date, pickerType: .time)
         }
     )
     
@@ -172,32 +177,29 @@ final class NewToDoViewController: UIViewController {
         }
     }
     
-#warning("DRY: datePickerValueChanged and timePickerValueChanged")
-    private func datePickerValueChanged(_ date: Date) {
-        selectedDate = date
+    private func pickerValueChanged(_ date: Date, pickerType: PickerType) {
         
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d"
         formatter.timeZone = .current
-        let timeLabel = formatter.string(from: date)
         
-        DispatchQueue.main.async {
-            self.datePickerSV.subtitleLabel.text = timeLabel
+        switch pickerType {
+        case .date:
+            selectedDate = date
+            formatter.dateFormat = "MMM d"
+            let dateString = formatter.string(from: date)
+            DispatchQueue.main.async {
+                self.datePickerSV.subtitleLabel.text = dateString
+            }
+        case .time:
+            selectedTime = date
+            formatter.dateFormat = "HH:mm"
+            let timeString = formatter.string(from: date)
+            DispatchQueue.main.async {
+                self.timePickerSV.subtitleLabel.text = timeString
+            }
         }
     }
     
-    private func timePickerValueChanged(_ date: Date) {
-        selectedTime = date
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = .current
-        let timeLabel = formatter.string(from: date)
-        
-        DispatchQueue.main.async {
-            self.timePickerSV.subtitleLabel.text = timeLabel
-        }
-    }
     
     private func combineDateAndTime(with selectedDate: Date?, and selectedTime: Date?) -> Date? {
         guard let selectedDate, let selectedTime else { return nil }
