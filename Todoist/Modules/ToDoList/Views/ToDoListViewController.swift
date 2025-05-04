@@ -50,7 +50,6 @@ final class ToDoListViewController: UIViewController {
         return element
     }()
     
-    
     // MARK: - Init
     
     init(
@@ -112,7 +111,6 @@ final class ToDoListViewController: UIViewController {
         emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
 }
-
 
 // MARK: - UITableViewDataSource
 extension ToDoListViewController: UITableViewDataSource {
@@ -185,22 +183,22 @@ private extension ToDoListViewController {
             
             toDoList.topAnchor
                 .constraint(
-                    equalTo:view.safeAreaLayoutGuide.topAnchor,
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
                     constant: 15
                 ),
             toDoList.leadingAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
+                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             toDoList.trailingAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.trailingAnchor),
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             toDoList.bottomAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             addItemButton.widthAnchor.constraint(equalToConstant: 50),
             addItemButton.heightAnchor.constraint(equalToConstant: 50),
             addItemButton.trailingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addItemButton.bottomAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ]
 )
     }

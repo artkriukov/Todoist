@@ -37,7 +37,6 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var infoStackView = FactoryUI.shared.makeStackView()
     
-    
     private lazy var titleTextField = FactoryUI.shared.makeTetxField(
         placeholder: "Название"
     )
@@ -96,7 +95,6 @@ final class NewToDoViewController: UIViewController {
         return element
     }()
     
-    
     private lazy var timePicker = FactoryUI.shared.makeDatePicker(
         mode: .time,
         style: .wheels,
@@ -104,7 +102,6 @@ final class NewToDoViewController: UIViewController {
             self?.pickerValueChanged(date, pickerType: .time)
         }
     )
-    
     
     // MARK: - Init
     init(saveItem: @escaping (ToDoItem) -> Void) {
@@ -129,7 +126,6 @@ final class NewToDoViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
         let date = combineDateAndTime(with: selectedDate, and: selectedTime)
-        
         
         let newItem = ToDoItem(
             title: title,
@@ -171,7 +167,7 @@ final class NewToDoViewController: UIViewController {
         handlePickerSwitch(isOn: timePickerSV.switcher.isOn, picker: timePicker)
     }
     
-    private func handlePickerSwitch(isOn: Bool, picker: UIView){
+    private func handlePickerSwitch(isOn: Bool, picker: UIView) {
         UIView.animate(withDuration: 0.3) {
             picker.isHidden = !isOn
         }
@@ -199,7 +195,6 @@ final class NewToDoViewController: UIViewController {
             }
         }
     }
-    
     
     private func combineDateAndTime(with selectedDate: Date?, and selectedTime: Date?) -> Date? {
         guard let selectedDate, let selectedTime else { return nil }

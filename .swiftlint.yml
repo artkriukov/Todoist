@@ -1,0 +1,57 @@
+analyzer_rules:
+  - unused_import
+
+opt_in_rules:
+  - explicit_init
+  - fatal_error_message
+  - force_unwrapping
+  - vertical_parameter_alignment
+  - redundant_optional_initialization
+  - empty_enum_arguments
+  - closure_spacing
+  - discouraged_optional_boolean
+
+disabled_rules:
+  - todo
+  - trailing_whitespace
+
+line_length:
+  warning: 150
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+
+type_body_length:
+  warning: 250
+  error: 400
+
+file_length:
+  warning: 400
+  error: 800
+
+function_body_length:
+  warning: 40
+  error: 80
+
+identifier_name:
+  min_length:
+    warning: 3
+    error: 2
+  max_length:
+    warning: 40
+    error: 60
+  excluded: [id, x, y]
+
+type_name:
+  min_length: 3
+  max_length: 40
+
+excluded:
+  - Carthage
+  - Pods
+  - .build
+  - Tests/Generated
+  - Generated
+
+included:
+  - "**/*.swift"

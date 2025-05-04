@@ -109,7 +109,7 @@ private extension ToDoTableViewCell {
             toDoMainSV.leadingAnchor
                 .constraint(equalTo: leadingAnchor, constant: 16),
             toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
+            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4)
         ])
     }
 }

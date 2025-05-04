@@ -11,8 +11,12 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     
     private var toDoItems: [ToDoItem] = []
     
-    private let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("ToDoItems.plist")
-
+    private let dataFilePath: URL = {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("Unable to get document directory URL")
+        }
+        return url.appendingPathComponent("ToDoItems.plist")
+    }()
     
     func getAllToDoItems() -> [ToDoItem] {
         
@@ -29,7 +33,7 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
         }
         return toDoItems
     }
-
+    
     func save(with item: ToDoItem) throws {
         toDoItems.append(item)
         
