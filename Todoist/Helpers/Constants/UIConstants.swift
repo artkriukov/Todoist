@@ -9,6 +9,16 @@ import UIKit
 
 enum UIConstants {
     
+    enum CustomFont {
+        static func regular(size: CGFloat) -> UIFont {
+            UIFont.systemFont(ofSize: size, weight: .regular)
+        }
+        
+        static func medium(size: CGFloat) -> UIFont {
+            UIFont.systemFont(ofSize: size, weight: .regular)
+        }
+    }
+    
     enum Colors {
         static let mainBackground = UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {

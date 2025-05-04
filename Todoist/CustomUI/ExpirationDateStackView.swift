@@ -42,10 +42,10 @@ final class ExpirationDateStackView: UIView {
         vDateStackView.spacing = 4
         
         titleLabel.text = configuration.title
-        titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        titleLabel.font = UIConstants.CustomFont.medium(size: 17)
         
         subtitleLabel.text = configuration.subtitle
-        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        subtitleLabel.font = UIConstants.CustomFont.regular(size: 13)
         
         [titleLabel, subtitleLabel].forEach {
             vDateStackView.addArrangedSubview($0)
