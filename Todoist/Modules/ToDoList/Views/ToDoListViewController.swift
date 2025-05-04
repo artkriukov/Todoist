@@ -19,7 +19,7 @@ final class ToDoListViewController: UIViewController {
         element.text = "Задач нет"
         element.textColor = .lightGray
         element.isHidden = true
-        element.font = UIFont.systemFont(ofSize: 27, weight: .medium)
+        element.font = UIConstants.CustomFont.medium(size: 27)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
