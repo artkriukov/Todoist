@@ -46,7 +46,7 @@ final class UserSettingsViewController: UIViewController {
             self?.saveButtonTapped()
         },
         for: .touchUpInside)
-        element.backgroundColor = UIConstants.blueColor
+        element.backgroundColor = UIConstants.Colors.blueColor
         element.tintColor = .white
         element.layer.cornerRadius = 10
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +76,7 @@ final class UserSettingsViewController: UIViewController {
 
 private extension UserSettingsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.mainBackground
+        view.backgroundColor = UIConstants.Colors.mainBackground
         
         view.addSubview(userInfoStackView)
         
