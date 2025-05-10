@@ -34,8 +34,6 @@ final class ExpirationDateStackView: UIView {
         
         let dateStack = createVerticalDateStack(title: configuration.title, subtitle: configuration.subtitle)
         
-        setupSwitcher(action: configuration.switcherAction)
-        
         setupStackViews(imageBackgroundView: imageBackgroundView, dateStack: dateStack)
         
         setupConstraints(imageBackgroundView: imageBackgroundView)
