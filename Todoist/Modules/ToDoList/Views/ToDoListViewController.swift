@@ -19,7 +19,7 @@ final class ToDoListViewController: UIViewController {
         element.text = "Задач нет"
         element.textColor = .lightGray
         element.isHidden = true
-        element.font = UIFont.systemFont(ofSize: 27, weight: .medium)
+        element.font = UIConstants.CustomFont.medium(size: 27)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -32,7 +32,7 @@ final class ToDoListViewController: UIViewController {
             ToDoTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
         )
-        element.backgroundColor = UIConstants.mainBackground
+        element.backgroundColor = UIConstants.Colors.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -40,7 +40,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: UIConstants.blueColor,
+            backgroundColor: UIConstants.Colors.blueColor,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -169,7 +169,7 @@ extension ToDoListViewController: UITableViewDelegate {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoListViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.mainBackground
+        view.backgroundColor = UIConstants.Colors.mainBackground
         
         view.addSubview(toDoList)
         view.addSubview(emptyLabel)
