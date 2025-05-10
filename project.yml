@@ -16,12 +16,7 @@ targets:
     platform: iOS
     deploymentTarget: "15.0"
     sources:
-      - path: Todoist/App
-      - path: Todoist/Models
-      - path: Todoist/CustomUI
-      - path: Todoist/Helpers
-      - path: Todoist/Modules
-      - path: Todoist/Resources
+      - path: Todoist/
     resources:
       - path: Todoist/Resources
 
