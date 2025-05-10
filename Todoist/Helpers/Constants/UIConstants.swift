@@ -25,7 +25,7 @@ enum UIConstants {
             case .light, .unspecified: UIColor(hexString: "#F2F2F7")
             case .dark: UIColor(hexString: "#000000")
             @unknown default:
-                fatalError()
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update mainBackground color handling.")
             }
         }
         
@@ -34,7 +34,7 @@ enum UIConstants {
             case .light, .unspecified: UIColor(hexString: "#FFFFFF")
             case .dark: UIColor(hexString: "#1C1C1E")
             @unknown default:
-                fatalError()
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update secondaryBackground color handling.")
             }
         }
         
@@ -43,7 +43,7 @@ enum UIConstants {
             case .light, .unspecified: UIColor(hexString: "#C6C6C8")
             case .dark: UIColor(hexString: "#38383A")
             @unknown default:
-                fatalError()
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update separatorLine color handling.")
             }
         }
         
@@ -52,7 +52,7 @@ enum UIConstants {
             case .light, .unspecified: UIColor(hexString: "#F2F2F7")
             case .dark: UIColor(hexString: "#2C2C2E")
             @unknown default:
-                fatalError()
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update cardBackground color handling.")
             }
         }
         
@@ -61,9 +61,8 @@ enum UIConstants {
             case .light, .unspecified: UIColor(hexString: "#007AFF")
             case .dark: UIColor(hexString: "#007AFF")
             @unknown default:
-                fatalError()
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update blueColor color handling.")
             }
         }
     }
-    
 }
