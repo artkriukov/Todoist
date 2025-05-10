@@ -233,6 +233,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B39E8E22DC7458400AC3F27 /* PBXTargetDependency */,
 			);
 			name = Todoist;
 			packageProductDependencies = (
@@ -501,6 +502,25 @@
 			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5B39E8DF2DC7403800AC3F27 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.59.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5B39E8E12DC7458400AC3F27 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B39E8DF2DC7403800AC3F27 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5620F77CD4AEFAC8DAF04C62 /* Project object */;
 }
