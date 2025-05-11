@@ -47,7 +47,7 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var lineView: UIView = {
         let element = UIView()
-        element.backgroundColor = UIConstants.separatorLine
+        element.backgroundColor = UIConstants.Colors.separatorLine
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -186,6 +186,7 @@ final class NewToDoViewController: UIViewController {
             DispatchQueue.main.async {
                 self.datePickerSV.subtitleLabel.text = dateString
             }
+            
         case .time:
             selectedTime = date
             formatter.dateFormat = "HH:mm"
@@ -218,7 +219,7 @@ final class NewToDoViewController: UIViewController {
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.mainBackground
+        view.backgroundColor = UIConstants.Colors.mainBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)

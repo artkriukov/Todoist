@@ -1,0 +1,43 @@
+name: Todoist
+
+options:
+  bundleIdPrefix: com.artkriukov
+  deploymentTarget:
+    iOS: "15.0"
+  defaultConfig: Production
+
+configs:
+  Debug: debug
+  Production: release
+
+targets:
+  Todoist:
+    type: application
+    platform: iOS
+    deploymentTarget:
+      iOS: "15.0"
+    sources:
+      - path: Todoist/
+    resources:
+      - path: Todoist/Resources
+    settings:
+      base:
+        INFOPLIST_FILE: Todoist/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.artkriukov.Todoist
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+    scheme:
+      environmentVariables:
+        DYLD_PRINT_STATISTICS: "1"
+    postCompileScripts:
+      - script: |
+          export PATH="/opt/homebrew/bin:$PATH"
+          echo "Current PATH: $PATH"
+          if which swiftlint >/dev/null; then
+              swiftlint
+          else
+              echo "SwiftLint not found! Check Homebrew installation."
+              exit 1
+          fi
+        name: SwiftLint
+        runOnlyWhenInstalling: false

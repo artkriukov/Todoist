@@ -28,7 +28,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
         element.text = "Имя"
-        element.font = .systemFont(ofSize: 17, weight: .medium)
+        element.font = UIConstants.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -45,8 +45,8 @@ final class UserSettingsViewController: UIViewController {
         element.addAction(UIAction { [weak self] _ in
             self?.saveButtonTapped()
         },
-        for: .touchUpInside)
-        element.backgroundColor = UIConstants.blueColor
+                          for: .touchUpInside)
+        element.backgroundColor = UIConstants.Colors.blueColor
         element.tintColor = .white
         element.layer.cornerRadius = 10
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +76,7 @@ final class UserSettingsViewController: UIViewController {
 
 private extension UserSettingsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.mainBackground
+        view.backgroundColor = UIConstants.Colors.mainBackground
         
         view.addSubview(userInfoStackView)
         

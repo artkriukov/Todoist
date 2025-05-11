@@ -22,7 +22,7 @@ final class ToDoTableViewCell: UITableViewCell {
     private lazy var toDoTitleLabel: UILabel = {
         let element = UILabel()
         element.text = "Title"
-        element.font = .systemFont(ofSize: 17, weight: .medium)
+        element.font = UIConstants.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -31,14 +31,14 @@ final class ToDoTableViewCell: UITableViewCell {
         let element = UILabel()
         element.text = "Description"
         element.numberOfLines = 0
-        element.font = .systemFont(ofSize: 14, weight: .regular)
+        element.font = UIConstants.CustomFont.regular(size: 14)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var expirationDateLabel: UILabel = {
         let element = UILabel()
-        element.font = .systemFont(ofSize: 13, weight: .regular)
+        element.font = UIConstants.CustomFont.regular(size: 13)
         element.textColor = .systemGreen
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -74,9 +74,11 @@ final class ToDoTableViewCell: UITableViewCell {
             case .moreThanHalfHour:
                 expirationDateLabel.text = timeLabel
                 expirationDateLabel.textColor = .systemGreen
+                
             case .lessThanHalfHour:
                 expirationDateLabel.text = timeLabel
                 expirationDateLabel.textColor = .systemYellow
+                
             case .failed:
                 expirationDateLabel.text = "Просрочено"
                 expirationDateLabel.textColor = .systemRed
@@ -87,6 +89,7 @@ final class ToDoTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
         expirationDateLabel.text = nil
@@ -96,7 +99,7 @@ final class ToDoTableViewCell: UITableViewCell {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoTableViewCell {
     func setupViews() {
-        backgroundColor = UIConstants.mainBackground
+        backgroundColor = UIConstants.Colors.mainBackground
         addSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)

@@ -15,7 +15,7 @@ final class FactoryUI {
         axis: NSLayoutConstraint.Axis = .vertical,
         spacing: CGFloat = 10,
         layoutMargins: UIEdgeInsets = .init(top: 0, left: 10, bottom: 0, right: 0),
-        backgroundColor: UIColor = UIConstants.secondaryBackground,
+        backgroundColor: UIColor = UIConstants.Colors.secondaryBackground,
         cornerRadius: CGFloat = 10,
         tamic: Bool = false
     ) -> UIStackView {
