@@ -50,7 +50,6 @@ final class ToDoListViewController: UIViewController {
         return element
     }()
     
-    
     // MARK: - Init
     
     init(
@@ -59,7 +58,7 @@ final class ToDoListViewController: UIViewController {
         self.itemsProvider = itemsProvider
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -104,7 +103,7 @@ final class ToDoListViewController: UIViewController {
         })
         
         let navController = UINavigationController(rootViewController: newToDoVC)
-
+        
         present(navController, animated: true)
     }
     
@@ -112,7 +111,6 @@ final class ToDoListViewController: UIViewController {
         emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
 }
-
 
 // MARK: - UITableViewDataSource
 extension ToDoListViewController: UITableViewDataSource {
@@ -178,30 +176,30 @@ private extension ToDoListViewController {
     
     func setupConstraints() {
         NSLayoutConstraint.activate(
-[
-            
-            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            toDoList.topAnchor
-                .constraint(
-                    equalTo:view.safeAreaLayoutGuide.topAnchor,
-                    constant: 15
-                ),
-            toDoList.leadingAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
-            toDoList.trailingAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.trailingAnchor),
-            toDoList.bottomAnchor
-                .constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
-            
-            addItemButton.widthAnchor.constraint(equalToConstant: 50),
-            addItemButton.heightAnchor.constraint(equalToConstant: 50),
-            addItemButton.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            addItemButton.bottomAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-        ]
-)
+            [
+                
+                emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                
+                toDoList.topAnchor
+                    .constraint(
+                        equalTo: view.safeAreaLayoutGuide.topAnchor,
+                        constant: 15
+                    ),
+                toDoList.leadingAnchor
+                    .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                toDoList.trailingAnchor
+                    .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                toDoList.bottomAnchor
+                    .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                
+                addItemButton.widthAnchor.constraint(equalToConstant: 50),
+                addItemButton.heightAnchor.constraint(equalToConstant: 50),
+                addItemButton.trailingAnchor
+                    .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+                addItemButton.bottomAnchor
+                    .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            ]
+        )
     }
 }

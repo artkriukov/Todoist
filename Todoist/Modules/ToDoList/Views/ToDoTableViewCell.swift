@@ -74,9 +74,11 @@ final class ToDoTableViewCell: UITableViewCell {
             case .moreThanHalfHour:
                 expirationDateLabel.text = timeLabel
                 expirationDateLabel.textColor = .systemGreen
+                
             case .lessThanHalfHour:
                 expirationDateLabel.text = timeLabel
                 expirationDateLabel.textColor = .systemYellow
+                
             case .failed:
                 expirationDateLabel.text = "Просрочено"
                 expirationDateLabel.textColor = .systemRed
@@ -87,6 +89,7 @@ final class ToDoTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
         expirationDateLabel.text = nil
@@ -109,7 +112,7 @@ private extension ToDoTableViewCell {
             toDoMainSV.leadingAnchor
                 .constraint(equalTo: leadingAnchor, constant: 16),
             toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
+            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4)
         ])
     }
 }

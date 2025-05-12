@@ -83,8 +83,7 @@ final class ExpirationDateStackView: UIView {
             imageView.centerXAnchor.constraint(equalTo: imageBackgroundView.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: imageBackgroundView.centerYAnchor),
             imageView.widthAnchor.constraint(equalToConstant: 25),
-            imageView.heightAnchor.constraint(equalToConstant: 25),
-            
+            imageView.heightAnchor.constraint(equalToConstant: 25)
         ])
     }
 }
