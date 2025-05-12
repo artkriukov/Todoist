@@ -10,16 +10,21 @@ configs:
   Debug: debug
   Production: release
 
+packages:
+  SwiftLint:
+    url: https://github.com/realm/SwiftLint
+    from: 0.59.0
+
 targets:
   Todoist:
     type: application
     platform: iOS
-    deploymentTarget: "15.0"
+    deploymentTarget:
+      iOS: "15.0"
     sources:
       - path: Todoist/
     resources:
       - path: Todoist/Resources
-
     settings:
       base:
         INFOPLIST_FILE: Todoist/Resources/Info.plist
@@ -29,3 +34,15 @@ targets:
     scheme:
       environmentVariables:
         DYLD_PRINT_STATISTICS: "1"
+    postCompileScripts:
+      - name: SwiftLint
+        runOnlyWhenInstalling: false
+        script: |
+          export PATH="/opt/homebrew/bin:$PATH"
+          echo "Current PATH: $PATH"
+          if which swiftlint >/dev/null; then
+              swiftlint
+          else
+              echo "SwiftLint not found! Check Homebrew installation."
+              exit 1
+          fi
