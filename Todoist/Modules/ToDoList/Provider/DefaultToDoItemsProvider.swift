@@ -11,7 +11,7 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     
     private var toDoItems: [ToDoItem] = []
     
-    private let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("ToDoItems.plist")
+    private let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("ToDoItems")
 
     
     func getAllToDoItems() -> [ToDoItem] {

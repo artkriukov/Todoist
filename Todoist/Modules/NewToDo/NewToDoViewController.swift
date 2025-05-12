@@ -138,6 +138,8 @@ final class NewToDoViewController: UIViewController {
         )
         saveItem?(newItem)
         
+        logger.log("Add new item: \(newItem.title)")
+        
         dismiss(animated: true)
     }
     
@@ -215,7 +217,6 @@ final class NewToDoViewController: UIViewController {
         dateComponents.second = timeComponents.second
         
         expirationDate = calendar.date(from: dateComponents)
-        print("Combined expirationDate: \(String(describing: expirationDate))")
         
         return expirationDate
     }

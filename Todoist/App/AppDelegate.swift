@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
-        
+        logger.log("App started")
         return true
     }
 }
