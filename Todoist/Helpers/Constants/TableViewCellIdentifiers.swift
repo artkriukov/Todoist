@@ -9,4 +9,5 @@ import Foundation
 
 enum TableViewCellIdentifiers {
     static let mainToDoTableViewCell = "main.todoTableViewCell"
+    static let loggsTableViewCell = "loggs.tableViewCell"
 }

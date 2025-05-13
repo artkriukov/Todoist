@@ -53,6 +53,16 @@ final class UserSettingsViewController: UIViewController {
         return element
     }()
     
+    private lazy var logsButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle("Посмотреть логи", for: .normal)
+        element.addAction(UIAction { [weak self] _ in
+            self?.logsButtonTapped()
+        }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +82,13 @@ final class UserSettingsViewController: UIViewController {
         let userSettings = UserSettings(name: userName)
         userSettings.save()
     }
+    
+    private func logsButtonTapped() {
+        let logsVC = LogsViewController()
+        let navController = UINavigationController(rootViewController: logsVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
+    }
 }
 
 private extension UserSettingsViewController {
@@ -83,6 +100,8 @@ private extension UserSettingsViewController {
         userInfoStackView.addArrangedSubview(nameLabel)
         userInfoStackView.addArrangedSubview(userNameTextField)
         view.addSubview(saveButton)
+        
+        view.addSubview(logsButton)
     }
     
     func setupConstraints() {
@@ -98,16 +117,13 @@ private extension UserSettingsViewController {
             
             saveButton.topAnchor
                 .constraint(equalTo: userInfoStackView.bottomAnchor, constant: 10),
-            saveButton.trailingAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                    constant: -15
-                ),
-            saveButton.leadingAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                    constant: 15
-                )
+            saveButton.widthAnchor.constraint(equalToConstant: 120),
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            logsButton.topAnchor
+                .constraint(equalTo: saveButton.bottomAnchor, constant: 10),
+            saveButton.widthAnchor.constraint(equalToConstant: 120),
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }

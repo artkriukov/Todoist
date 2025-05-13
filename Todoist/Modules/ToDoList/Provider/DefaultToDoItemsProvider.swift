@@ -11,11 +11,14 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     
     private var toDoItems: [ToDoItem] = []
     
-    private let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("ToDoItems")
+    private let dataFilePath: URL = {
+        let fileManager = FileManager.default
+        let directory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
+        return directory.appendingPathComponent("ToDoItems")
+    }()
 
-    
     func getAllToDoItems() -> [ToDoItem] {
-        
+
         if let jsonData = try? Data(contentsOf: dataFilePath) {
             let decoder = PropertyListDecoder()
             

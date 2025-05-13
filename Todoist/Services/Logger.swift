@@ -31,10 +31,14 @@ final class FileLogger: Logger {
     private var fileHandle: FileHandle?
     
     init() {
-        let dataFilePath = FileManager.default.urls(
+        guard let dataFilePath = FileManager.default.urls(
             for: .documentDirectory,
             in: .userDomainMask
-        ).first!
+        ).first
+        else {
+            logger.log(" -> [FileLogger] Documents directory not found.")
+            fatalError("Documents directory not found.")
+        }
         
         fileURL = dataFilePath.appendingPathComponent(fileName)
         
