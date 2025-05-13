@@ -9,6 +9,9 @@ import UIKit
 
 final class LogsViewController: UIViewController {
     
+    private var logs: [String] = []
+    
+    // MARK: - UI
     private lazy var loggsTableView: UITableView = {
         let element = UITableView()
         element.backgroundColor = UIConstants.Colors.mainBackground
@@ -16,6 +19,7 @@ final class LogsViewController: UIViewController {
             LogsTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.loggsTableViewCell
             )
+
         element.dataSource = self
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -27,6 +31,8 @@ final class LogsViewController: UIViewController {
         setupViews()
         setupConstraints()
         configureNavigationBar()
+        
+        logs = FileLogger.shared.getLogs()
     }
     
     private func configureNavigationBar() {
@@ -47,7 +53,7 @@ final class LogsViewController: UIViewController {
 
 extension LogsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        logs.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,8 +64,9 @@ extension LogsViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.textLabel?.text = "Hello, World!"
+        cell.configure(with: logs[indexPath.row])
         cell.selectionStyle = .none
+        
         return cell
     }
 

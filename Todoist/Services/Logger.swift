@@ -25,6 +25,7 @@ final class ConsoleLogger: Logger {
 }
 
 final class FileLogger: Logger {
+    static let shared = FileLogger()
     
     private let fileName = "applogs"
     private var fileURL: URL
@@ -68,7 +69,15 @@ final class FileLogger: Logger {
         } catch {
             print("Failed to write log: \(error)")
         }
-        
+    }
+    
+    func getLogs() -> [String] {
+        do {
+            let content = try String(contentsOfFile: fileURL.path, encoding: .utf8)
+            return content.components(separatedBy: .newlines)
+        } catch {
+            return []
+        }
     }
 }
 
