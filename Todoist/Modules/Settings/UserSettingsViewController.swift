@@ -54,11 +54,12 @@ final class UserSettingsViewController: UIViewController {
     }()
     
     private lazy var logsButton: UIButton = {
-        let element = UIButton(type: .system)
-        element.setTitle("Посмотреть логи", for: .normal)
-        element.addAction(UIAction { [weak self] _ in
-            self?.logsButtonTapped()
-        }, for: .touchUpInside)
+        
+        let element = FactoryUI.shared.makeStyledButton(
+            title: "Посмотреть логи") {
+                self.logsButtonTapped()
+            }
+        
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -120,10 +121,16 @@ private extension UserSettingsViewController {
             saveButton.widthAnchor.constraint(equalToConstant: 120),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            logsButton.topAnchor
-                .constraint(equalTo: saveButton.bottomAnchor, constant: 10),
             saveButton.widthAnchor.constraint(equalToConstant: 120),
-            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            logsButton.topAnchor
+                .constraint(equalTo: saveButton.bottomAnchor, constant: 50),
+            logsButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
+            logsButton.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15)
+
         ])
     }
 }
