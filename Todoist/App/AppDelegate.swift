@@ -11,16 +11,19 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let dependencies = DependencyContainer.shared
+    
     func application(_ application: UIApplication,
                      // swiftlint:disable:next discouraged_optional_collection
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        dependencies.logger.log("App launched")
         
         window = UIWindow()
         
         self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
-        logger.log("App started")
+        
         return true
     }
 }

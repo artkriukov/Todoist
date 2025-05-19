@@ -134,8 +134,6 @@ final class NewToDoViewController: UIViewController {
         )
         saveItem?(newItem)
         
-        logger.log("Add new item: \(newItem.title)")
-        
         dismiss(animated: true)
     }
     

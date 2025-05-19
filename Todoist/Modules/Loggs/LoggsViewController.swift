@@ -7,8 +7,10 @@
 
 import UIKit
 
+
 final class LogsViewController: UIViewController {
     
+    private let logger: Logger
     private var logs: [String] = []
     
     // MARK: - UI
@@ -18,13 +20,25 @@ final class LogsViewController: UIViewController {
         element.register(
             LogsTableViewCell.self,
             forCellReuseIdentifier: TableViewCellIdentifiers.loggsTableViewCell
-            )
-
+        )
+        
         element.dataSource = self
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
+    // MARK: - UI
+    
+    init(logger: Logger = DependencyContainer.shared.logger) {
+        self.logger = logger
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,7 +46,7 @@ final class LogsViewController: UIViewController {
         setupConstraints()
         configureNavigationBar()
         
-        logs = FileLogger.shared.getLogs()
+        loadLogs()
     }
     
     private func configureNavigationBar() {
@@ -49,13 +63,26 @@ final class LogsViewController: UIViewController {
     private func cancelButtonTapped() {
         dismiss(animated: true)
     }
+    
+    private func loadLogs() {
+        if let fileLogger = DependencyContainer.shared.logger as? FileLogger {
+            logs = fileLogger.getLogs()
+        } else if let combinedLogger = DependencyContainer.shared.logger as? CombinedLogger {
+            for logger in combinedLogger.loggers {
+                if let fileLogger = logger as? FileLogger {
+                    logs = fileLogger.getLogs()
+                    break
+                }
+            }
+        }
+    }
 }
 
 extension LogsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         logs.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: TableViewCellIdentifiers.loggsTableViewCell,
@@ -69,7 +96,7 @@ extension LogsViewController: UITableViewDataSource {
         
         return cell
     }
-
+    
 }
 
 private extension LogsViewController {

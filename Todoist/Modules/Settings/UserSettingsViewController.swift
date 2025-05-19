@@ -9,6 +9,8 @@ import UIKit
 
 final class UserSettingsViewController: UIViewController {
     
+    private let logger: Logger
+    
     // MARK: - UI
     
     private lazy var userInfoStackView = FactoryUI.shared.makeStackView(
@@ -64,9 +66,21 @@ final class UserSettingsViewController: UIViewController {
         return element
     }()
     
+    // MARK: - Init
+    
+    init(logger: Logger = DependencyContainer.shared.logger) {
+        self.logger = logger
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        logger.log("UserSettingsViewController loaded")
         
         setupViews()
         setupConstraints()
