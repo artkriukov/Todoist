@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 final class LogsViewController: UIViewController {
     
     private let logger: Logger
@@ -65,12 +64,10 @@ final class LogsViewController: UIViewController {
     }
     
     private func loadLogs() {
-        if let fileLogger = DependencyContainer.shared.logger as? FileLogger {
-            logs = fileLogger.getLogs()
-        } else if let combinedLogger = DependencyContainer.shared.logger as? CombinedLogger {
+        if let combinedLogger = DependencyContainer.shared.logger as? CombinedLogger {
             for logger in combinedLogger.loggers {
                 if let fileLogger = logger as? FileLogger {
-                    logs = fileLogger.getLogs()
+                    logs = fileLogger.getLogs().reversed()
                     break
                 }
             }
