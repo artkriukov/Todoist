@@ -13,6 +13,31 @@ final class UserSettingsViewController: UIViewController {
     
     // MARK: - UI
     
+    private lazy var userImageStackView = FactoryUI.shared.makeStackView(
+        axis: .vertical,
+        spacing: 10,
+        backgroundColor: .clear
+    )
+    
+    private lazy var userImage: UIImageView = {
+        let element = UIImageView()
+        element.image = ImagesConstants.defoultUserImage
+        element.tintColor = .gray
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var changeUserImageButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle( "Изменить фото", for: .normal)
+        element.addAction(
+            UIAction { _ in
+                self.changeUserImageButtonTapped()
+            }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var userInfoStackView = FactoryUI.shared.makeStackView(
         axis: .horizontal,
         spacing: 5,
@@ -89,6 +114,21 @@ final class UserSettingsViewController: UIViewController {
         userNameTextField.text = userSettings?.name
     }
     
+    // MARK: - Private Methods
+    
+    private func changeUserImageButtonTapped() {
+        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
+            onGalleryTap: {
+                print("onGalleryTap")
+            },
+            onUnsplashTap: {
+                print("onUnsplashTap")
+            }
+        )
+        
+        present(actionSheet, animated: true)
+    }
+    
     private func saveButtonTapped() {
         guard let userName = userNameTextField.text, !userName.isEmpty else {
             return
@@ -110,6 +150,10 @@ private extension UserSettingsViewController {
     func setupViews() {
         view.backgroundColor = UIConstants.Colors.mainBackground
         
+        view.addSubview(userImageStackView)
+        userImageStackView.addArrangedSubview(userImage)
+        userImageStackView.addArrangedSubview(changeUserImageButton)
+        
         view.addSubview(userInfoStackView)
         
         userInfoStackView.addArrangedSubview(nameLabel)
@@ -121,8 +165,16 @@ private extension UserSettingsViewController {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            userInfoStackView.topAnchor
+            
+            userImageStackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            userImageStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            userImage.heightAnchor.constraint(equalToConstant: 120),
+            userImage.widthAnchor.constraint(equalToConstant: 120),
+            
+            userInfoStackView.topAnchor
+                .constraint(equalTo: userImageStackView.bottomAnchor, constant: 15),
             userInfoStackView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             userInfoStackView.trailingAnchor

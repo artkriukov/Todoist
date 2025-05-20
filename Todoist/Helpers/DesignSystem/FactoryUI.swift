@@ -87,4 +87,38 @@ final class FactoryUI {
         
         return button
     }
+    
+    func makeChangePhotoAlert(
+        onGalleryTap: @escaping () -> Void,
+        onUnsplashTap: @escaping () -> Void
+    ) -> UIAlertController {
+        let actionSheet = UIAlertController(
+            title: "Изменить фото",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Выбрать из галереи",
+            style: .default,
+            handler: { _ in
+                onGalleryTap()
+            })
+        )
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Загрузить с Unsplash",
+            style: .default,
+            handler: { _ in
+                onUnsplashTap()
+            })
+        )
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Отмена",
+            style: .cancel
+        ))
+        
+        return actionSheet
+    }
 }
