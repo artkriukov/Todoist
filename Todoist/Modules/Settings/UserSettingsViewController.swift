@@ -24,6 +24,7 @@ final class UserSettingsViewController: UIViewController {
         element.image = ImagesConstants.defoultUserImage
         element.tintColor = .gray
         element.layer.cornerRadius = 60
+        element.clipsToBounds = true
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -98,7 +99,7 @@ final class UserSettingsViewController: UIViewController {
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -119,9 +120,10 @@ final class UserSettingsViewController: UIViewController {
     
     private func changeUserImageButtonTapped() {
         let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
-            onGalleryTap: { [self] in
-                let imagePicker = createImagePickerController()
-                present(imagePicker, animated: true)
+            onGalleryTap: { [weak self] in
+                guard let self else { return }
+                let imagePicker = self.createImagePickerController()
+                self.present(imagePicker, animated: true)
             },
             onUnsplashTap: {
                 print("onUnsplashTap")
@@ -221,7 +223,7 @@ private extension UserSettingsViewController {
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             logsButton.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15)
-
+            
         ])
     }
 }
