@@ -23,6 +23,7 @@ final class UserSettingsViewController: UIViewController {
         let element = UIImageView()
         element.image = ImagesConstants.defoultUserImage
         element.tintColor = .gray
+        element.layer.cornerRadius = 60
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -118,8 +119,9 @@ final class UserSettingsViewController: UIViewController {
     
     private func changeUserImageButtonTapped() {
         let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
-            onGalleryTap: {
-                print("onGalleryTap")
+            onGalleryTap: { [self] in
+                let imagePicker = createImagePickerController()
+                present(imagePicker, animated: true)
             },
             onUnsplashTap: {
                 print("onUnsplashTap")
@@ -143,6 +145,29 @@ final class UserSettingsViewController: UIViewController {
         let navController = UINavigationController(rootViewController: logsVC)
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
+    }
+    
+    private func createImagePickerController() -> UIImagePickerController {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.sourceType = .photoLibrary
+        return imagePickerController
+    }
+}
+
+extension UserSettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        if let image = info[.editedImage] as? UIImage {
+            userImage.image = image
+        } else if let image = info[.originalImage] as? UIImage {
+            userImage.image = image
+        }
+        
+        dismiss(animated: true)
     }
 }
 
