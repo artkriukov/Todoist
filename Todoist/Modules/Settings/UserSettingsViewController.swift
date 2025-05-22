@@ -112,8 +112,7 @@ final class UserSettingsViewController: UIViewController {
         setupViews()
         setupConstraints()
         
-        let userSettings = UserSettings.load()
-        userNameTextField.text = userSettings?.name
+        loadDataFromUserDefoults()
     }
     
     // MARK: - Private Methods
@@ -133,12 +132,25 @@ final class UserSettingsViewController: UIViewController {
         present(actionSheet, animated: true)
     }
     
+    private func loadDataFromUserDefoults() {
+        let userSettings = UserSettings.load()
+        userNameTextField.text = userSettings?.name
+        
+        if let image = userSettings?.image {
+            userImage.image = image
+        } else {
+            userImage.image = ImagesConstants.defoultUserImage
+        }
+    }
+    
     private func saveButtonTapped() {
         guard let userName = userNameTextField.text, !userName.isEmpty else {
             return
         }
         
-        let userSettings = UserSettings(name: userName)
+        let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
+        
+        let userSettings = UserSettings(name: userName, imageData: imageData)
         userSettings.save()
     }
     
