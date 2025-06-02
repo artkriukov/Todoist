@@ -1,5 +1,5 @@
 //
-//  ExpirationDateStackView.swift
+//  TitledSwitchView.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 25.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ExpirationDateStackView: UIView {
+final class TitledSwitchView: UIView {
     
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
@@ -88,7 +88,7 @@ final class ExpirationDateStackView: UIView {
     }
 }
 
-extension ExpirationDateStackView {
+extension TitledSwitchView {
     struct Configuration {
         let image: UIImage?
         let title: String
