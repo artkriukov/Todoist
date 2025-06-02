@@ -8,7 +8,9 @@
 import UIKit
 
 final class ImageSourceSelectionViewController: UIViewController {
-
+    
+    private var currentVC: UIViewController?
+    
     // MARK: - UI
     private lazy var segmentedControl: UISegmentedControl = {
         let element = UISegmentedControl(items: ["Загрузить с устройства", "Загрузить из сети"])
@@ -20,31 +22,52 @@ final class ImageSourceSelectionViewController: UIViewController {
         return element
     }()
     
+    private lazy var containerView: UIView = {
+        let element = UIView()
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        displayVC(for: 0)
     }
     
     // MARK: - Private Methods
     private func segmentChanged(_ sender: UISegmentedControl) {
-        let selectedIndex = sender.selectedSegmentIndex
-        switch selectedIndex {
+        displayVC(for: sender.selectedSegmentIndex)
+    }
+    
+    private func displayVC(for index: Int) {
+        currentVC?.willMove(toParent: nil)
+        currentVC?.view.removeFromSuperview()
+        currentVC?.removeFromParent()
+        
+        let newVC: UIViewController
+        
+        switch index {
         case 0:
-            print(1)
+            newVC = DatePickerViewController()
         case 1:
-            print(2)
-        default: break
+            newVC = UnsplashImageViewController()
+        default: return
         }
+        
+        addChild(newVC)
+        newVC.view.frame = containerView.bounds
+        containerView.addSubview(newVC.view)
+        newVC.didMove(toParent: self)
+        currentVC = newVC
     }
 }
 
 extension ImageSourceSelectionViewController {
     func setupViews() {
         view.backgroundColor = UIConstants.Colors.mainBackground
-        segmentedControl.selectedSegmentIndex = 0
         view.addSubview(segmentedControl)
+        view.addSubview(containerView)
     }
     
     func setupConstraints() {
@@ -54,7 +77,16 @@ extension ImageSourceSelectionViewController {
             segmentedControl.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             segmentedControl.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15)
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            
+            containerView.topAnchor
+                .constraint(equalTo: segmentedControl.bottomAnchor, constant: 16),
+            containerView.leadingAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            containerView.trailingAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            containerView.bottomAnchor
+                .constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
