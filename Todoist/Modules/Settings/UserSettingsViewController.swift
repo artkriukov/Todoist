@@ -13,6 +13,33 @@ final class UserSettingsViewController: UIViewController {
     
     // MARK: - UI
     
+    private lazy var userImageStackView = FactoryUI.shared.makeStackView(
+        axis: .vertical,
+        spacing: 10,
+        backgroundColor: .clear
+    )
+    
+    private lazy var userImage: UIImageView = {
+        let element = UIImageView()
+        element.image = ImagesConstants.defoultUserImage
+        element.tintColor = .gray
+        element.layer.cornerRadius = 60
+        element.clipsToBounds = true
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var changeUserImageButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle( "Изменить фото", for: .normal)
+        element.addAction(
+            UIAction { _ in
+                self.changeUserImageButtonTapped()
+            }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var userInfoStackView = FactoryUI.shared.makeStackView(
         axis: .horizontal,
         spacing: 5,
@@ -72,7 +99,7 @@ final class UserSettingsViewController: UIViewController {
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -85,8 +112,35 @@ final class UserSettingsViewController: UIViewController {
         setupViews()
         setupConstraints()
         
+        loadDataFromUserDefoults()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func changeUserImageButtonTapped() {
+        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
+            onGalleryTap: { [weak self] in
+                guard let self else { return }
+                let imagePicker = self.createImagePickerController()
+                self.present(imagePicker, animated: true)
+            },
+            onUnsplashTap: {
+                print("onUnsplashTap")
+            }
+        )
+        
+        present(actionSheet, animated: true)
+    }
+    
+    private func loadDataFromUserDefoults() {
         let userSettings = UserSettings.load()
         userNameTextField.text = userSettings?.name
+        
+        if let image = userSettings?.image {
+            userImage.image = image
+        } else {
+            userImage.image = ImagesConstants.defoultUserImage
+        }
     }
     
     private func saveButtonTapped() {
@@ -94,7 +148,9 @@ final class UserSettingsViewController: UIViewController {
             return
         }
         
-        let userSettings = UserSettings(name: userName)
+        let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
+        
+        let userSettings = UserSettings(name: userName, imageData: imageData)
         userSettings.save()
     }
     
@@ -104,11 +160,38 @@ final class UserSettingsViewController: UIViewController {
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
     }
+    
+    private func createImagePickerController() -> UIImagePickerController {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.sourceType = .photoLibrary
+        return imagePickerController
+    }
+}
+
+extension UserSettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        if let image = info[.editedImage] as? UIImage {
+            userImage.image = image
+        } else if let image = info[.originalImage] as? UIImage {
+            userImage.image = image
+        }
+        
+        dismiss(animated: true)
+    }
 }
 
 private extension UserSettingsViewController {
     func setupViews() {
         view.backgroundColor = UIConstants.Colors.mainBackground
+        
+        view.addSubview(userImageStackView)
+        userImageStackView.addArrangedSubview(userImage)
+        userImageStackView.addArrangedSubview(changeUserImageButton)
         
         view.addSubview(userInfoStackView)
         
@@ -121,8 +204,16 @@ private extension UserSettingsViewController {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            userInfoStackView.topAnchor
+            
+            userImageStackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            userImageStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            userImage.heightAnchor.constraint(equalToConstant: 120),
+            userImage.widthAnchor.constraint(equalToConstant: 120),
+            
+            userInfoStackView.topAnchor
+                .constraint(equalTo: userImageStackView.bottomAnchor, constant: 15),
             userInfoStackView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             userInfoStackView.trailingAnchor
@@ -144,7 +235,7 @@ private extension UserSettingsViewController {
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             logsButton.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15)
-
+            
         ])
     }
 }
