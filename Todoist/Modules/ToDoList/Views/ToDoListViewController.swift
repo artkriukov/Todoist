@@ -11,6 +11,7 @@ final class ToDoListViewController: UIViewController {
     
     private let itemsProvider: ToDoItemsProvider
     private var observer: Any?
+    private let logger: Logger
     
     // MARK: - UI
     
@@ -53,9 +54,11 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Init
     
     init(
-        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider()
+        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
+        logger: Logger = DependencyContainer.shared.logger
     ) {
         self.itemsProvider = itemsProvider
+        self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,6 +68,7 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
+        logger.log("ToDoListViewController loaded")
         
         setupViews()
         setupConstraints()

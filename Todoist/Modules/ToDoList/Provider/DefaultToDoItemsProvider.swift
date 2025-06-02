@@ -12,14 +12,13 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
     private var toDoItems: [ToDoItem] = []
     
     private let dataFilePath: URL = {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("Unable to get document directory URL")
-        }
-        return url.appendingPathComponent("ToDoItems.plist")
+        let fileManager = FileManager.default
+        let directory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
+        return directory.appendingPathComponent("ToDoItems")
     }()
-    
+
     func getAllToDoItems() -> [ToDoItem] {
-        
+
         if let jsonData = try? Data(contentsOf: dataFilePath) {
             let decoder = PropertyListDecoder()
             
@@ -33,7 +32,7 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
         }
         return toDoItems
     }
-    
+
     func save(with item: ToDoItem) throws {
         toDoItems.append(item)
         

@@ -68,4 +68,23 @@ final class FactoryUI {
         
         return picker
     }
+    
+    func makeStyledButton(
+        title: String,
+        handler: @escaping () -> Void)
+    -> UIButton {
+        
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.backgroundColor = UIConstants.Colors.secondaryBackground
+        button.layer.cornerRadius = 8
+        button.tintColor = .gray
+        
+        button.addAction(
+            UIAction { _ in
+                handler()
+            }, for: .touchUpInside)
+        
+        return button
+    }
 }
