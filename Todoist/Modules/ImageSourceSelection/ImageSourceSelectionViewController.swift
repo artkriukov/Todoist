@@ -53,6 +53,11 @@ final class ImageSourceSelectionViewController: UIViewController {
         return element
     }()
     
+    private lazy var searchController: UISearchController = {
+        let element = UISearchController()
+        return element
+    }()
+    
     // MARK: - Init
     
     init(mode: PhotoMode) {
@@ -76,7 +81,6 @@ final class ImageSourceSelectionViewController: UIViewController {
     private func segmentChanged(_ sender: UISegmentedControl) {
         let selectedMode: PhotoMode = sender.selectedSegmentIndex == 0 ? .local : .remote
         switchMode(to: selectedMode)
-        collectionView.reloadData()
     }
     
     private func switchMode(to newMode: PhotoMode) {
@@ -85,16 +89,19 @@ final class ImageSourceSelectionViewController: UIViewController {
         switch newMode {
         case .local:
             self.segmentedControl.selectedSegmentIndex = 0
-
+            navigationItem.searchController = nil
+            collectionView.reloadData()
         case .remote:
             self.segmentedControl.selectedSegmentIndex = 1
+            navigationItem.searchController = searchController
+            collectionView.reloadData()
         }
     }
 }
 
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        7
+        27
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -106,9 +113,9 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         switch mode {
             
         case .local:
-            cell.backgroundColor = .black
+            cell.configureCell()
         case .remote:
-            cell.backgroundColor = .blue
+            cell.configureCell(with: .remote)
         }
         
         return cell

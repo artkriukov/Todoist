@@ -12,7 +12,10 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     // MARK: - UI
     private lazy var imageView: UIImageView = {
         let element = UIImageView()
-        
+        element.layer.cornerRadius = 8
+        element.image = UIImage(systemName: "photo.artframe")
+        element.contentMode = .scaleAspectFit
+        element.clipsToBounds = true
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -25,6 +28,14 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureCell() {
+        imageView.image = UIImage(systemName: "photo.artframe")
+    }
+    
+    func configureCell(with mode: PhotoMode) {
+        imageView.image = UIImage(systemName: "photo.fill")
     }
     
 }
