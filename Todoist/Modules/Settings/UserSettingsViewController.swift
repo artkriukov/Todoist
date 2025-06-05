@@ -57,7 +57,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
         element.text = "Имя"
-        element.font = UIConstants.CustomFont.medium(size: 17)
+        element.font = Asset.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -75,7 +75,7 @@ final class UserSettingsViewController: UIViewController {
             self?.saveButtonTapped()
         },
                           for: .touchUpInside)
-        element.backgroundColor = UIConstants.Colors.blueColor
+        element.backgroundColor = Asset.Colors.blueColor
         element.tintColor = .white
         element.layer.cornerRadius = 10
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -187,7 +187,7 @@ extension UserSettingsViewController: UIImagePickerControllerDelegate, UINavigat
 
 private extension UserSettingsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(userImageStackView)
         userImageStackView.addArrangedSubview(userImage)

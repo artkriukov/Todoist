@@ -15,10 +15,10 @@ final class LogsViewController: UIViewController {
     // MARK: - UI
     private lazy var loggsTableView: UITableView = {
         let element = UITableView()
-        element.backgroundColor = UIConstants.Colors.mainBackground
+        element.backgroundColor = Asset.Colors.mainBackground
         element.register(
             LogsTableViewCell.self,
-            forCellReuseIdentifier: TableViewCellIdentifiers.loggsTableViewCell
+            forCellReuseIdentifier: CellIdentifiers.loggsTableViewCell
         )
         
         element.dataSource = self
@@ -82,7 +82,7 @@ extension LogsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: TableViewCellIdentifiers.loggsTableViewCell,
+            withIdentifier: CellIdentifiers.loggsTableViewCell,
             for: indexPath
         ) as? LogsTableViewCell else {
             return UITableViewCell()
@@ -98,7 +98,7 @@ extension LogsViewController: UITableViewDataSource {
 
 private extension LogsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(loggsTableView)
     }
     

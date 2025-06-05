@@ -7,9 +7,14 @@
 
 import UIKit
 
+enum PhotoMode {
+    case local, remote
+}
+
 final class ImageSourceSelectionViewController: UIViewController {
     
     private var currentVC: UIViewController?
+    private var mode: PhotoMode
     
     // MARK: - UI
     private lazy var segmentedControl: UISegmentedControl = {
@@ -27,47 +32,96 @@ final class ImageSourceSelectionViewController: UIViewController {
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 125, height: 75)
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+        
+        let element = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        element.backgroundColor = Asset.Colors.mainBackground
+        element.showsVerticalScrollIndicator = false
+        element.register(
+                PhotoCollectionViewCell.self,
+                forCellWithReuseIdentifier: CellIdentifiers.photoCollectionViewCell
+            )
+        element.dataSource = self
+        element.delegate = self
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    // MARK: - Init
+    
+    init(mode: PhotoMode) {
+        self.mode = mode
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        displayVC(for: 0)
+        switchMode(to: mode)
     }
     
     // MARK: - Private Methods
     private func segmentChanged(_ sender: UISegmentedControl) {
-        displayVC(for: sender.selectedSegmentIndex)
+        let selectedMode: PhotoMode = sender.selectedSegmentIndex == 0 ? .local : .remote
+        switchMode(to: selectedMode)
+        collectionView.reloadData()
     }
     
-    private func displayVC(for index: Int) {
-        currentVC?.willMove(toParent: nil)
-        currentVC?.view.removeFromSuperview()
-        currentVC?.removeFromParent()
+    private func switchMode(to newMode: PhotoMode) {
+        self.mode = newMode
         
-        let newVC: UIViewController
+        switch newMode {
+        case .local:
+            self.segmentedControl.selectedSegmentIndex = 0
+
+        case .remote:
+            self.segmentedControl.selectedSegmentIndex = 1
+        }
+    }
+}
+
+extension ImageSourceSelectionViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        7
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CellIdentifiers.photoCollectionViewCell,
+            for: indexPath
+        ) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
         
-        switch index {
-        case 0:
-            newVC = DatePickerViewController()
-        case 1:
-            newVC = UnsplashImageViewController()
-        default: return
+        switch mode {
+            
+        case .local:
+            cell.backgroundColor = .black
+        case .remote:
+            cell.backgroundColor = .blue
         }
         
-        addChild(newVC)
-        newVC.view.frame = containerView.bounds
-        containerView.addSubview(newVC.view)
-        newVC.didMove(toParent: self)
-        currentVC = newVC
+        return cell
     }
 }
 
 extension ImageSourceSelectionViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(segmentedControl)
         view.addSubview(containerView)
+        
+        containerView.addSubview(collectionView)
     }
     
     func setupConstraints() {
@@ -85,8 +139,37 @@ extension ImageSourceSelectionViewController {
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             containerView.trailingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            containerView.bottomAnchor
-                .constraint(equalTo: view.bottomAnchor)
+            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            collectionView.topAnchor
+                .constraint(equalTo: containerView.topAnchor),
+            collectionView.leadingAnchor
+                .constraint(equalTo: containerView.leadingAnchor),
+            collectionView.trailingAnchor
+                .constraint(equalTo: containerView.trailingAnchor),
+            collectionView.bottomAnchor
+                .constraint(equalTo: containerView.bottomAnchor)
         ])
+    }
+}
+
+extension ImageSourceSelectionViewController: UICollectionViewDelegateFlowLayout {
+    // swiftlint:disable:next line_length
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let itemsInRow: CGFloat = 3
+        let spacing: CGFloat = 10
+        let sectionInsets = (
+            collectionViewLayout as? UICollectionViewFlowLayout
+        )?.sectionInset ?? .zero
+        
+        let totalSpacing = sectionInsets.left + sectionInsets.right + spacing * (
+            itemsInRow - 1
+        )
+        let availableWidth = collectionView.bounds.width - totalSpacing
+        let  itemWidth = floor(availableWidth / itemsInRow)
+        
+        return CGSize(width: itemWidth, height: itemWidth)
+        
     }
 }

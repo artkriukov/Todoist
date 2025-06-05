@@ -20,7 +20,7 @@ final class ToDoListViewController: UIViewController {
         element.text = "Задач нет"
         element.textColor = .lightGray
         element.isHidden = true
-        element.font = UIConstants.CustomFont.medium(size: 27)
+        element.font = Asset.CustomFont.medium(size: 27)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -31,9 +31,9 @@ final class ToDoListViewController: UIViewController {
         element.delegate = self
         element.register(
             ToDoTableViewCell.self,
-            forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
+            forCellReuseIdentifier: CellIdentifiers.mainToDoTableViewCell
         )
-        element.backgroundColor = UIConstants.Colors.mainBackground
+        element.backgroundColor = Asset.Colors.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -41,7 +41,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: UIConstants.Colors.blueColor,
+            backgroundColor: Asset.Colors.blueColor,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -129,7 +129,7 @@ extension ToDoListViewController: UITableViewDataSource {
     ) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell,
+            withIdentifier: CellIdentifiers.mainToDoTableViewCell,
             for: indexPath
         ) as? ToDoTableViewCell else {
             return UITableViewCell()
@@ -171,7 +171,7 @@ extension ToDoListViewController: UITableViewDelegate {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoListViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(toDoList)
         view.addSubview(emptyLabel)

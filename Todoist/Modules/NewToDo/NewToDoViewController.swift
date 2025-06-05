@@ -47,7 +47,7 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var lineView: UIView = {
         let element = UIView()
-        element.backgroundColor = UIConstants.Colors.separatorLine
+        element.backgroundColor = Asset.Colors.separatorLine
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -247,14 +247,14 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func toDoImageButtonTapped() {
-        let imageSourceVC = ImageSourceSelectionViewController()
+        let imageSourceVC = ImageSourceSelectionViewController(mode: .local)
         navigationController?.pushViewController(imageSourceVC, animated: true)
     }
 }
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)

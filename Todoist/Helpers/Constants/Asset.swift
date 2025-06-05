@@ -1,5 +1,5 @@
 //
-//  UIConstants.swift
+//  Asset.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 25.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum UIConstants {
+enum Asset {
     
     enum CustomFont {
         static func regular(size: CGFloat) -> UIFont {

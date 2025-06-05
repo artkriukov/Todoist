@@ -42,10 +42,10 @@ final class TitledSwitchView: UIView {
         vDateStackView.spacing = 4
         
         titleLabel.text = configuration.title
-        titleLabel.font = UIConstants.CustomFont.medium(size: 17)
+        titleLabel.font = Asset.CustomFont.medium(size: 17)
         
         subtitleLabel.text = configuration.subtitle
-        subtitleLabel.font = UIConstants.CustomFont.regular(size: 13)
+        subtitleLabel.font = Asset.CustomFont.regular(size: 13)
         
         [titleLabel, subtitleLabel].forEach {
             vDateStackView.addArrangedSubview($0)
