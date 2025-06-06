@@ -13,6 +13,7 @@ enum PhotoMode {
 
 final class ImageSourceSelectionViewController: UIViewController {
     
+    private var unsplashImages: [UnsplashResult] = []
     private var currentVC: UIViewController?
     private var mode: PhotoMode
     
@@ -44,9 +45,9 @@ final class ImageSourceSelectionViewController: UIViewController {
         element.backgroundColor = Asset.Colors.mainBackground
         element.showsVerticalScrollIndicator = false
         element.register(
-                PhotoCollectionViewCell.self,
-                forCellWithReuseIdentifier: CellIdentifiers.photoCollectionViewCell
-            )
+            PhotoCollectionViewCell.self,
+            forCellWithReuseIdentifier: CellIdentifiers.photoCollectionViewCell
+        )
         element.dataSource = self
         element.delegate = self
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +65,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -94,16 +95,27 @@ final class ImageSourceSelectionViewController: UIViewController {
         case .remote:
             self.segmentedControl.selectedSegmentIndex = 1
             navigationItem.searchController = searchController
-            collectionView.reloadData()
+            
+            UnsplashImageService.shared.fetchImages(with: "nature") { [weak self] results in
+                DispatchQueue.main.async {
+                    self?.unsplashImages = results
+                    self?.collectionView.reloadData()
+                }
+            }
         }
     }
 }
 
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        27
+        switch mode {
+        case .local:
+            20
+        case .remote:
+            unsplashImages.count
+        }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: CellIdentifiers.photoCollectionViewCell,
@@ -115,7 +127,8 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         case .local:
             cell.configureCell()
         case .remote:
-            cell.configureCell(with: .remote)
+            let unsplashImage = unsplashImages[indexPath.item].urls.regular
+            cell.configureCell(with: unsplashImage)
         }
         
         return cell

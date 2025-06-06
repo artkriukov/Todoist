@@ -13,8 +13,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     private lazy var imageView: UIImageView = {
         let element = UIImageView()
         element.layer.cornerRadius = 8
-        element.image = UIImage(systemName: "photo.artframe")
-        element.contentMode = .scaleAspectFit
+        element.contentMode = .scaleAspectFill
         element.clipsToBounds = true
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -34,8 +33,15 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         imageView.image = UIImage(systemName: "photo.artframe")
     }
     
-    func configureCell(with mode: PhotoMode) {
-        imageView.image = UIImage(systemName: "photo.fill")
+    func configureCell(with imageURL: String) {
+        guard let url = URL(string: imageURL) else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+            guard let data = data, let image = UIImage(data: data) else { return }
+            DispatchQueue.main.async {
+                self?.imageView.image = image
+            }
+        }.resume()
     }
     
 }
