@@ -20,13 +20,13 @@ final class UnsplashImageService {
             completion([])
             return
         }
-
+        
         URLSession.shared.dataTask(with: request) { data, _, error in
             guard let data = data, error == nil else {
                 completion([])
                 return
             }
-
+            
             do {
                 let decodedImage = try JSONDecoder().decode(APIResponse.self, from: data)
                 completion(decodedImage.results)

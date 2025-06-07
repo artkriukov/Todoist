@@ -36,6 +36,10 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     func configureCell(with imageURL: String) {
         guard let url = URL(string: imageURL) else { return }
         
+        loadImage(from: url)
+    }
+    
+    private func loadImage(from url: URL) {
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let data = data, let image = UIImage(data: data) else { return }
             DispatchQueue.main.async {
@@ -43,7 +47,6 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
             }
         }.resume()
     }
-    
 }
 
 private extension PhotoCollectionViewCell {

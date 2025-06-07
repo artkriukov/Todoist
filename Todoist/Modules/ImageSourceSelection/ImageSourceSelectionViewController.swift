@@ -13,10 +13,13 @@ enum PhotoMode {
 
 final class ImageSourceSelectionViewController: UIViewController {
     
-    private var unsplashImages: [UnsplashResult] = []
+    private var unsplashImages: [UnsplashResult]? = nil
     private var currentVC: UIViewController?
     private var mode: PhotoMode
     
+    private lazy var containerViewTopConstraint: NSLayoutConstraint = {
+        containerView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16)
+    }()
     // MARK: - UI
     private lazy var segmentedControl: UISegmentedControl = {
         let element = UISegmentedControl(items: ["Загрузить с устройства", "Загрузить из сети"])
@@ -54,8 +57,12 @@ final class ImageSourceSelectionViewController: UIViewController {
         return element
     }()
     
-    private lazy var searchController: UISearchController = {
-        let element = UISearchController()
+    private lazy var searchBar: UISearchBar = {
+        let element = UISearchBar()
+        element.placeholder = "Найти картинку"
+        element.searchBarStyle = .minimal
+        element.delegate = self
+        element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
@@ -89,19 +96,39 @@ final class ImageSourceSelectionViewController: UIViewController {
         
         switch newMode {
         case .local:
-            self.segmentedControl.selectedSegmentIndex = 0
-            navigationItem.searchController = nil
-            collectionView.reloadData()
+            configureLocalMode()
         case .remote:
-            self.segmentedControl.selectedSegmentIndex = 1
-            navigationItem.searchController = searchController
-            
-            UnsplashImageService.shared.fetchImages(with: "nature") { [weak self] results in
-                DispatchQueue.main.async {
-                    self?.unsplashImages = results
-                    self?.collectionView.reloadData()
-                }
+            configureRemoteMode()
+        }
+    }
+    
+    private func fetchImages(with query: String) {
+        UnsplashImageService.shared.fetchImages(with: query) { [weak self] results in
+            DispatchQueue.main.async {
+                self?.unsplashImages = results
+                self?.collectionView.reloadData()
             }
+        }
+    }
+    
+    private func configureLocalMode() {
+        self.segmentedControl.selectedSegmentIndex = 0
+        searchBar.isHidden = true
+        containerViewTopConstraint.constant = 16
+        collectionView.reloadData()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func configureRemoteMode() {
+        self.segmentedControl.selectedSegmentIndex = 1
+        searchBar.isHidden = false
+        containerViewTopConstraint.constant = 15 + searchBar.frame.height + 16
+        unsplashImages = nil
+        collectionView.reloadData()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
         }
     }
 }
@@ -112,7 +139,7 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         case .local:
             20
         case .remote:
-            unsplashImages.count
+            unsplashImages?.count ?? 0
         }
     }
     
@@ -127,8 +154,15 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         case .local:
             cell.configureCell()
         case .remote:
-            let unsplashImage = unsplashImages[indexPath.item].urls.regular
-            cell.configureCell(with: unsplashImage)
+            
+            if unsplashImages?.count == 0 {
+                return cell
+            } else {
+                if let images = unsplashImages {
+                    let unsplashImage = images[indexPath.item].urls.regular
+                    cell.configureCell(with: unsplashImage)
+                }
+            }
         }
         
         return cell
@@ -139,12 +173,15 @@ extension ImageSourceSelectionViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(segmentedControl)
-        view.addSubview(containerView)
+        view.addSubview(searchBar)
         
+        view.addSubview(containerView)
         containerView.addSubview(collectionView)
     }
     
     func setupConstraints() {
+        containerViewTopConstraint = containerView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16)
+        
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -153,8 +190,14 @@ extension ImageSourceSelectionViewController {
             segmentedControl.trailingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             
-            containerView.topAnchor
-                .constraint(equalTo: segmentedControl.bottomAnchor, constant: 16),
+            searchBar.topAnchor
+                .constraint(equalTo: segmentedControl.bottomAnchor, constant: 15),
+            searchBar.trailingAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            searchBar.leadingAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            
+            containerViewTopConstraint,
             containerView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             containerView.trailingAnchor
@@ -170,6 +213,13 @@ extension ImageSourceSelectionViewController {
             collectionView.bottomAnchor
                 .constraint(equalTo: containerView.bottomAnchor)
         ])
+    }
+}
+
+extension ImageSourceSelectionViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text else { return }
+        fetchImages(with: query)
     }
 }
 
