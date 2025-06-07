@@ -29,8 +29,8 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell() {
-        imageView.image = UIImage(systemName: "photo.artframe")
+    func configureCell(with image: UIImage) {
+        imageView.image = image
     }
     
     func configureCell(with imageURL: String) {

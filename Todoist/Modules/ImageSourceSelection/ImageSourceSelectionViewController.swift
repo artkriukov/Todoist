@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 02.06.2025.
 //
 
+import Photos
 import UIKit
 
 enum PhotoMode {
@@ -13,7 +14,9 @@ enum PhotoMode {
 
 final class ImageSourceSelectionViewController: UIViewController {
     
-    private var unsplashImages: [UnsplashResult]? = nil
+    // swiftlint:disable:next discouraged_optional_collection
+    private var unsplashImages: [UnsplashResult]?
+    private var localImages: [UIImage] = []
     private var currentVC: UIViewController?
     private var mode: PhotoMode
     
@@ -83,6 +86,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         setupViews()
         setupConstraints()
         switchMode(to: mode)
+        requestPhotoLibraryAccess()
     }
     
     // MARK: - Private Methods
@@ -131,13 +135,46 @@ final class ImageSourceSelectionViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
+    
+    private func requestPhotoLibraryAccess() {
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized || status == .limited {
+                self.fetchLocalPhotos()
+            }
+        }
+    }
+    
+    func fetchLocalPhotos() {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        
+        let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        
+        let imageManager = PHCachingImageManager()
+        let targetSize = CGSize(width: 150, height: 150)
+        
+        fetchResult.enumerateObjects { asset, _, _ in
+            let options = PHImageRequestOptions()
+            options.isSynchronous = true
+            
+            imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: options) { image, _ in
+                if let img = image {
+                    self.localImages.append(img)
+                }
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
 }
 
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch mode {
         case .local:
-            20
+            localImages.count
         case .remote:
             unsplashImages?.count ?? 0
         }
@@ -152,7 +189,8 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         switch mode {
             
         case .local:
-            cell.configureCell()
+            let image = localImages[indexPath.item]
+            cell.configureCell(with: image)
         case .remote:
             
             if unsplashImages?.count == 0 {
@@ -167,6 +205,10 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         
         return cell
     }
+}
+
+extension ImageSourceSelectionViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
 }
 
 extension ImageSourceSelectionViewController {
@@ -220,6 +262,7 @@ extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
         fetchImages(with: query)
+        view.endEditing(true)
     }
 }
 
