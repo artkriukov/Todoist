@@ -11,7 +11,35 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private var item: ToDoItem?
     
+    var handlerButtonTapped: (() -> Void)?
+    
     // MARK: - UI
+    
+    private lazy var contentSV: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.alignment = .top
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private lazy var doneButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.backgroundColor = Asset.Colors.mainBackground
+        element.tintColor = Asset.Colors.lightGrayColor
+        element.layer.borderColor = Asset.Colors.separatorLine.cgColor
+        element.layer.borderWidth = 1
+        element.layer.cornerRadius = 12
+        element.addAction(
+            UIAction { [weak self] _ in
+                self?.didTappedDoneButton()
+            }, for: .touchUpInside
+        )
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
@@ -88,11 +116,23 @@ final class ToDoTableViewCell: UITableViewCell {
         }
     }
     
+    private func didTappedDoneButton() {
+        doneButton.setImage(
+                UIImage(systemName: "checkmark.circle.fill"),
+                for: .normal
+            )
+        
+        handlerButtonTapped?()
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
         expirationDateLabel.text = nil
+        toDoDescrLabel.isHidden = false
+        expirationDateLabel.isHidden = false
+        doneButton.setImage(nil, for: .normal)
     }
 }
 
@@ -100,7 +140,11 @@ final class ToDoTableViewCell: UITableViewCell {
 private extension ToDoTableViewCell {
     func setupViews() {
         backgroundColor = Asset.Colors.mainBackground
-        addSubview(toDoMainSV)
+        
+        contentView.addSubview(contentSV)
+        contentSV.addArrangedSubview(doneButton)
+        
+        contentSV.addArrangedSubview(toDoMainSV)
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)
         toDoMainSV.addArrangedSubview(expirationDateLabel)
@@ -108,11 +152,13 @@ private extension ToDoTableViewCell {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            toDoMainSV.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            toDoMainSV.leadingAnchor
-                .constraint(equalTo: leadingAnchor, constant: 16),
-            toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4)
+            contentSV.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            contentSV.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            contentSV.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contentSV.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            
+            doneButton.widthAnchor.constraint(equalToConstant: 24),
+            doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)
         ])
     }
 }

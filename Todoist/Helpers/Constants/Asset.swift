@@ -58,5 +58,6 @@ enum Asset {
         
         static let blueColor = UIColor(hexString: "#007AFF")
         static let whiteColor = UIColor(hexString: "#FFFFFF")
+        static let lightGrayColor = UIColor(hexString: "#D1D1D6")
     }
 }

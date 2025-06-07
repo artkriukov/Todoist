@@ -135,6 +135,12 @@ extension ToDoListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
+        cell.handlerButtonTapped = { [weak self] in
+            self?.itemsProvider.removeItem(at: indexPath.row)
+            
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+        
         let item = itemsProvider.getAllToDoItems()[indexPath.row]
         cell.configureCell(with: item)
         
