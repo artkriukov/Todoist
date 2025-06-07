@@ -56,13 +56,7 @@ enum Asset {
             }
         }
         
-        static let blueColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .light, .unspecified: UIColor(hexString: "#007AFF")
-            case .dark: UIColor(hexString: "#007AFF")
-            @unknown default:
-                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update blueColor color handling.")
-            }
-        }
+        static let blueColor = UIColor(hexString: "#007AFF")
+        static let whiteColor = UIColor(hexString: "#FFFFFF")
     }
 }

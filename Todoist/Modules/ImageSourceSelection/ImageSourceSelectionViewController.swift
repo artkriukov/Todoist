@@ -4,7 +4,7 @@
 //
 //  Created by Artem Kriukov on 02.06.2025.
 //
-
+#warning("Много расширений, может их можно в отдельные файлы перенести?")
 import Photos
 import UIKit
 
@@ -64,6 +64,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         let element = UISearchBar()
         element.placeholder = "Найти картинку"
         element.searchBarStyle = .minimal
+        element.clipsToBounds = true
         element.delegate = self
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -170,6 +171,7 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
 }
 
+// MARK: - UICollectionViewDataSource
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch mode {
@@ -207,10 +209,24 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegate
+extension ImageSourceSelectionViewController: UICollectionViewDelegate {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        
+    }
+    
+}
+
+// MARK: - UIImagePickerControllerDelegate & UINavigationControllerDelegate
 extension ImageSourceSelectionViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
 }
 
+// MARK: - Setup Views & Setup Constraints
 extension ImageSourceSelectionViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
@@ -235,9 +251,9 @@ extension ImageSourceSelectionViewController {
             searchBar.topAnchor
                 .constraint(equalTo: segmentedControl.bottomAnchor, constant: 15),
             searchBar.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
             searchBar.leadingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             
             containerViewTopConstraint,
             containerView.leadingAnchor
@@ -258,6 +274,7 @@ extension ImageSourceSelectionViewController {
     }
 }
 
+// MARK: - UISearchBarDelegate
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
@@ -266,6 +283,7 @@ extension ImageSourceSelectionViewController: UISearchBarDelegate {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension ImageSourceSelectionViewController: UICollectionViewDelegateFlowLayout {
     // swiftlint:disable:next line_length
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
