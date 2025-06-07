@@ -221,11 +221,6 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
     
 }
 
-// MARK: - UIImagePickerControllerDelegate & UINavigationControllerDelegate
-extension ImageSourceSelectionViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-}
-
 // MARK: - Setup Views & Setup Constraints
 extension ImageSourceSelectionViewController {
     func setupViews() {

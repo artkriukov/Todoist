@@ -82,6 +82,14 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
             self.checkmarckImageView.isHidden = !self.isSelected
         }
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        checkmarckImageView.image = nil
+        checkmarckContainerView.backgroundColor = nil
+        checkmarckContainerView.layer.borderColor = nil
+    }
 }
 
 private extension PhotoCollectionViewCell {
