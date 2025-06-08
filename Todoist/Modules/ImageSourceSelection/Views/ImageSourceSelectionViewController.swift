@@ -4,21 +4,26 @@
 //
 //  Created by Artem Kriukov on 02.06.2025.
 //
-#warning("Много расширений, может их можно в отдельные файлы перенести?")
-import Photos
+
 import UIKit
 
 enum PhotoMode {
     case local, remote
 }
 
+protocol LocalImageSourceViewProtocol: AnyObject {
+    func displayFetchedImages(_ images: [UIImage])
+}
+
+protocol RemoteImageSourceViewProtocol: AnyObject {
+    func displayFetchedImages(_ images: [UnsplashResult])
+}
+
 final class ImageSourceSelectionViewController: UIViewController {
     
-    // swiftlint:disable:next discouraged_optional_collection
-    private var unsplashImages: [UnsplashResult]?
-    private var localImages: [UIImage] = []
-    private var currentVC: UIViewController?
     private var mode: PhotoMode
+    private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
+    private let localImageSourcePresenter: LocalImageSourceProtocol?
     
     private lazy var containerViewTopConstraint: NSLayoutConstraint = {
         containerView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16)
@@ -72,9 +77,17 @@ final class ImageSourceSelectionViewController: UIViewController {
     
     // MARK: - Init
     
-    init(mode: PhotoMode) {
+    init(
+        mode: PhotoMode,
+        remoteImageSourcePresenter: RemoteImageSourcePresenter = RemoteImageSourcePresenter(),
+        localImageSourcePresenter: LocalImageSourceProtocol = LocalImageSourcePresenter()
+    ) {
         self.mode = mode
+        self.remoteImageSourcePresenter = remoteImageSourcePresenter
+        self.localImageSourcePresenter = localImageSourcePresenter
         super.init(nibName: nil, bundle: nil)
+        self.remoteImageSourcePresenter?.view = self
+        self.localImageSourcePresenter?.view = self
     }
     
     required init?(coder: NSCoder) {
@@ -87,7 +100,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         setupViews()
         setupConstraints()
         switchMode(to: mode)
-        requestPhotoLibraryAccess()
+        localImageSourcePresenter?.requestPhotoLibraryAccess()
     }
     
     // MARK: - Private Methods
@@ -107,15 +120,6 @@ final class ImageSourceSelectionViewController: UIViewController {
         }
     }
     
-    private func fetchImages(with query: String) {
-        UnsplashImageService.shared.fetchImages(with: query) { [weak self] results in
-            DispatchQueue.main.async {
-                self?.unsplashImages = results
-                self?.collectionView.reloadData()
-            }
-        }
-    }
-    
     private func configureLocalMode() {
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
@@ -130,43 +134,10 @@ final class ImageSourceSelectionViewController: UIViewController {
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false
         containerViewTopConstraint.constant = 15 + searchBar.frame.height + 16
-        unsplashImages = nil
+
         collectionView.reloadData()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
-        }
-    }
-    
-    private func requestPhotoLibraryAccess() {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized || status == .limited {
-                self.fetchLocalPhotos()
-            }
-        }
-    }
-    
-    func fetchLocalPhotos() {
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        
-        let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        
-        let imageManager = PHCachingImageManager()
-        let targetSize = CGSize(width: 150, height: 150)
-        
-        fetchResult.enumerateObjects { asset, _, _ in
-            let options = PHImageRequestOptions()
-            options.isSynchronous = true
-            
-            imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: options) { image, _ in
-                if let img = image {
-                    self.localImages.append(img)
-                }
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
         }
     }
 }
@@ -176,9 +147,9 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch mode {
         case .local:
-            localImages.count
+            localImageSourcePresenter?.numberOfImages() ?? 0
         case .remote:
-            unsplashImages?.count ?? 0
+            remoteImageSourcePresenter?.numberOfImages() ?? 0
         }
     }
     
@@ -191,14 +162,17 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         switch mode {
             
         case .local:
-            let image = localImages[indexPath.item]
+            guard let image = localImageSourcePresenter?.getLocalImages()[indexPath.item] else {
+                return UICollectionViewCell()
+            }
+            
             cell.configureCell(with: image)
         case .remote:
             
-            if unsplashImages?.count == 0 {
+            if remoteImageSourcePresenter?.numberOfImages() == 0 {
                 return cell
             } else {
-                if let images = unsplashImages {
+                if let images = remoteImageSourcePresenter?.getUnsplashImages() {
                     let unsplashImage = images[indexPath.item].urls.regular
                     cell.configureCell(with: unsplashImage)
                 }
@@ -209,16 +183,15 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
-extension ImageSourceSelectionViewController: UICollectionViewDelegate {
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        
+// MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
+extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol, LocalImageSourceViewProtocol {
+    func displayFetchedImages(_ images: [UIImage]) {
+        collectionView.reloadData()
     }
     
+    func displayFetchedImages(_ images: [UnsplashResult]) {
+        collectionView.reloadData()
+    }
 }
 
 // MARK: - Setup Views & Setup Constraints
@@ -273,7 +246,7 @@ extension ImageSourceSelectionViewController {
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        fetchImages(with: query)
+        remoteImageSourcePresenter?.fetchRemoteImages(with: query)
         view.endEditing(true)
     }
 }
