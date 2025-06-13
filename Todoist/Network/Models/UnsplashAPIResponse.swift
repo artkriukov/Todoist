@@ -1,5 +1,5 @@
 //
-//  APIResponse.swift
+//  UnsplashAPIResponse.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 06.06.2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct APIResponse: Codable {
+struct UnsplashAPIResponse: Codable {
     let total: Int
     let totalPages: Int
     let results: [UnsplashResult]
