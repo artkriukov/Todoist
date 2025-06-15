@@ -56,6 +56,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
     func configureCell(with image: UIImage) {
         imageView.image = image
     }
@@ -82,6 +83,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         checkmarckImageView.image = nil
         checkmarckContainerView.backgroundColor = nil
         checkmarckContainerView.layer.borderColor = nil
+        checkmarckContainerView.layer.borderWidth = 0
     }
 }
 

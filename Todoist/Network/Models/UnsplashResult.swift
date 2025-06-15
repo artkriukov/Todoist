@@ -8,6 +8,5 @@
 import Foundation
 
 struct UnsplashResult: Codable {
-    let id: String
     let urls: ImageURLs
 }

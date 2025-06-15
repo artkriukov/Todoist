@@ -28,7 +28,7 @@ final class UnsplashImageService {
             }
             
             do {
-                let decodedImage = try JSONDecoder().decode(APIResponse.self, from: data)
+                let decodedImage = try JSONDecoder().decode(UnsplashAPIResponse.self, from: data)
                 completion(decodedImage.results)
             } catch {
                 completion([])

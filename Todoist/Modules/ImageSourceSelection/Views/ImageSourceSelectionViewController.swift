@@ -25,10 +25,17 @@ final class ImageSourceSelectionViewController: UIViewController {
     private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
     private let localImageSourcePresenter: LocalImageSourceProtocol?
     
-    private lazy var containerViewTopConstraint: NSLayoutConstraint = {
-        containerView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16)
-    }()
     // MARK: - UI
+    
+    private lazy var stackView: UIStackView = {
+        let element = UIStackView()
+        element.spacing = 10
+        element.axis = .vertical
+        
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var segmentedControl: UISegmentedControl = {
         let element = UISegmentedControl(items: ["Загрузить с устройства", "Загрузить из сети"])
         element.addAction(
@@ -123,7 +130,6 @@ final class ImageSourceSelectionViewController: UIViewController {
     private func configureLocalMode() {
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
-        containerViewTopConstraint.constant = 16
         collectionView.reloadData()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -133,8 +139,7 @@ final class ImageSourceSelectionViewController: UIViewController {
     private func configureRemoteMode() {
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false
-        containerViewTopConstraint.constant = 15 + searchBar.frame.height + 16
-
+        
         collectionView.reloadData()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -162,7 +167,9 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         switch mode {
             
         case .local:
-            guard let image = localImageSourcePresenter?.getLocalImages()[indexPath.item] else {
+            let localImages = localImageSourcePresenter?.getLocalImages()[indexPath.item]
+            
+            guard let image = localImages else {
                 return UICollectionViewCell()
             }
             
@@ -198,46 +205,38 @@ extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol, Loc
 extension ImageSourceSelectionViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
-        view.addSubview(segmentedControl)
-        view.addSubview(searchBar)
+        view.addSubview(stackView)
         
-        view.addSubview(containerView)
+        stackView.addArrangedSubview(segmentedControl)
+        stackView.addArrangedSubview(searchBar)
+        
+        stackView.addArrangedSubview(containerView)
         containerView.addSubview(collectionView)
     }
     
     func setupConstraints() {
-        containerViewTopConstraint = containerView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16)
         
         NSLayoutConstraint.activate([
-            segmentedControl.topAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            segmentedControl.leadingAnchor
+            stackView.topAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.trailingAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15 ),
+            stackView.leadingAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            segmentedControl.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            stackView.bottomAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            searchBar.topAnchor
-                .constraint(equalTo: segmentedControl.bottomAnchor, constant: 15),
-            searchBar.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-            searchBar.leadingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 34),
+            searchBar.heightAnchor.constraint(equalToConstant: 44),
             
-            containerViewTopConstraint,
-            containerView.leadingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            containerView.trailingAnchor
-                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
             
-            collectionView.topAnchor
-                .constraint(equalTo: containerView.topAnchor),
-            collectionView.leadingAnchor
-                .constraint(equalTo: containerView.leadingAnchor),
-            collectionView.trailingAnchor
-                .constraint(equalTo: containerView.trailingAnchor),
-            collectionView.bottomAnchor
-                .constraint(equalTo: containerView.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 }
