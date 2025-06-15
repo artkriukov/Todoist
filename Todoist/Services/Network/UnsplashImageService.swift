@@ -7,31 +7,46 @@
 
 import Foundation
 
+enum UnsplashServiceError: Error {
+    case couldNotMakeRequest
+}
+
 final class UnsplashImageService {
     static let shared = UnsplashImageService()
     
-    private init() {}
+    let logger: Logger
+    
+    private init(logger: Logger = DependencyContainer.shared.logger) {
+        self.logger = logger
+    }
     
     func fetchImages(
         with query: String,
         completion: @escaping ([UnsplashResult]) -> Void
     ) {
         guard let request = makeRequest(with: query) else {
-            completion([])
+            print(UnsplashServiceError.couldNotMakeRequest)
             return
         }
         
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            guard let data = data, error == nil else {
-                completion([])
+        URLSession.shared.dataTask(with: request) {data, _, error in
+            guard let data = data,
+                  error == nil else {
+                
+                self.logger.log(
+                        "[UnsplashServiceError.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
+                    )
                 return
             }
             
             do {
                 let decodedImage = try JSONDecoder().decode(UnsplashAPIResponse.self, from: data)
                 completion(decodedImage.results)
+                self.logger.log("[UnsplashServiceError.fetchImages]: Данные успешно декодированы")
             } catch {
-                completion([])
+                
+                self.logger.log("[UnsplashServiceError.fetchImages]: Не удалось декодировать данные: [\(error)]")
+                
             }
         }.resume()
     }
