@@ -14,7 +14,9 @@ enum UnsplashServiceError: Error {
 final class UnsplashImageService {
     static let shared = UnsplashImageService()
     
-    let logger: Logger
+    private let logger: Logger
+    private let perPage = 24
+    private var currentTask: URLSessionDataTask?
     
     private init(logger: Logger = DependencyContainer.shared.logger) {
         self.logger = logger
@@ -24,6 +26,8 @@ final class UnsplashImageService {
         with query: String,
         completion: @escaping ([UnsplashResult]) -> Void
     ) {
+        currentTask = nil
+        
         guard let request = makeRequest(with: query) else {
             self.logger
                 .log(
@@ -32,7 +36,7 @@ final class UnsplashImageService {
             return
         }
         
-        URLSession.shared.dataTask(with: request) {data, _, error in
+        currentTask = URLSession.shared.dataTask(with: request) {data, _, error in
             guard let data = data,
                   error == nil else {
                 
@@ -46,13 +50,15 @@ final class UnsplashImageService {
             do {
                 let decodedImage = try JSONDecoder().decode(UnsplashAPIResponse.self, from: data)
                 completion(decodedImage.results)
-                self.logger.log("[UnsplashImageService.fetchImages]: Данные успешно декодированы")
+                
             } catch {
                 
                 self.logger.log("[UnsplashImageService.fetchImages]: Не удалось декодировать данные: [\(error)]")
                 
             }
-        }.resume()
+        }
+        
+        currentTask?.resume()
     }
     
     private func makeRequest(with query: String) -> URLRequest? {
@@ -61,6 +67,7 @@ final class UnsplashImageService {
         
         urlComponents.queryItems = [
             URLQueryItem(name: "query", value: "\(query)"),
+            URLQueryItem(name: "per_page", value: "\(perPage)"),
             URLQueryItem(name: "client_id", value: UnsplashConstants.accessKey)
         ]
         

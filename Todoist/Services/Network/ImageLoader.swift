@@ -14,7 +14,6 @@ protocol ImageLoadingProtocol {
 class ImageLoader: ImageLoadingProtocol {
     static let shared = ImageLoader()
     
-    
     private init() {}
     
     func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
