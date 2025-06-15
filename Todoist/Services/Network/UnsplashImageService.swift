@@ -25,7 +25,10 @@ final class UnsplashImageService {
         completion: @escaping ([UnsplashResult]) -> Void
     ) {
         guard let request = makeRequest(with: query) else {
-            print(UnsplashServiceError.couldNotMakeRequest)
+            self.logger
+                .log(
+                    "[UnsplashImageService.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
+                )
             return
         }
         
@@ -33,8 +36,9 @@ final class UnsplashImageService {
             guard let data = data,
                   error == nil else {
                 
-                self.logger.log(
-                        "[UnsplashServiceError.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
+                self.logger
+                    .log(
+                        "[UnsplashImageService.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
                     )
                 return
             }
@@ -42,10 +46,10 @@ final class UnsplashImageService {
             do {
                 let decodedImage = try JSONDecoder().decode(UnsplashAPIResponse.self, from: data)
                 completion(decodedImage.results)
-                self.logger.log("[UnsplashServiceError.fetchImages]: Данные успешно декодированы")
+                self.logger.log("[UnsplashImageService.fetchImages]: Данные успешно декодированы")
             } catch {
                 
-                self.logger.log("[UnsplashServiceError.fetchImages]: Не удалось декодировать данные: [\(error)]")
+                self.logger.log("[UnsplashImageService.fetchImages]: Не удалось декодировать данные: [\(error)]")
                 
             }
         }.resume()
