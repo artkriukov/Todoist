@@ -69,6 +69,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         }
     }
     
+#warning("Кажется не обсудили этот метод")
     private func updateSelectionUI() {
         UIView.animate(withDuration: 0.2) {
             self.imageView.layer.opacity = self.isSelected ? 0.6 : 1

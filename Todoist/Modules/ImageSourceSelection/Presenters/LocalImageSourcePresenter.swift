@@ -39,7 +39,10 @@ final class LocalImageSourcePresenter: LocalImageSourceProtocol {
         let imageManager = PHCachingImageManager()
         let targetSize = CGSize(width: 150, height: 150)
         
-        fetchResult.enumerateObjects { asset, _, _ in
+        // swiftlint:disable:next syntactic_sugar
+        var images = Array<UIImage?>(repeating: nil, count: fetchResult.count)
+        
+        fetchResult.enumerateObjects { asset, index, _ in
             let options = PHImageRequestOptions()
             options.isSynchronous = true
             
@@ -49,11 +52,11 @@ final class LocalImageSourcePresenter: LocalImageSourceProtocol {
                 contentMode: .aspectFill,
                 options: options
             ) { image, _ in
-                if let img = image {
-                    self.localImages.append(img)
-                }
+                images[index] = image
             }
         }
+        
+        self.localImages = images.compactMap { $0 }
         
         DispatchQueue.main.async {
             self.view?.displayFetchedImages(self.localImages)
