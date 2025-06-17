@@ -42,11 +42,30 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
+        element.axis = .horizontal
+        element.distribution = .fillEqually
+        element.alignment = .center
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var mainInfoStackView: UIStackView = {
+        let element = UIStackView()
         element.axis = .vertical
         element.spacing = 4
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var selectedImage: UIImageView = {
+        let element = UIImageView()
+        element.contentMode = .scaleAspectFit
+        element.isHidden = true
+        element.layer.cornerRadius = 12
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var toDoTitleLabel: UILabel = {
         let element = UILabel()
         element.text = "Title"
@@ -86,6 +105,14 @@ final class ToDoTableViewCell: UITableViewCell {
     // MARK: - Public Method
     func configureCell(with item: ToDoItem) {
         self.item = item
+        if let imageData = item.selectedImage, let image = UIImage(data: imageData) {
+            selectedImage.image = image
+            selectedImage.isHidden = false
+        } else {
+            selectedImage.image = nil
+            selectedImage.isHidden = true
+        }
+
         toDoTitleLabel.text = item.title
         toDoDescrLabel.text = item.description
         
@@ -130,9 +157,14 @@ final class ToDoTableViewCell: UITableViewCell {
         toDoTitleLabel.text = nil
         toDoDescrLabel.text = nil
         expirationDateLabel.text = nil
+        selectedImage.image = nil
+        doneButton.setImage(nil, for: .normal)
+        
         toDoDescrLabel.isHidden = false
         expirationDateLabel.isHidden = false
-        doneButton.setImage(nil, for: .normal)
+        selectedImage.isHidden = false
+        
+        NSLayoutConstraint.deactivate(selectedImage.constraints)
     }
 }
 
@@ -145,9 +177,15 @@ private extension ToDoTableViewCell {
         contentSV.addArrangedSubview(doneButton)
         
         contentSV.addArrangedSubview(toDoMainSV)
-        toDoMainSV.addArrangedSubview(toDoTitleLabel)
-        toDoMainSV.addArrangedSubview(toDoDescrLabel)
-        toDoMainSV.addArrangedSubview(expirationDateLabel)
+        
+        toDoMainSV.addArrangedSubview(mainInfoStackView)
+        
+        mainInfoStackView.addArrangedSubview(toDoTitleLabel)
+        mainInfoStackView.addArrangedSubview(toDoDescrLabel)
+        mainInfoStackView.addArrangedSubview(expirationDateLabel)
+        
+        toDoMainSV.addArrangedSubview(selectedImage)
+        
     }
     
     func setupConstraints() {
@@ -156,6 +194,9 @@ private extension ToDoTableViewCell {
             contentSV.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             contentSV.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contentSV.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            
+            selectedImage.widthAnchor.constraint(equalToConstant: 80),
+            selectedImage.heightAnchor.constraint(equalToConstant: 60),
             
             doneButton.widthAnchor.constraint(equalToConstant: 24),
             doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)

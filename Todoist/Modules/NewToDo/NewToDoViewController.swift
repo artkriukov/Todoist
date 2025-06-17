@@ -174,11 +174,13 @@ final class NewToDoViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
         let date = combineDateAndTime(with: selectedDate, and: selectedTime)
+        let dataImage = selectedImage?.pngData()
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: date
+            expirationDate: date,
+            selectedImage: dataImage
         )
         saveItem?(newItem)
         
