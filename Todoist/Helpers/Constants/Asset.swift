@@ -59,9 +59,12 @@ enum Asset {
         static let blueColor = UIColor(hexString: "#007AFF")
         static let whiteColor = UIColor(hexString: "#FFFFFF")
         static let lightGrayColor = UIColor(hexString: "#D1D1D6")
+        static let imagePlaceholderBackground = UIColor(hexString: "#E5E5EA")
+        static let imagePlaceholderTint = UIColor(hexString: "#AEAEB2")
     }
     
     enum Images {
-        static let defoultUserImage = UIImage(systemName: "person.circle.fill")
+        static let defaultUserImage = UIImage(systemName: "person.circle.fill")
+        static let defaultBackgroundImage = UIImage(systemName: "photo")
     }
 }

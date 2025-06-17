@@ -24,7 +24,9 @@ final class ImageSourceSelectionViewController: UIViewController {
     private var mode: PhotoMode
     private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
     private let localImageSourcePresenter: LocalImageSourceProtocol?
+    private var selectedImage: UIImage?
     
+    var onImageReceived: ((UIImage) -> Void)?
     // MARK: - UI
     
     private lazy var stackView: UIStackView = {
@@ -187,6 +189,31 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         }
         
         return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension ImageSourceSelectionViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        
+        switch mode {
+            
+        case .local:
+            
+            let localImages = localImageSourcePresenter?.getLocalImages()
+            selectedImage = localImages?[indexPath.item]
+            
+            
+            if let selectedImage = selectedImage {
+                onImageReceived?(selectedImage)
+            }
+            
+        case .remote: break
+        }
+        
     }
 }
 

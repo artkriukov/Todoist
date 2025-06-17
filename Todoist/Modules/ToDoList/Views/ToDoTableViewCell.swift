@@ -43,7 +43,7 @@ final class ToDoTableViewCell: UITableViewCell {
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
-        element.spacing = 8
+        element.spacing = 4
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()

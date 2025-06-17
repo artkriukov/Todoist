@@ -16,11 +16,11 @@ final class NewToDoViewController: UIViewController {
     
     private var selectedDate: Date?
     private var selectedTime: Date?
-    
-    var expirationDate: Date?
+    private var expirationDate: Date?
+    private var selectedImage: UIImage?
     
     var saveItem: ((ToDoItem) -> Void)?
-    
+    var onImageReceived: ((UIImage) -> Void)?
     // MARK: - UI
     
     private lazy var scrollView: UIScrollView = {
@@ -53,7 +53,7 @@ final class NewToDoViewController: UIViewController {
     }()
     
     private lazy var expirationDateStackView = FactoryUI.shared.makeStackView(
-        layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layoutMargins: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
     )
     
     private lazy var datePickerSV: TitledSwitchView = {
@@ -129,9 +129,26 @@ final class NewToDoViewController: UIViewController {
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var toDoSelectedImageView: UIImageView = {
+        let element = UIImageView()
+        element.backgroundColor = Asset.Colors.imagePlaceholderBackground
+        element.tintColor = Asset.Colors.imagePlaceholderTint
+        element.layer.cornerRadius = 12
+        element.isHidden = true
+        element.contentMode = .scaleAspectFit
+        element.image = Asset.Images.defaultBackgroundImage
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Init
-    init(saveItem: @escaping (ToDoItem) -> Void) {
+    init(
+        saveItem: ((ToDoItem) -> Void)? = nil,
+        onImageReceived: ((UIImage) -> Void)? = nil
+    ) {
         self.saveItem = saveItem
+        self.onImageReceived = onImageReceived
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -145,6 +162,11 @@ final class NewToDoViewController: UIViewController {
         setupViews()
         setupConstraints()
         configureNavigationBar()
+        
+        onImageReceived = { [weak self] image in
+            self?.toDoSelectedImageView.image = image
+        }
+
     }
     
     // MARK: - Private Methods
@@ -194,13 +216,19 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func toDoImageSwitcherValueChanged() {
-        handleToggleChange(isOn: toDoImageView.switcher.isOn, relatedView: toDoImageButton)
+        handleToggleChange(
+            isOn: toDoImageView.switcher.isOn,
+            relatedView: toDoImageButton,
+            relatedImage: toDoSelectedImageView
+        )
     }
     
-    private func handleToggleChange(isOn: Bool, relatedView: UIView) {
+    private func handleToggleChange(isOn: Bool, relatedView: UIView, relatedImage: UIImageView? = nil) {
         UIView.animate(withDuration: 0.5) {
             relatedView.isHidden = !isOn
             relatedView.layer.opacity = isOn ? 1 : 0
+            relatedImage?.isHidden = !isOn
+            relatedImage?.layer.opacity = isOn ? 1 : 0
         }
     }
     
@@ -248,6 +276,10 @@ final class NewToDoViewController: UIViewController {
     
     private func toDoImageButtonTapped() {
         let imageSourceVC = ImageSourceSelectionViewController(mode: .local)
+        imageSourceVC.onImageReceived = { [weak self] image in
+            self?.toDoSelectedImageView.image = image
+            self?.selectedImage = image
+        }
         navigationController?.pushViewController(imageSourceVC, animated: true)
     }
 }
@@ -266,7 +298,7 @@ private extension NewToDoViewController {
         
         contentView.addSubview(expirationDateStackView)
         
-        [datePickerSV, datePicker, timePickerSV, timePicker, toDoImageView, toDoImageButton].forEach {
+        [datePickerSV, datePicker, timePickerSV, timePicker, toDoImageView, toDoImageButton, toDoSelectedImageView].forEach {
             expirationDateStackView.addArrangedSubview($0)
         }
     }
@@ -305,7 +337,13 @@ private extension NewToDoViewController {
             expirationDateStackView.trailingAnchor
                 .constraint(equalTo: contentView.trailingAnchor, constant: -15),
             expirationDateStackView.bottomAnchor
-                .constraint(equalTo: contentView.bottomAnchor, constant: -20)
+                .constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            
+            toDoSelectedImageView.leadingAnchor
+                .constraint(equalTo: expirationDateStackView.leadingAnchor, constant: 15),
+            toDoSelectedImageView.trailingAnchor
+                .constraint(equalTo: expirationDateStackView.trailingAnchor, constant: -15),
+            toDoSelectedImageView.heightAnchor.constraint(equalToConstant: 200)
         ])
     }
 }

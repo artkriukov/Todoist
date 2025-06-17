@@ -21,7 +21,7 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var userImage: UIImageView = {
         let element = UIImageView()
-        element.image = Asset.Images.defoultUserImage
+        element.image = Asset.Images.defaultUserImage
         element.tintColor = .gray
         element.layer.cornerRadius = 60
         element.clipsToBounds = true
@@ -139,7 +139,7 @@ final class UserSettingsViewController: UIViewController {
         if let image = userSettings?.image {
             userImage.image = image
         } else {
-            userImage.image = Asset.Images.defoultUserImage
+            userImage.image = Asset.Images.defaultUserImage
         }
     }
     
