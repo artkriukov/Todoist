@@ -5,13 +5,21 @@
 //  Created by Artem Kriukov on 06.06.2025.
 //
 
-import Foundation
+import UIKit
 
 enum UnsplashServiceError: Error {
     case couldNotMakeRequest
 }
 
-final class UnsplashImageService {
+protocol UnsplashImageServiceProtocol {
+    func fetchImages(
+        with query: String,
+        completion: @escaping ([UnsplashResult]) -> Void
+    )
+    func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void)
+}
+
+final class UnsplashImageService: UnsplashImageServiceProtocol {
     static let shared = UnsplashImageService()
     
     private let logger: Logger
@@ -59,6 +67,20 @@ final class UnsplashImageService {
         }
         
         currentTask?.resume()
+    }
+    
+    func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
+        
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(image)
+            }
+        }.resume()
     }
     
     private func makeRequest(with query: String) -> URLRequest? {

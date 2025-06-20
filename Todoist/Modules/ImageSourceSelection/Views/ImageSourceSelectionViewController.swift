@@ -221,7 +221,7 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             
             guard let url = URL(string: imageUrlString) else { return }
             
-            ImageLoader.shared.loadImage(from: url) { [weak self] image in
+            UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
                 guard let self, let image else { return }
                 onImageReceived?(image)
             }

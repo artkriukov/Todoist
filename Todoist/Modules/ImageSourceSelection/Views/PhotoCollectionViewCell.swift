@@ -64,7 +64,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     func configureCell(with imageURL: String) {
         guard let url = URL(string: imageURL) else { return }
         
-        ImageLoader.shared.loadImage(from: url) { [weak self] image in
+        UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
             self?.imageView.image = image
         }
     }
