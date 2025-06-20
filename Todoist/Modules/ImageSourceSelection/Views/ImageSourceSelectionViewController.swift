@@ -206,14 +206,26 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             let localImages = localImageSourcePresenter?.getLocalImages()
             selectedImage = localImages?[indexPath.item]
             
-            
             if let selectedImage = selectedImage {
                 onImageReceived?(selectedImage)
             }
             
-        case .remote: break
+        case .remote:
+            
+            guard let remoteImages = remoteImageSourcePresenter?.getUnsplashImages(),
+                  indexPath.item < remoteImages.count else {
+                return
+            }
+            
+            let imageUrlString = remoteImages[indexPath.item].urls.regular
+            
+            guard let url = URL(string: imageUrlString) else { return }
+            
+            ImageLoader.shared.loadImage(from: url) { [weak self] image in
+                guard let self, let image else { return }
+                onImageReceived?(image)
+            }
         }
-        
     }
 }
 

@@ -132,11 +132,11 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var toDoSelectedImageView: UIImageView = {
         let element = UIImageView()
-        element.backgroundColor = Asset.Colors.imagePlaceholderBackground
         element.tintColor = Asset.Colors.imagePlaceholderTint
         element.layer.cornerRadius = 12
+        element.clipsToBounds = true
         element.isHidden = true
-        element.contentMode = .scaleAspectFit
+        element.contentMode = .scaleAspectFill
         element.image = Asset.Images.defaultBackgroundImage
         element.translatesAutoresizingMaskIntoConstraints = false
         return element

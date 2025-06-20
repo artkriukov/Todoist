@@ -150,6 +150,7 @@ final class ToDoTableViewCell: UITableViewCell {
             )
         
         handlerButtonTapped?()
+
     }
     
     override func prepareForReuse() {
@@ -164,7 +165,6 @@ final class ToDoTableViewCell: UITableViewCell {
         expirationDateLabel.isHidden = false
         selectedImage.isHidden = false
         
-        NSLayoutConstraint.deactivate(selectedImage.constraints)
     }
 }
 
