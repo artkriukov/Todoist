@@ -248,7 +248,6 @@ final class NewToDoViewController: UIViewController {
                 self.datePickerSV.subtitleLabel.text = dateString
             }
 
-            
         case .time:
             selectedTime = date
             formatter.dateFormat = "HH:mm"

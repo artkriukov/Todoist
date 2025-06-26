@@ -10,6 +10,8 @@ import UIKit
 final class PhotoCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Private Properties
+    private var propertyAnimator: UIViewPropertyAnimator?
+    
     override var isSelected: Bool {
         didSet {
             updateSelectionUI()
@@ -69,13 +71,19 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         }
     }
     
-#warning("Кажется не обсудили этот метод")
     private func updateSelectionUI() {
-        UIView.animate(withDuration: 0.2) {
+        propertyAnimator?.stopAnimation(true)
+        
+        propertyAnimator = UIViewPropertyAnimator(
+            duration: 0.2,
+            curve: .easeInOut
+        ) {
             self.imageView.layer.opacity = self.isSelected ? 0.6 : 1
             self.checkmarckContainerView.isHidden = !self.isSelected
             self.checkmarckImageView.isHidden = !self.isSelected
         }
+        
+        propertyAnimator?.startAnimation()
     }
     
     override func prepareForReuse() {
