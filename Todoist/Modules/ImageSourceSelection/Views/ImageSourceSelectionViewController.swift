@@ -95,8 +95,8 @@ final class ImageSourceSelectionViewController: UIViewController {
         self.remoteImageSourcePresenter = remoteImageSourcePresenter
         self.localImageSourcePresenter = localImageSourcePresenter
         super.init(nibName: nil, bundle: nil)
-        self.remoteImageSourcePresenter?.view = self
-        self.localImageSourcePresenter?.view = self
+        remoteImageSourcePresenter.view = self
+        localImageSourcePresenter.view = self
     }
     
     required init?(coder: NSCoder) {
