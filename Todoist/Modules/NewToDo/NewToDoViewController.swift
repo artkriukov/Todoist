@@ -244,15 +244,16 @@ final class NewToDoViewController: UIViewController {
             selectedDate = date
             formatter.dateFormat = "MMM d"
             let dateString = formatter.string(from: date)
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 self.datePickerSV.subtitleLabel.text = dateString
             }
+
             
         case .time:
             selectedTime = date
             formatter.dateFormat = "HH:mm"
             let timeString = formatter.string(from: date)
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 self.timePickerSV.subtitleLabel.text = timeString
             }
         }

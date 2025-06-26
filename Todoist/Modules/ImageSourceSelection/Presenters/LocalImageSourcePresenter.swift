@@ -58,9 +58,10 @@ final class LocalImageSourcePresenter: LocalImageSourceProtocol {
         
         self.localImages = images.compactMap { $0 }
         
-        DispatchQueue.main.async {
+        receiveOnMainThread {
             self.view?.displayFetchedImages(self.localImages)
         }
+
     }
     
     func numberOfImages() -> Int {

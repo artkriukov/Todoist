@@ -92,7 +92,8 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Private Methods
     
     private func handleNotification(_ notification: Notification) {
-        DispatchQueue.main.async { [weak self] in
+        
+        receiveOnMainThread { [weak self] in
             self?.toDoList.reloadData()
         }
     }
@@ -103,7 +104,7 @@ final class ToDoListViewController: UIViewController {
             try? itemsProvider.save(with: newItem)
             self.checkTasks()
             
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 self.toDoList.reloadData()
             }
         })

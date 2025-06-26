@@ -24,7 +24,8 @@ final class RemoteImageSourcePresenter: RemoteImageSourceProtocol {
         view?.displayFetchedImages([])
         
         UnsplashImageService.shared.fetchImages(with: query) { [weak self] results in
-            DispatchQueue.main.async {
+            
+            receiveOnMainThread {
                 self?.unsplashImages = results
                 self?.view?.displayFetchedImages(results)
             }

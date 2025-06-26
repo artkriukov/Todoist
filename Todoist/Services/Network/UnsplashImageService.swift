@@ -77,9 +77,10 @@ final class UnsplashImageService: UnsplashImageServiceProtocol {
                 return
             }
             
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 completion(image)
             }
+
         }.resume()
     }
     

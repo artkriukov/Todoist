@@ -81,10 +81,10 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
-        checkmarckImageView.image = nil
-        checkmarckContainerView.backgroundColor = nil
-        checkmarckContainerView.layer.borderColor = nil
-        checkmarckContainerView.layer.borderWidth = 0
+//        checkmarckImageView.image = nil
+//        checkmarckContainerView.backgroundColor = nil
+//        checkmarckContainerView.layer.borderColor = nil
+//        checkmarckContainerView.layer.borderWidth = 0
     }
 }
 
