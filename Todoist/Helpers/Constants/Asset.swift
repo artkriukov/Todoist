@@ -47,6 +47,15 @@ enum Asset {
             }
         }
         
+        static let grayTextColor = UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .light, .unspecified: UIColor(hexString: "#1C1C1E")
+            case .dark: UIColor(hexString: "#F2F2F7")
+            @unknown default:
+                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update separatorLine color handling.")
+            }
+        }
+        
         static let cardBackground = UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
             case .light, .unspecified: UIColor(hexString: "#F2F2F7")

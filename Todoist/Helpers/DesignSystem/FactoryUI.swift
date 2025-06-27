@@ -71,19 +71,23 @@ final class FactoryUI {
     
     func makeStyledButton(
         title: String,
-        handler: @escaping () -> Void)
-    -> UIButton {
+        alignment: UIControl.ContentHorizontalAlignment = .leading,
+        backgroundColor: UIColor = Asset.Colors.cardBackground,
+        contentInsets: NSDirectionalEdgeInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 0),
+        handler: @escaping () -> Void
+    ) -> UIButton {
         
-        let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
-        button.backgroundColor = Asset.Colors.secondaryBackground
+        var config = UIButton.Configuration.filled()
+        config.title = title
+        config.baseBackgroundColor = backgroundColor
+        config.baseForegroundColor = Asset.Colors.grayTextColor
+        config.contentInsets = contentInsets
+        
+        let button = UIButton(configuration: config)
         button.layer.cornerRadius = 8
-        button.tintColor = .gray
+        button.contentHorizontalAlignment = alignment
         
-        button.addAction(
-            UIAction { _ in
-                handler()
-            }, for: .touchUpInside)
+        button.addAction(UIAction { _ in handler() }, for: .touchUpInside)
         
         return button
     }
