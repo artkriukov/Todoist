@@ -11,10 +11,6 @@ enum PhotoMode {
     case local, remote
 }
 
-protocol LocalImageSourceViewProtocol: AnyObject {
-    func displayFetchedImages(_ images: [UIImage])
-}
-
 protocol RemoteImageSourceViewProtocol: AnyObject {
     func displayFetchedImages(_ images: [UnsplashResult])
 }
@@ -22,8 +18,10 @@ protocol RemoteImageSourceViewProtocol: AnyObject {
 final class ImageSourceSelectionViewController: UIViewController {
     
     private var mode: PhotoMode
+    private var dataSource: ImageDataSourceProtocol?
+    private var images = [ImageKey]()
+    
     private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
-    private let localImageSourcePresenter: LocalImageSourceProtocol?
     private var selectedImage: UIImage?
     
     var onImageReceived: ((UIImage) -> Void)?
@@ -88,15 +86,13 @@ final class ImageSourceSelectionViewController: UIViewController {
     
     init(
         mode: PhotoMode,
-        remoteImageSourcePresenter: RemoteImageSourcePresenter = RemoteImageSourcePresenter(),
-        localImageSourcePresenter: LocalImageSourceProtocol = LocalImageSourcePresenter()
+        remoteImageSourcePresenter: RemoteImageSourcePresenter = RemoteImageSourcePresenter()
     ) {
         self.mode = mode
         self.remoteImageSourcePresenter = remoteImageSourcePresenter
-        self.localImageSourcePresenter = localImageSourcePresenter
         super.init(nibName: nil, bundle: nil)
         remoteImageSourcePresenter.view = self
-        localImageSourcePresenter.view = self
+
     }
     
     required init?(coder: NSCoder) {
@@ -109,7 +105,6 @@ final class ImageSourceSelectionViewController: UIViewController {
         setupViews()
         setupConstraints()
         switchMode(to: mode)
-        localImageSourcePresenter?.requestPhotoLibraryAccess()
     }
     
     // MARK: - Private Methods
@@ -130,15 +125,28 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
     
     private func configureLocalMode() {
+        dataSource = LocalImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
-        collectionView.reloadData()
+        
+        dataSource?.getImages(
+            query: "",
+            page: 1,
+            completion: { [weak self] imagesKey in
+                print("Получено \(imagesKey.count) фотографий")
+                self?.images = imagesKey
+                receiveOnMainThread {
+                    self?.collectionView.reloadData()
+                }
+            })
+        
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
     }
     
     private func configureRemoteMode() {
+        dataSource = RemoteImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false
         
@@ -151,16 +159,18 @@ final class ImageSourceSelectionViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch mode {
-        case .local:
-            localImageSourcePresenter?.numberOfImages() ?? 0
-        case .remote:
-            remoteImageSourcePresenter?.numberOfImages() ?? 0
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int) -> Int
+    {
+        images.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: CellIdentifiers.photoCollectionViewCell,
             for: indexPath
@@ -169,13 +179,11 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         switch mode {
             
         case .local:
-            let localImages = localImageSourcePresenter?.getLocalImages()[indexPath.item]
+            let imageKey = images[indexPath.item]
+            dataSource?.getImage(for: imageKey, { image in
+                cell.configureCell(with: image)
+            })
             
-            guard let image = localImages else {
-                return UICollectionViewCell()
-            }
-            
-            cell.configureCell(with: image)
         case .remote:
             
             if remoteImageSourcePresenter?.numberOfImages() == 0 {
@@ -203,12 +211,11 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             
         case .local:
             
-            let localImages = localImageSourcePresenter?.getLocalImages()
-            selectedImage = localImages?[indexPath.item]
+            let selectedImageKey = images[indexPath.item]
             
-            if let selectedImage = selectedImage {
-                onImageReceived?(selectedImage)
-            }
+            dataSource?.getImage(for: selectedImageKey, { [weak self] image in
+                self?.onImageReceived?(image)
+            })
             
         case .remote:
             
@@ -230,10 +237,7 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
 }
 
 // MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
-extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol, LocalImageSourceViewProtocol {
-    func displayFetchedImages(_ images: [UIImage]) {
-        collectionView.reloadData()
-    }
+extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol {
     
     func displayFetchedImages(_ images: [UnsplashResult]) {
         collectionView.reloadData()
