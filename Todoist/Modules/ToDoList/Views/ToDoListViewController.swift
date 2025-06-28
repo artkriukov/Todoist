@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import SwiftUI
 import UIKit
 
 final class ToDoListViewController: UIViewController {
@@ -155,6 +156,10 @@ extension ToDoListViewController: UITableViewDataSource {
 extension ToDoListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
+        let detailView = DetailToDoView(toDo: selectedToDo)
+        let hostingVC = UIHostingController(rootView: detailView)
+        navigationController?.pushViewController(hostingVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

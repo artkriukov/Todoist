@@ -66,5 +66,6 @@ enum Asset {
     enum Images {
         static let defaultUserImage = UIImage(systemName: "person.circle.fill")
         static let defaultBackgroundImage = UIImage(systemName: "photo")
+        static let circle = UIImage(systemName: "circle")
     }
 }
