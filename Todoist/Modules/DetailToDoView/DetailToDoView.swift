@@ -37,13 +37,13 @@ struct DetailToDoView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            ScrollView(.horizontal) {
-                if let data = toDo.expirationDate {
-                    Text(data.formatted(
-                        date: .abbreviated,
-                        time: .shortened)
-                    )
-                }
+            if let data = toDo.expirationDate {
+                Text(data.formattedShort())
+                    .padding(.vertical, 7)
+                    .padding(.horizontal, 7)
+                    .foregroundStyle(.white)
+                    .background(Color.green)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             
             if let imageData = toDo.selectedImage, let uiImage = UIImage(data: imageData) {
@@ -53,7 +53,7 @@ struct DetailToDoView: View {
                     .frame(width: 350, height: 250)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-                
+            
             Spacer()
             
         }
