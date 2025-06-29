@@ -14,7 +14,7 @@ struct DetailToDoView: View {
     @State private var isDone = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 20) {
                 Button(action: {
                     didTapDoneButton()
@@ -23,20 +23,18 @@ struct DetailToDoView: View {
                     // swiftlint:disable:next superfluous_disable_command
                     Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
                         .resizable()
-                        .frame(width: 35, height: 35)
+                        .frame(width: 25, height: 25)
                         .foregroundColor(.gray)
                 }
                 Text(toDo.title)
-                    .font(.system(size: 35))
+                    .font(.system(size: 25))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
             
             if let description = toDo.description {
                 Text(description)
-                    .font(.system(size: 25))
+                    .font(.system(size: 20))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
             }
             
             ScrollView(.horizontal) {
@@ -47,7 +45,6 @@ struct DetailToDoView: View {
                     )
                 }
             }
-            .padding()
             
             if let imageData = toDo.selectedImage, let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
@@ -61,6 +58,8 @@ struct DetailToDoView: View {
             
         }
         .padding(.horizontal)
+        .navigationBarTitleDisplayMode(.inline)
+        .padding(.top, 20)
         .background(Color(Asset.Colors.mainBackground))
     }
     
@@ -73,7 +72,7 @@ struct DetailToDoView: View {
     DetailToDoView(
         toDo: ToDoItem(
             title: "Test",
-            description: nil,
+            description: "something",
             expirationDate: Date(),
             selectedImage: nil
         )

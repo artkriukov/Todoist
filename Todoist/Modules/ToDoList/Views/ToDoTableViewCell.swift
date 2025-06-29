@@ -44,7 +44,7 @@ final class ToDoTableViewCell: UITableViewCell {
         let element = UIStackView()
         element.axis = .vertical
         element.alignment = .leading
-        element.spacing = 10
+        element.spacing = 5
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -186,8 +186,8 @@ private extension ToDoTableViewCell {
             contentSV.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contentSV.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             
-//            imageIndicatorView.widthAnchor.constraint(equalToConstant: 20),
-//            imageIndicatorView.heightAnchor.constraint(equalToConstant: 20),
+            imageIndicatorView.widthAnchor.constraint(equalToConstant: 25),
+            imageIndicatorView.heightAnchor.constraint(equalToConstant: 25),
             
             doneButton.widthAnchor.constraint(equalToConstant: 24),
             doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)
