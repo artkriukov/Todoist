@@ -124,16 +124,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
         
-        dataSource?.getImages(
-            query: "",
-            page: 1,
-            completion: { [weak self] imagesKey in
-                print("Получено \(imagesKey.count) фотографий")
-                self?.images = imagesKey
-                receiveOnMainThread {
-                    self?.collectionView.reloadData()
-                }
-            })
+        getImages(with: "", page: 1)
         
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -149,6 +140,18 @@ final class ImageSourceSelectionViewController: UIViewController {
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    private func getImages(with query: String, page: Int) {
+        dataSource?.getImages(
+            query: query,
+            page: page,
+            completion: { [weak self] imagesKey in
+                self?.images = imagesKey
+                receiveOnMainThread {
+                    self?.collectionView.reloadData()
+                }
+            })
     }
 }
 
@@ -200,16 +203,13 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
         switch mode {
             
         case .local:
-            
             let selectedImageKey = images[indexPath.item]
-            
             dataSource?.getImage(for: selectedImageKey, { [weak self] image in
                 self?.onImageReceived?(image)
             })
             
         case .remote:
             let selectedImageKey = images[indexPath.item]
-            
             dataSource?.getImage(for: selectedImageKey, { [weak self] image in
                 self?.onImageReceived?(image)
             })
@@ -219,7 +219,6 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
 
 // MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
 extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol {
-    
     func displayFetchedImages(_ images: [UnsplashResult]) {
         collectionView.reloadData()
     }
@@ -239,7 +238,6 @@ extension ImageSourceSelectionViewController {
     }
     
     func setupConstraints() {
-        
         NSLayoutConstraint.activate([
             stackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -269,15 +267,7 @@ extension ImageSourceSelectionViewController {
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        
-        dataSource?.getImages(query: query, page: 1, completion: { [weak self] imagesKey in
-            print("Получено \(imagesKey.count) фотографий")
-            self?.images = imagesKey
-            receiveOnMainThread {
-                self?.collectionView.reloadData()
-            }
-        })
-        
+        getImages(with: query, page: 1)
         view.endEditing(true)
     }
 }
