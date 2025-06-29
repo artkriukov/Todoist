@@ -34,7 +34,7 @@ final class ToDoListViewController: UIViewController {
             ToDoTableViewCell.self,
             forCellReuseIdentifier: CellIdentifiers.mainToDoTableViewCell
         )
-        element.rowHeight = 100
+        element.rowHeight = UITableView.automaticDimension
         element.estimatedRowHeight = 100
         element.backgroundColor = Asset.Colors.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
