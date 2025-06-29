@@ -63,14 +63,6 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         imageView.image = image
     }
     
-    func configureCell(with imageURL: String) {
-        guard let url = URL(string: imageURL) else { return }
-        
-        UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
-            self?.imageView.image = image
-        }
-    }
-    
     private func updateSelectionUI() {
         propertyAnimator?.stopAnimation(true)
         

@@ -21,7 +21,6 @@ final class ImageSourceSelectionViewController: UIViewController {
     private var dataSource: ImageDataSourceProtocol?
     private var images = [ImageKey]()
     
-    private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
     private var selectedImage: UIImage?
     
     var onImageReceived: ((UIImage) -> Void)?
@@ -85,14 +84,10 @@ final class ImageSourceSelectionViewController: UIViewController {
     // MARK: - Init
     
     init(
-        mode: PhotoMode,
-        remoteImageSourcePresenter: RemoteImageSourcePresenter = RemoteImageSourcePresenter()
+        mode: PhotoMode
     ) {
         self.mode = mode
-        self.remoteImageSourcePresenter = remoteImageSourcePresenter
         super.init(nibName: nil, bundle: nil)
-        remoteImageSourcePresenter.view = self
-
     }
     
     required init?(coder: NSCoder) {
@@ -149,8 +144,8 @@ final class ImageSourceSelectionViewController: UIViewController {
         dataSource = RemoteImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false
-        
         collectionView.reloadData()
+        
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
@@ -161,8 +156,7 @@ final class ImageSourceSelectionViewController: UIViewController {
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(
         _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int) -> Int
-    {
+        numberOfItemsInSection section: Int) -> Int {
         images.count
     }
     
@@ -186,14 +180,10 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
             
         case .remote:
             
-            if remoteImageSourcePresenter?.numberOfImages() == 0 {
-                return cell
-            } else {
-                if let images = remoteImageSourcePresenter?.getUnsplashImages() {
-                    let unsplashImage = images[indexPath.item].urls.regular
-                    cell.configureCell(with: unsplashImage)
-                }
-            }
+            let imageKey = images[indexPath.item]
+            dataSource?.getImage(for: imageKey, { image in
+                cell.configureCell(with: image)
+            })
         }
         
         return cell
@@ -218,20 +208,11 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             })
             
         case .remote:
+            let selectedImageKey = images[indexPath.item]
             
-            guard let remoteImages = remoteImageSourcePresenter?.getUnsplashImages(),
-                  indexPath.item < remoteImages.count else {
-                return
-            }
-            
-            let imageUrlString = remoteImages[indexPath.item].urls.regular
-            
-            guard let url = URL(string: imageUrlString) else { return }
-            
-            UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
-                guard let self, let image else { return }
-                onImageReceived?(image)
-            }
+            dataSource?.getImage(for: selectedImageKey, { [weak self] image in
+                self?.onImageReceived?(image)
+            })
         }
     }
 }
@@ -288,7 +269,15 @@ extension ImageSourceSelectionViewController {
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        remoteImageSourcePresenter?.fetchRemoteImages(with: query)
+        
+        dataSource?.getImages(query: query, page: 1, completion: { [weak self] imagesKey in
+            print("Получено \(imagesKey.count) фотографий")
+            self?.images = imagesKey
+            receiveOnMainThread {
+                self?.collectionView.reloadData()
+            }
+        })
+        
         view.endEditing(true)
     }
 }
