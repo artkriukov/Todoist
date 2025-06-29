@@ -109,10 +109,7 @@ final class ToDoTableViewCell: UITableViewCell {
         
         if let expirationDate = item.expirationDate {
             let checker = DefaultExpirationChecker()
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM d, HH:mm"
-            formatter.timeZone = .current
-            let timeLabel = formatter.string(from: expirationDate)
+            let timeLabel = expirationDate.formattedShort()
             
             switch checker.check(date: expirationDate) {
             case .moreThanHalfHour:
