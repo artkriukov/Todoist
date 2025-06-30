@@ -118,6 +118,10 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
     
     private func configureLocalMode() {
+        images = []
+        page = 1
+        isLoading = false
+        
         dataSource = LocalImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
@@ -144,7 +148,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         guard !isLoading else { return }
         isLoading = true
         
-        if isNewSearch {
+        if isNewSearch || mode == .local {
             self.images = []
             self.page = 1
             collectionView.reloadData()
