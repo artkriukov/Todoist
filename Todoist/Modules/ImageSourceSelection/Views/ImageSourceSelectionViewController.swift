@@ -154,13 +154,12 @@ final class ImageSourceSelectionViewController: UIViewController {
             page: page,
             completion: { [weak self] imagesKey in
                 self?.images.append(contentsOf: imagesKey)
+                self?.isLoading = false
+                self?.page += 1
                 receiveOnMainThread {
                     self?.collectionView.reloadData()
                 }
             })
-        
-        isLoading = false
-        self.page += 1
     }
 }
 
