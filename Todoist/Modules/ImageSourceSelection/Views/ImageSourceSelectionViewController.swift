@@ -144,10 +144,15 @@ final class ImageSourceSelectionViewController: UIViewController {
         }
     }
     
-    private func getImages(with query: String, page: Int) {
-        
+    private func getImages(with query: String, page: Int, isNewSearch: Bool = false) {
         guard !isLoading else { return }
         isLoading = true
+        
+        if isNewSearch {
+            self.images = []
+            self.page = 1
+            collectionView.reloadData()
+        }
         
         dataSource?.getImages(
             query: query,
@@ -155,9 +160,8 @@ final class ImageSourceSelectionViewController: UIViewController {
             completion: { [weak self] imagesKey in
                 self?.images.append(contentsOf: imagesKey)
                 self?.isLoading = false
-                print("ЗАГРУЖЕНО \(imagesKey.count) картинки")
                 self?.page += 1
-                receiveOnMainThread {
+                DispatchQueue.main.async {
                     self?.collectionView.reloadData()
                 }
             })
@@ -292,7 +296,7 @@ extension ImageSourceSelectionViewController {
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        getImages(with: query, page: page)
+        getImages(with: query, page: 1, isNewSearch: true)
         view.endEditing(true)
     }
 }
