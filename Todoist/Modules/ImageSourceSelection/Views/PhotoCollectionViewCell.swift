@@ -5,8 +5,8 @@
 //  Created by Artem Kriukov on 05.06.2025.
 //
 
-import UIKit
 import Kingfisher
+import UIKit
 
 final class PhotoCollectionViewCell: UICollectionViewCell {
     
@@ -70,7 +70,6 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
                     .scaleFactor(UIScreen.main.scale),
                     .cacheOriginalImage
                 ])
-            print("kf")
         } else {
             imageView.image = image
         }

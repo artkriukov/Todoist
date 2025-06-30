@@ -50,8 +50,7 @@ final class UnsplashImageService: UnsplashImageServiceProtocol {
             guard let data = data,
                   error == nil else {
                 
-                self.logger
-                    .log(
+                self.logger.log(
                         "[UnsplashImageService.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
                     )
                 return

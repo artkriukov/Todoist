@@ -155,6 +155,7 @@ final class ImageSourceSelectionViewController: UIViewController {
             completion: { [weak self] imagesKey in
                 self?.images.append(contentsOf: imagesKey)
                 self?.isLoading = false
+                print("ЗАГРУЖЕНО \(imagesKey.count) картинки")
                 self?.page += 1
                 receiveOnMainThread {
                     self?.collectionView.reloadData()
@@ -192,7 +193,10 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
         case .remote:
             
             let imageKey = images[indexPath.item]
-            dataSource?.getImage(for: imageKey, { image, url  in
+            dataSource?.getImage(for: imageKey, { [weak collectionView] image, url  in
+                guard let cell = collectionView?.cellForItem(at: indexPath) as? PhotoCollectionViewCell else {
+                    return
+                }
                 cell.configureCell(with: image, url: url)
             })
         }
@@ -231,7 +235,9 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
 
         if offsetY > contentHeight - height * 2 {
             guard let query = searchBar.text else { return }
+            
             getImages(with: query, page: page)
+            view.endEditing(true)
         }
     }
 }
