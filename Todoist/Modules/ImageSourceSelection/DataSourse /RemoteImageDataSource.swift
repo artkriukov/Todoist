@@ -38,7 +38,7 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
 
     func getImage(
         for key: ImageKey,
-        _ completion: @escaping (UIImage) -> Void
+        _ completion: @escaping (UIImage, URL?) -> Void
     ) {
         guard let unsplashImages = unsplashImages.first(where: { $0.id == key }),
               let url = URL(string: unsplashImages.urls.regular) else {
@@ -48,7 +48,7 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
         unsplashImageService.loadImage(from: url) { image in
             guard let image else { return }
             receiveOnMainThread {
-                completion(image)
+                completion(image, url)
             }
         }
     }

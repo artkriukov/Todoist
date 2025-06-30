@@ -30,7 +30,7 @@ final class LocalImageDataSource: ImageDataSourceProtocol {
 
     func getImage(
         for key: ImageKey,
-        _ completion: @escaping (UIImage) -> Void
+        _ completion: @escaping (UIImage, URL?) -> Void
     ) {
         
         guard let asset = PHAsset.fetchAssets(
@@ -55,7 +55,7 @@ final class LocalImageDataSource: ImageDataSourceProtocol {
             guard let image else { return }
             
             receiveOnMainThread {
-                completion(image)
+                completion(image, nil)
             }
             
         }

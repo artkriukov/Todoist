@@ -185,15 +185,15 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
             
         case .local:
             let imageKey = images[indexPath.item]
-            dataSource?.getImage(for: imageKey, { image in
+            dataSource?.getImage(for: imageKey, { image, _  in
                 cell.configureCell(with: image)
             })
             
         case .remote:
             
             let imageKey = images[indexPath.item]
-            dataSource?.getImage(for: imageKey, { image in
-                cell.configureCell(with: image)
+            dataSource?.getImage(for: imageKey, { image, url  in
+                cell.configureCell(with: image, url: url)
             })
         }
         
@@ -212,13 +212,13 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             
         case .local:
             let selectedImageKey = images[indexPath.item]
-            dataSource?.getImage(for: selectedImageKey, { [weak self] image in
+            dataSource?.getImage(for: selectedImageKey, { [weak self] image, _  in
                 self?.onImageReceived?(image)
             })
             
         case .remote:
             let selectedImageKey = images[indexPath.item]
-            dataSource?.getImage(for: selectedImageKey, { [weak self] image in
+            dataSource?.getImage(for: selectedImageKey, { [weak self] image, _ in
                 self?.onImageReceived?(image)
             })
         }

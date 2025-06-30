@@ -20,6 +20,6 @@ protocol ImageDataSourceProtocol: AnyObject {
     
     func getImage(
         for key: ImageKey,
-        _ completion: @escaping (UIImage) -> Void
+        _ completion: @escaping (UIImage, URL?) -> Void
     )
 }

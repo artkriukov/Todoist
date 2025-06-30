@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class PhotoCollectionViewCell: UICollectionViewCell {
     
@@ -59,8 +60,20 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureCell(with image: UIImage) {
-        imageView.image = image
+    func configureCell(with image: UIImage, url: URL? = nil) {
+        if url != nil {
+            imageView.kf.indicatorType = .activity
+            imageView.kf.setImage(
+                with: url,
+                options: [
+                    .transition(.fade(0.5)),
+                    .scaleFactor(UIScreen.main.scale),
+                    .cacheOriginalImage
+                ])
+            print("kf")
+        } else {
+            imageView.image = image
+        }
     }
     
     private func updateSelectionUI() {
