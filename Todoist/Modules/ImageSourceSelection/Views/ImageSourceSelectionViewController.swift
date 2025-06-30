@@ -11,10 +11,6 @@ enum PhotoMode {
     case local, remote
 }
 
-protocol RemoteImageSourceViewProtocol: AnyObject {
-    func displayFetchedImages(_ images: [UnsplashResult])
-}
-
 final class ImageSourceSelectionViewController: UIViewController {
     
     private var mode: PhotoMode
@@ -243,13 +239,6 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             getImages(with: query, page: page)
             view.endEditing(true)
         }
-    }
-}
-
-// MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
-extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol {
-    func displayFetchedImages(_ images: [UnsplashResult]) {
-        collectionView.reloadData()
     }
 }
 
