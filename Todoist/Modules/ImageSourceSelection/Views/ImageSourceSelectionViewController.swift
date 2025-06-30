@@ -22,6 +22,8 @@ final class ImageSourceSelectionViewController: UIViewController {
     private var images = [ImageKey]()
     
     private var selectedImage: UIImage?
+    private var page = 1
+    private var isLoading = false
     
     var onImageReceived: ((UIImage) -> Void)?
     // MARK: - UI
@@ -143,15 +145,22 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
     
     private func getImages(with query: String, page: Int) {
+        
+        guard !isLoading else { return }
+        isLoading = true
+        
         dataSource?.getImages(
             query: query,
             page: page,
             completion: { [weak self] imagesKey in
-                self?.images = imagesKey
+                self?.images.append(contentsOf: imagesKey)
                 receiveOnMainThread {
                     self?.collectionView.reloadData()
                 }
             })
+        
+        isLoading = false
+        self.page += 1
     }
 }
 
@@ -215,6 +224,17 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
             })
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+
+        if offsetY > contentHeight - height * 2 {
+            guard let query = searchBar.text else { return }
+            getImages(with: query, page: page)
+        }
+    }
 }
 
 // MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
@@ -267,7 +287,7 @@ extension ImageSourceSelectionViewController {
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        getImages(with: query, page: 1)
+        getImages(with: query, page: page)
         view.endEditing(true)
     }
 }

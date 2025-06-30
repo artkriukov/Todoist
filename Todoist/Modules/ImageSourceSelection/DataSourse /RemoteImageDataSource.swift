@@ -10,6 +10,7 @@ import UIKit
 final class RemoteImageDataSource: ImageDataSourceProtocol {
     private let unsplashImageService: UnsplashImageServiceProtocol
     private var unsplashImages: [UnsplashResult] = []
+    private var page = 1
     
     var isQuerySearchAvailable = true
     
@@ -24,11 +25,13 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
         page: Int,
         completion: @escaping ([ImageKey]) -> Void
     ) {
-        unsplashImageService.fetchImages(with: query) { [weak self] images in
-            self?.unsplashImages = images
+        unsplashImageService
+            .fetchImages(with: query, page: page) { [weak self] images in
+            self?.unsplashImages.append(contentsOf: images)
             let imageKeys = images.map { $0.id }
             receiveOnMainThread {
                 completion(imageKeys)
+                self?.page += 1
             }
         }
     }
