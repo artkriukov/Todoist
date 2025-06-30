@@ -13,6 +13,8 @@ enum PhotoMode {
 
 final class ImageSourceSelectionViewController: UIViewController {
     
+    private let debouncer = Debouncer(delay: 0.4)
+    
     private var mode: PhotoMode
     private var dataSource: ImageDataSourceProtocol?
     private var images = [ImageKey]()
@@ -173,8 +175,8 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int) -> Int {
-        images.count
-    }
+            images.count
+        }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -236,7 +238,7 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
-
+        
         if offsetY > contentHeight - height * 2 {
             guard let query = searchBar.text else { return }
             
@@ -287,10 +289,12 @@ extension ImageSourceSelectionViewController {
 
 // MARK: - UISearchBarDelegate
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        getImages(with: query, page: 1, isNewSearch: true)
-        view.endEditing(true)
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        debouncer.run {
+            if !searchText.isEmpty {
+                self.getImages(with: searchText, page: 1, isNewSearch: true)
+            }
+        }
     }
 }
 
