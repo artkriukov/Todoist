@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  Todoist
+
+  Created by Artem Kriukov on 01.07.2025.
+  
+*/
+
+"name" = "Имя";
+"save" = "Сохранить";
+"add" = "Добавить";
+"cancel" = "Отменить";
+"back" = "Назад";
+
+"profile_key" = "Профиль";
+"change_photo" = "Изменить фото";
+"view_logs" = "Посмотреть логи";
+"system_logs" = "Логи системы";
+
+"to_do_list" = "Список дел";
+"overdue" = "Просрочено";
+"title" = "Название";
+"note" = "Заметка";
+"date" = "Дата";
+"time" = "Время";
+"new_reminders" = "Новое напоминание";

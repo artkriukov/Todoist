@@ -20,8 +20,16 @@ class TabBarController: UITabBarController {
         let settingsVC = UserSettingsViewController()
         
         viewControllers = [
-            configureNavigationBar(with: toDoListVC, title: "Список дел", image: "calendar.circle"),
-            configureNavigationBar(with: settingsVC, title: "Профиль", image: "person.circle.fill")
+            configureNavigationBar(
+                with: toDoListVC,
+                title: LocalizableLabels.toDoList.localize(),
+                image: "calendar.circle"
+            ),
+            configureNavigationBar(
+                with: settingsVC,
+                title: LocalizableLabels.profileKey.localize(),
+                image: "person.circle.fill"
+            )
         ]
         
     }

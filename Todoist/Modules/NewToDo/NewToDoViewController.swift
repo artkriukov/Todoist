@@ -38,11 +38,11 @@ final class NewToDoViewController: UIViewController {
     private lazy var infoStackView = FactoryUI.shared.makeStackView()
     
     private lazy var titleTextField = FactoryUI.shared.makeTetxField(
-        placeholder: "Название"
+        placeholder: LocalizableLabels.title.localize()
     )
     
     private lazy var descriptionTextField = FactoryUI.shared.makeTetxField(
-        placeholder: "Заметка"
+        placeholder: LocalizableLabels.note.localize()
     )
     
     private lazy var lineView: UIView = {
@@ -59,7 +59,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var datePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "calendar"),
-            title: "Дата",
+            title: LocalizableLabels.date.localize(),
             subtitle: nil,
             backgroundColor: .red,
             switcherAction: { [weak self] in
@@ -82,7 +82,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var timePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "clock"),
-            title: "Время",
+            title: LocalizableLabels.time.localize(),
             subtitle: nil,
             backgroundColor: .systemBlue,
             switcherAction: { [weak self] in
@@ -142,17 +142,17 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        title = "Новое напоминание"
+        title = LocalizableLabels.newReminders.localize()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Отменить",
+            title: LocalizableLabels.cancel.localize(),
             primaryAction: UIAction { [weak self] _ in
                 self?.cancelButtonTapped()
             }
         )
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Добавить",
+            title: LocalizableLabels.add.localize(),
             primaryAction: UIAction { [weak self] _ in
                 self?.addNewItemTapped()
             }

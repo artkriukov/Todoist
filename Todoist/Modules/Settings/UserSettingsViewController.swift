@@ -31,7 +31,8 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var changeUserImageButton: UIButton = {
         let element = UIButton(type: .system)
-        element.setTitle( "Изменить фото", for: .normal)
+        element
+            .setTitle(LocalizableLabels.changePhoto.localize(), for: .normal)
         element.addAction(
             UIAction { _ in
                 self.changeUserImageButtonTapped()
@@ -56,13 +57,14 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
-        element.text = "Имя"
+        element.text = LocalizableLabels.name.localize()
         element.font = UIConstants.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     private lazy var userNameTextField: UITextField = {
         let element = UITextField()
+#warning("localizovat'")
         element.placeholder = "Ваше имя"
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -70,7 +72,7 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var saveButton: UIButton = {
         let element = UIButton(type: .system)
-        element.setTitle("Сохранить", for: .normal)
+        element.setTitle(LocalizableLabels.save.localize(), for: .normal)
         element.addAction(UIAction { [weak self] _ in
             self?.saveButtonTapped()
         },
@@ -85,7 +87,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var logsButton: UIButton = {
         
         let element = FactoryUI.shared.makeStyledButton(
-            title: "Посмотреть логи") {
+            title: LocalizableLabels.systemLogs.localize()) {
                 self.logsButtonTapped()
             }
         
