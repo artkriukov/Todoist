@@ -38,6 +38,7 @@ struct DetailToDoView: View {
             }
             
             if let data = toDo.expirationDate {
+#warning("Кажется, что цвет можно получить из структуры ToDoItem, но нужно ли этой структуре знать о цвете даты?")
                 Text(data.formattedShort())
                     .padding(.vertical, 7)
                     .padding(.horizontal, 7)

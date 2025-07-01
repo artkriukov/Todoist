@@ -108,20 +108,9 @@ final class ToDoTableViewCell: UITableViewCell {
         }
         
         if let expirationDate = item.expirationDate {
-            let checker = DefaultExpirationChecker()
-            let timeLabel = expirationDate.formattedShort()
-            
-            switch checker.check(date: expirationDate) {
-            case .moreThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemGreen
-            case .lessThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemYellow
-            case .failed:
-                expirationDateLabel.text = "Просрочено"
-                expirationDateLabel.textColor = .systemRed
-            }
+            let data = ExpirationDateHelper().getExpirationDate(for: expirationDate)
+            expirationDateLabel.text = data.text
+            expirationDateLabel.textColor = data.uiColor
             expirationDateLabel.isHidden = false
         } else {
             expirationDateLabel.textColor = .systemGray
