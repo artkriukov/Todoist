@@ -22,12 +22,12 @@ class TabBarController: UITabBarController {
         viewControllers = [
             configureNavigationBar(
                 with: toDoListVC,
-                title: LocalizableLabels.toDoList.localize(),
+                title: ToDoStrings.toDoList.rawValue.localized(),
                 image: "calendar.circle"
             ),
             configureNavigationBar(
                 with: settingsVC,
-                title: LocalizableLabels.profileKey.localize(),
+                title: ProfileStrings.profileKey.rawValue.localized(),
                 image: "person.circle.fill"
             )
         ]

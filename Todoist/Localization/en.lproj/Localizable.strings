@@ -6,17 +6,23 @@
   
 */
 
+// GlobalStrings
 "name" = "Name";
 "save" = "Save";
 "add" = "Add";
 "cancel" = "Cancel";
 "back" = "Back";
+"delete" = "Delete";
 
+// ProfileStrings
 "profile_key" = "Profile";
 "change_photo" = "Change Photo";
 "view_logs" = "View Logs";
 "system_logs" = "System Logs";
+"your_name" = "Your Name";
+"selectFromGallery" = "Select from Gallery";
 
+// ToDoStrings
 "to_do_list" = "To-Do List";
 "overdue" = "Overdue";
 "title" = "Title";

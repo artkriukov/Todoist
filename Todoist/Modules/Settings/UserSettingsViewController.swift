@@ -32,7 +32,10 @@ final class UserSettingsViewController: UIViewController {
     private lazy var changeUserImageButton: UIButton = {
         let element = UIButton(type: .system)
         element
-            .setTitle(LocalizableLabels.changePhoto.localize(), for: .normal)
+            .setTitle(
+                ProfileStrings.changePhoto.rawValue.localized(),
+                for: .normal
+            )
         element.addAction(
             UIAction { _ in
                 self.changeUserImageButtonTapped()
@@ -57,22 +60,21 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
-        element.text = LocalizableLabels.name.localize()
+        element.text = GlobalStrings.name.rawValue.localized()
         element.font = UIConstants.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     private lazy var userNameTextField: UITextField = {
         let element = UITextField()
-#warning("localizovat'")
-        element.placeholder = "Ваше имя"
+        element.placeholder = ProfileStrings.yourName.rawValue.localized()
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var saveButton: UIButton = {
         let element = UIButton(type: .system)
-        element.setTitle(LocalizableLabels.save.localize(), for: .normal)
+        element.setTitle(GlobalStrings.save.rawValue.localized(), for: .normal)
         element.addAction(UIAction { [weak self] _ in
             self?.saveButtonTapped()
         },
@@ -87,7 +89,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var logsButton: UIButton = {
         
         let element = FactoryUI.shared.makeStyledButton(
-            title: LocalizableLabels.systemLogs.localize()) {
+            title: ProfileStrings.systemLogs.rawValue.localized()) {
                 self.logsButtonTapped()
             }
         

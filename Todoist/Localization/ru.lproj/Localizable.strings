@@ -6,17 +6,23 @@
   
 */
 
+// GlobalStrings
 "name" = "Имя";
 "save" = "Сохранить";
 "add" = "Добавить";
 "cancel" = "Отменить";
 "back" = "Назад";
+"delete" = "Удалить";
 
+// ProfileStrings
 "profile_key" = "Профиль";
 "change_photo" = "Изменить фото";
 "view_logs" = "Посмотреть логи";
 "system_logs" = "Логи системы";
+"your_name" = "Ваше имя";
+"selectFromGallery" = "Выбрать из галереи";
 
+// ToDoStrings
 "to_do_list" = "Список дел";
 "overdue" = "Просрочено";
 "title" = "Название";

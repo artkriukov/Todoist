@@ -38,11 +38,11 @@ final class NewToDoViewController: UIViewController {
     private lazy var infoStackView = FactoryUI.shared.makeStackView()
     
     private lazy var titleTextField = FactoryUI.shared.makeTetxField(
-        placeholder: LocalizableLabels.title.localize()
+        placeholder: ToDoStrings.title.rawValue.localized()
     )
     
     private lazy var descriptionTextField = FactoryUI.shared.makeTetxField(
-        placeholder: LocalizableLabels.note.localize()
+        placeholder: ToDoStrings.note.rawValue.localized()
     )
     
     private lazy var lineView: UIView = {
@@ -59,7 +59,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var datePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "calendar"),
-            title: LocalizableLabels.date.localize(),
+            title: ToDoStrings.date.rawValue.localized(),
             subtitle: nil,
             backgroundColor: .red,
             switcherAction: { [weak self] in
@@ -82,7 +82,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var timePickerSV: ExpirationDateStackView = {
         let config = ExpirationDateStackView.Configuration(
             image: UIImage(systemName: "clock"),
-            title: LocalizableLabels.time.localize(),
+            title: ToDoStrings.time.rawValue.localized(),
             subtitle: nil,
             backgroundColor: .systemBlue,
             switcherAction: { [weak self] in
@@ -142,17 +142,17 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        title = LocalizableLabels.newReminders.localize()
+        title = ToDoStrings.newReminders.rawValue.localized()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: LocalizableLabels.cancel.localize(),
+            title: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
                 self?.cancelButtonTapped()
             }
         )
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: LocalizableLabels.add.localize(),
+            title: GlobalStrings.add.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
                 self?.addNewItemTapped()
             }
