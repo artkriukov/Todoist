@@ -139,9 +139,16 @@ extension ToDoListViewController: UITableViewDataSource {
         }
         
         cell.handlerButtonTapped = { [weak self] in
-            self?.itemsProvider.removeItem(at: indexPath.row)
+            guard let self = self else { return }
+            guard let currentIndexPath = tableView.indexPath(for: cell) else { return }
             
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.itemsProvider.removeItem(at: currentIndexPath.row)
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [currentIndexPath], with: .automatic)
+            }, completion: { _ in
+                self.checkTasks()
+            })
         }
         
         let item = itemsProvider.getAllToDoItems()[indexPath.row]
@@ -154,7 +161,10 @@ extension ToDoListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension ToDoListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         tableView.deselectRow(at: indexPath, animated: true)
         let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
         let detailView = DetailToDoView(toDo: selectedToDo)
@@ -162,7 +172,10 @@ extension ToDoListViewController: UITableViewDelegate {
         navigationController?.pushViewController(hostingVC, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
         
         let deleteAction = UIContextualAction(
             style: .destructive,

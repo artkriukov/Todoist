@@ -144,7 +144,7 @@ final class ToDoTableViewCell: UITableViewCell {
         toDoDescrLabel.isHidden = true
         expirationDateLabel.isHidden = true
         imageIndicatorView.isHidden = true
-        
+        doneButton.setImage(nil, for: .normal)
     }
 }
 
