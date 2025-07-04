@@ -80,7 +80,8 @@ final class ToDoTableViewCell: UITableViewCell {
                 expirationDateLabel.textColor = .systemYellow
                 
             case .failed:
-                expirationDateLabel.text = "Просрочено"
+                expirationDateLabel.text = ToDoStrings.overdue.rawValue
+                    .localized()
                 expirationDateLabel.textColor = .systemRed
             }
         } else {

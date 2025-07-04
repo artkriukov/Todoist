@@ -49,10 +49,10 @@ final class LogsViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        title = "Логи системы"
+        title = ProfileStrings.systemLogs.rawValue.localized()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Назад",
+            title: GlobalStrings.back.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
                 self?.cancelButtonTapped()
             }
