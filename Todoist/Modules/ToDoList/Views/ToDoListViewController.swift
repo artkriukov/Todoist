@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import SwiftUI
 import UIKit
 
 final class ToDoListViewController: UIViewController {
@@ -20,7 +21,7 @@ final class ToDoListViewController: UIViewController {
         element.text = "Задач нет"
         element.textColor = .lightGray
         element.isHidden = true
-        element.font = UIConstants.CustomFont.medium(size: 27)
+        element.font = Asset.CustomFont.medium(size: 27)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -31,9 +32,11 @@ final class ToDoListViewController: UIViewController {
         element.delegate = self
         element.register(
             ToDoTableViewCell.self,
-            forCellReuseIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell
+            forCellReuseIdentifier: CellIdentifiers.mainToDoTableViewCell
         )
-        element.backgroundColor = UIConstants.Colors.mainBackground
+        element.rowHeight = UITableView.automaticDimension
+        element.estimatedRowHeight = 100
+        element.backgroundColor = Asset.Colors.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -41,7 +44,7 @@ final class ToDoListViewController: UIViewController {
     private lazy var addItemButton: RoundedActionButton = {
         let config = RoundedActionButton.Configuration(
             image: UIImage(systemName: "plus"),
-            backgroundColor: UIConstants.Colors.blueColor,
+            backgroundColor: Asset.Colors.blueColor,
             action: { [weak self] in
                 self?.addNewItemTapped()
             })
@@ -129,10 +132,23 @@ extension ToDoListViewController: UITableViewDataSource {
     ) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: TableViewCellIdentifiers.mainToDoTableViewCell,
+            withIdentifier: CellIdentifiers.mainToDoTableViewCell,
             for: indexPath
         ) as? ToDoTableViewCell else {
             return UITableViewCell()
+        }
+        
+        cell.handlerButtonTapped = { [weak self] in
+            guard let self = self else { return }
+            guard let currentIndexPath = tableView.indexPath(for: cell) else { return }
+            
+            self.itemsProvider.removeItem(at: currentIndexPath.row)
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [currentIndexPath], with: .automatic)
+            }, completion: { _ in
+                self.checkTasks()
+            })
         }
         
         let item = itemsProvider.getAllToDoItems()[indexPath.row]
@@ -145,11 +161,21 @@ extension ToDoListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension ToDoListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
+        let detailView = DetailToDoView(toDo: selectedToDo)
+        let hostingVC = UIHostingController(rootView: detailView)
+        navigationController?.pushViewController(hostingVC, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
         
         let deleteAction = UIContextualAction(
             style: .destructive,
@@ -171,7 +197,7 @@ extension ToDoListViewController: UITableViewDelegate {
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoListViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(toDoList)
         view.addSubview(emptyLabel)

@@ -16,11 +16,11 @@ final class NewToDoViewController: UIViewController {
     
     private var selectedDate: Date?
     private var selectedTime: Date?
-    
-    var expirationDate: Date?
+    private var expirationDate: Date?
+    private var selectedImage: UIImage?
     
     var saveItem: ((ToDoItem) -> Void)?
-    
+    var onImageReceived: ((UIImage) -> Void)?
     // MARK: - UI
     
     private lazy var scrollView: UIScrollView = {
@@ -47,17 +47,17 @@ final class NewToDoViewController: UIViewController {
     
     private lazy var lineView: UIView = {
         let element = UIView()
-        element.backgroundColor = UIConstants.Colors.separatorLine
+        element.backgroundColor = Asset.Colors.separatorLine
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var expirationDateStackView = FactoryUI.shared.makeStackView(
-        layoutMargins: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layoutMargins: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
     )
     
-    private lazy var datePickerSV: ExpirationDateStackView = {
-        let config = ExpirationDateStackView.Configuration(
+    private lazy var datePickerSV: TitledSwitchView = {
+        let config = TitledSwitchView.Configuration(
             image: UIImage(systemName: "calendar"),
             title: ToDoStrings.date.rawValue.localized(),
             subtitle: nil,
@@ -66,7 +66,7 @@ final class NewToDoViewController: UIViewController {
                 self?.dataSwitcherValueChanged()
             })
         
-        let element = ExpirationDateStackView(configuration: config)
+        let element = TitledSwitchView(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         
         return element
@@ -79,8 +79,8 @@ final class NewToDoViewController: UIViewController {
         }
     )
     
-    private lazy var timePickerSV: ExpirationDateStackView = {
-        let config = ExpirationDateStackView.Configuration(
+    private lazy var timePickerSV: TitledSwitchView = {
+        let config = TitledSwitchView.Configuration(
             image: UIImage(systemName: "clock"),
             title: ToDoStrings.time.rawValue.localized(),
             subtitle: nil,
@@ -89,7 +89,7 @@ final class NewToDoViewController: UIViewController {
                 self?.timeSwitcherValueChanged()
             })
         
-        let element = ExpirationDateStackView(configuration: config)
+        let element = TitledSwitchView(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         
         return element
@@ -103,9 +103,52 @@ final class NewToDoViewController: UIViewController {
         }
     )
     
+    private lazy var toDoImageView: TitledSwitchView = {
+        let config = TitledSwitchView.Configuration(
+            image: UIImage(systemName: "photo"),
+            title: "Изображение",
+            subtitle: nil,
+            backgroundColor: .systemYellow,
+            switcherAction: { [weak self] in
+                self?.toDoImageSwitcherValueChanged()
+            })
+        
+        let element = TitledSwitchView(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var toDoImageButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle("Загрузить изображение", for: .normal)
+        element.isHidden = true
+        element.addAction(
+            UIAction { _ in
+                self.toDoImageButtonTapped()
+            }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var toDoSelectedImageView: UIImageView = {
+        let element = UIImageView()
+        element.tintColor = Asset.Colors.imagePlaceholderTint
+        element.layer.cornerRadius = 12
+        element.clipsToBounds = true
+        element.isHidden = true
+        element.contentMode = .scaleAspectFill
+        element.image = Asset.Images.defaultBackgroundImage
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Init
-    init(saveItem: @escaping (ToDoItem) -> Void) {
+    init(
+        saveItem: ((ToDoItem) -> Void)? = nil,
+        onImageReceived: ((UIImage) -> Void)? = nil
+    ) {
         self.saveItem = saveItem
+        self.onImageReceived = onImageReceived
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -119,6 +162,11 @@ final class NewToDoViewController: UIViewController {
         setupViews()
         setupConstraints()
         configureNavigationBar()
+        
+        onImageReceived = { [weak self] image in
+            self?.toDoSelectedImageView.image = image
+        }
+
     }
     
     // MARK: - Private Methods
@@ -126,11 +174,13 @@ final class NewToDoViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         let descr = descriptionTextField.text
         let date = combineDateAndTime(with: selectedDate, and: selectedTime)
+        let dataImage = selectedImage?.pngData()
         
         let newItem = ToDoItem(
             title: title,
             description: descr,
-            expirationDate: date
+            expirationDate: date,
+            selectedImage: dataImage
         )
         saveItem?(newItem)
         
@@ -160,16 +210,27 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func dataSwitcherValueChanged() {
-        handlePickerSwitch(isOn: datePickerSV.switcher.isOn, picker: datePicker)
+        handleToggleChange(isOn: datePickerSV.switcher.isOn, relatedView: datePicker)
     }
     
     private func timeSwitcherValueChanged() {
-        handlePickerSwitch(isOn: timePickerSV.switcher.isOn, picker: timePicker)
+        handleToggleChange(isOn: timePickerSV.switcher.isOn, relatedView: timePicker)
     }
     
-    private func handlePickerSwitch(isOn: Bool, picker: UIView) {
-        UIView.animate(withDuration: 0.3) {
-            picker.isHidden = !isOn
+    private func toDoImageSwitcherValueChanged() {
+        handleToggleChange(
+            isOn: toDoImageView.switcher.isOn,
+            relatedView: toDoImageButton,
+            relatedImage: toDoSelectedImageView
+        )
+    }
+    
+    private func handleToggleChange(isOn: Bool, relatedView: UIView, relatedImage: UIImageView? = nil) {
+        UIView.animate(withDuration: 0.5) {
+            relatedView.isHidden = !isOn
+            relatedView.layer.opacity = isOn ? 1 : 0
+            relatedImage?.isHidden = !isOn
+            relatedImage?.layer.opacity = isOn ? 1 : 0
         }
     }
     
@@ -214,11 +275,20 @@ final class NewToDoViewController: UIViewController {
         
         return expirationDate
     }
+    
+    private func toDoImageButtonTapped() {
+        let imageSourceVC = ImageSourceSelectionViewController(mode: .local)
+        imageSourceVC.onImageReceived = { [weak self] image in
+            self?.toDoSelectedImageView.image = image
+            self?.selectedImage = image
+        }
+        navigationController?.pushViewController(imageSourceVC, animated: true)
+    }
 }
 
 private extension NewToDoViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -229,10 +299,10 @@ private extension NewToDoViewController {
         infoStackView.addArrangedSubview(descriptionTextField)
         
         contentView.addSubview(expirationDateStackView)
-        expirationDateStackView.addArrangedSubview(datePickerSV)
-        expirationDateStackView.addArrangedSubview(datePicker)
-        expirationDateStackView.addArrangedSubview(timePickerSV)
-        expirationDateStackView.addArrangedSubview(timePicker)
+        
+        [datePickerSV, datePicker, timePickerSV, timePicker, toDoImageView, toDoImageButton, toDoSelectedImageView].forEach {
+            expirationDateStackView.addArrangedSubview($0)
+        }
     }
     
     func setupConstraints() {
@@ -269,7 +339,13 @@ private extension NewToDoViewController {
             expirationDateStackView.trailingAnchor
                 .constraint(equalTo: contentView.trailingAnchor, constant: -15),
             expirationDateStackView.bottomAnchor
-                .constraint(equalTo: contentView.bottomAnchor, constant: -20)
+                .constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            
+            toDoSelectedImageView.leadingAnchor
+                .constraint(equalTo: expirationDateStackView.leadingAnchor, constant: 15),
+            toDoSelectedImageView.trailingAnchor
+                .constraint(equalTo: expirationDateStackView.trailingAnchor, constant: -15),
+            toDoSelectedImageView.heightAnchor.constraint(equalToConstant: 200)
         ])
     }
 }

@@ -11,18 +11,48 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private var item: ToDoItem?
     
+    var handlerButtonTapped: (() -> Void)?
+    
     // MARK: - UI
-    private lazy var toDoMainSV: UIStackView = {
-        let element = UIStackView()
-        element.axis = .vertical
-        element.spacing = 8
+    
+    private lazy var contentSV: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.alignment = .top
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private lazy var doneButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.backgroundColor = Asset.Colors.mainBackground
+        element.tintColor = Asset.Colors.lightGrayColor
+        element.layer.borderColor = Asset.Colors.separatorLine.cgColor
+        element.layer.borderWidth = 1
+        element.layer.cornerRadius = 12
+        element.addAction(
+            UIAction { [weak self] _ in
+                self?.didTappedDoneButton()
+            }, for: .touchUpInside
+        )
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
+    private lazy var toDoMainSV: UIStackView = {
+        let element = UIStackView()
+        element.axis = .vertical
+        element.alignment = .leading
+        element.spacing = 5
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var toDoTitleLabel: UILabel = {
         let element = UILabel()
         element.text = "Title"
-        element.font = UIConstants.CustomFont.medium(size: 17)
+        element.font = Asset.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -31,15 +61,23 @@ final class ToDoTableViewCell: UITableViewCell {
         let element = UILabel()
         element.text = "Description"
         element.numberOfLines = 0
-        element.font = UIConstants.CustomFont.regular(size: 14)
+        element.font = Asset.CustomFont.regular(size: 14)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var expirationDateLabel: UILabel = {
         let element = UILabel()
-        element.font = UIConstants.CustomFont.regular(size: 13)
+        element.font = Asset.CustomFont.regular(size: 13)
         element.textColor = .systemGreen
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var imageIndicatorView: UIImageView = {
+        let element = UIImageView()
+        element.contentMode = .scaleAspectFill
+        element.isHidden = true
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -58,62 +96,87 @@ final class ToDoTableViewCell: UITableViewCell {
     // MARK: - Public Method
     func configureCell(with item: ToDoItem) {
         self.item = item
-        toDoTitleLabel.text = item.title
-        toDoDescrLabel.text = item.description
         
-        let checker = DefaultExpirationChecker()
+        hideOptionalElements()
+        
+        toDoTitleLabel.text = item.title
+        toDoTitleLabel.isHidden = false
+        
+        if let description = item.description, !description.isEmpty {
+            toDoDescrLabel.text = description
+            toDoDescrLabel.isHidden = false
+        }
         
         if let expirationDate = item.expirationDate {
-            
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM d, HH:mm"
-            formatter.timeZone = .current
-            let timeLabel = formatter.string(from: expirationDate)
-            
-            switch checker.check(date: expirationDate) {
-            case .moreThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemGreen
-                
-            case .lessThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemYellow
-                
-            case .failed:
-                expirationDateLabel.text = ToDoStrings.overdue.rawValue
-                    .localized()
-                expirationDateLabel.textColor = .systemRed
-            }
+            let data = ExpirationDateHelper().getExpirationDate(for: expirationDate)
+            expirationDateLabel.text = data.text
+            expirationDateLabel.textColor = data.uiColor
+            expirationDateLabel.isHidden = false
         } else {
             expirationDateLabel.textColor = .systemGray
         }
+        
+        if item.selectedImage != nil {
+            imageIndicatorView.image = UIImage(systemName: "photo.artframe.circle.fill")
+            imageIndicatorView.isHidden = false
+        }
+    }
+    
+    private func didTappedDoneButton() {
+        doneButton.setImage(
+                UIImage(systemName: "checkmark.circle.fill"),
+                for: .normal
+            )
+        
+        handlerButtonTapped?()
+
+    }
+    
+    private func hideOptionalElements() {
+        toDoDescrLabel.isHidden = true
+        expirationDateLabel.isHidden = true
+        imageIndicatorView.isHidden = true
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        toDoTitleLabel.text = nil
-        toDoDescrLabel.text = nil
-        expirationDateLabel.text = nil
+        toDoTitleLabel.isHidden = true
+        toDoDescrLabel.isHidden = true
+        expirationDateLabel.isHidden = true
+        imageIndicatorView.isHidden = true
+        doneButton.setImage(nil, for: .normal)
     }
 }
 
 // MARK: - Setup Views & Setup Constraints
 private extension ToDoTableViewCell {
     func setupViews() {
-        backgroundColor = UIConstants.Colors.mainBackground
-        addSubview(toDoMainSV)
+        backgroundColor = Asset.Colors.mainBackground
+        
+        contentView.addSubview(contentSV)
+        contentSV.addArrangedSubview(doneButton)
+        
+        contentSV.addArrangedSubview(toDoMainSV)
+        
         toDoMainSV.addArrangedSubview(toDoTitleLabel)
         toDoMainSV.addArrangedSubview(toDoDescrLabel)
         toDoMainSV.addArrangedSubview(expirationDateLabel)
+        toDoMainSV.addArrangedSubview(imageIndicatorView)
+        
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            toDoMainSV.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            toDoMainSV.leadingAnchor
-                .constraint(equalTo: leadingAnchor, constant: 16),
-            toDoMainSV.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            toDoMainSV.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4)
+            contentSV.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            contentSV.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            contentSV.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contentSV.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            
+            imageIndicatorView.widthAnchor.constraint(equalToConstant: 25),
+            imageIndicatorView.heightAnchor.constraint(equalToConstant: 25),
+            
+            doneButton.widthAnchor.constraint(equalToConstant: 24),
+            doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)
         ])
     }
 }

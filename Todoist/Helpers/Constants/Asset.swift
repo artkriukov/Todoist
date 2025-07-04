@@ -1,5 +1,5 @@
 //
-//  UIConstants.swift
+//  Asset.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 25.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum UIConstants {
+enum Asset {
     
     enum CustomFont {
         static func regular(size: CGFloat) -> UIFont {
@@ -56,13 +56,16 @@ enum UIConstants {
             }
         }
         
-        static let blueColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .light, .unspecified: UIColor(hexString: "#007AFF")
-            case .dark: UIColor(hexString: "#007AFF")
-            @unknown default:
-                fatalError("Unhandled userInterfaceStyle case: \(traitCollection.userInterfaceStyle). Update blueColor color handling.")
-            }
-        }
+        static let blueColor = UIColor(hexString: "#007AFF")
+        static let whiteColor = UIColor(hexString: "#FFFFFF")
+        static let lightGrayColor = UIColor(hexString: "#D1D1D6")
+        static let imagePlaceholderBackground = UIColor(hexString: "#E5E5EA")
+        static let imagePlaceholderTint = UIColor(hexString: "#AEAEB2")
+    }
+    
+    enum Images {
+        static let defaultUserImage = UIImage(systemName: "person.circle.fill")
+        static let defaultBackgroundImage = UIImage(systemName: "photo")
+        static let circle = UIImage(systemName: "circle")
     }
 }

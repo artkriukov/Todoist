@@ -1,5 +1,5 @@
 //
-//  ExpirationDateStackView.swift
+//  TitledSwitchView.swift
 //  Todoist
 //
 //  Created by Artem Kriukov on 25.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ExpirationDateStackView: UIView {
+final class TitledSwitchView: UIView {
     
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
@@ -42,10 +42,10 @@ final class ExpirationDateStackView: UIView {
         vDateStackView.spacing = 4
         
         titleLabel.text = configuration.title
-        titleLabel.font = UIConstants.CustomFont.medium(size: 17)
+        titleLabel.font = Asset.CustomFont.medium(size: 17)
         
         subtitleLabel.text = configuration.subtitle
-        subtitleLabel.font = UIConstants.CustomFont.regular(size: 13)
+        subtitleLabel.font = Asset.CustomFont.regular(size: 13)
         
         [titleLabel, subtitleLabel].forEach {
             vDateStackView.addArrangedSubview($0)
@@ -88,7 +88,7 @@ final class ExpirationDateStackView: UIView {
     }
 }
 
-extension ExpirationDateStackView {
+extension TitledSwitchView {
     struct Configuration {
         let image: UIImage?
         let title: String

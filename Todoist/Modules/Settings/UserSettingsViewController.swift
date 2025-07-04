@@ -21,7 +21,7 @@ final class UserSettingsViewController: UIViewController {
     
     private lazy var userImage: UIImageView = {
         let element = UIImageView()
-        element.image = ImagesConstants.defoultUserImage
+        element.image = Asset.Images.defaultUserImage
         element.tintColor = .gray
         element.layer.cornerRadius = 60
         element.clipsToBounds = true
@@ -79,7 +79,7 @@ final class UserSettingsViewController: UIViewController {
             self?.saveButtonTapped()
         },
                           for: .touchUpInside)
-        element.backgroundColor = UIConstants.Colors.blueColor
+        element.backgroundColor = Asset.Colors.blueColor
         element.tintColor = .white
         element.layer.cornerRadius = 10
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -143,7 +143,7 @@ final class UserSettingsViewController: UIViewController {
         if let image = userSettings?.image {
             userImage.image = image
         } else {
-            userImage.image = ImagesConstants.defoultUserImage
+            userImage.image = Asset.Images.defaultUserImage
         }
     }
     
@@ -191,7 +191,7 @@ extension UserSettingsViewController: UIImagePickerControllerDelegate, UINavigat
 
 private extension UserSettingsViewController {
     func setupViews() {
-        view.backgroundColor = UIConstants.Colors.mainBackground
+        view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(userImageStackView)
         userImageStackView.addArrangedSubview(userImage)

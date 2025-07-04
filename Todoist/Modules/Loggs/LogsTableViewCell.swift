@@ -15,7 +15,7 @@ final class LogsTableViewCell: UITableViewCell {
         let element = UILabel()
         element.numberOfLines = 0
         element.lineBreakMode = .byWordWrapping
-        element.font = UIConstants.CustomFont.regular(size: 16)
+        element.font = Asset.CustomFont.regular(size: 16)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
