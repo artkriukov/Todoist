@@ -179,7 +179,7 @@ extension ToDoListViewController: UITableViewDelegate {
         
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Удалить"
+            title: GlobalStrings.delete.rawValue.localized()
         ) { _, _, completionHandler in
             
             self.itemsProvider.removeItem(at: indexPath.row)

@@ -93,13 +93,13 @@ final class FactoryUI {
         onUnsplashTap: @escaping () -> Void
     ) -> UIAlertController {
         let actionSheet = UIAlertController(
-            title: "Изменить фото",
+            title: ProfileStrings.changePhoto.rawValue.localized(),
             message: nil,
             preferredStyle: .actionSheet
         )
         
         actionSheet.addAction(UIAlertAction(
-            title: "Выбрать из галереи",
+            title: ProfileStrings.selectFromGallery.rawValue.localized(),
             style: .default,
             handler: { _ in
                 onGalleryTap()
@@ -107,15 +107,7 @@ final class FactoryUI {
         )
         
         actionSheet.addAction(UIAlertAction(
-            title: "Загрузить с Unsplash",
-            style: .default,
-            handler: { _ in
-                onUnsplashTap()
-            })
-        )
-        
-        actionSheet.addAction(UIAlertAction(
-            title: "Отмена",
+            title: GlobalStrings.cancel.rawValue.localized(),
             style: .cancel
         ))
         
