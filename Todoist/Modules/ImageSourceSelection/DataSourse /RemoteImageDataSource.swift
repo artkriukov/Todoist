@@ -11,9 +11,10 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
     private let unsplashImageService: UnsplashImageServiceProtocol
     private var unsplashImages: [UnsplashResult] = []
     private var page = 1
-    
+    private var lastQuery: String = ""
+
     var isQuerySearchAvailable = true
-    
+
     init(
         unsplashImageService: UnsplashImageServiceProtocol = UnsplashImageService.shared
     ) {
@@ -22,35 +23,47 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
 
     func getImages(
         query: String,
-        page: Int,
-        completion: @escaping ([ImageKey]) -> Void
+        completion: @escaping (GetImagesResult) -> Void
     ) {
-        unsplashImageService
-            .fetchImages(with: query, page: page) { [weak self] images in
-            self?.unsplashImages.append(contentsOf: images)
+        if lastQuery != query {
+            page = 1
+            unsplashImages = []
+            lastQuery = query
+        }
+        unsplashImageService.fetchImages(with: query, page: page) { [weak self] images in
+            guard let self = self else { return }
+            if images.isEmpty {
+                DispatchQueue.main.async {
+                    completion(.failure(.noImagesFound))
+                }
+                return
+            }
+            self.unsplashImages.append(contentsOf: images)
             let imageKeys = images.map { $0.id }
-            receiveOnMainThread {
-                completion(imageKeys)
-                self?.page += 1
+            DispatchQueue.main.async {
+                completion(.success(imageKeys))
+                self.page += 1
             }
         }
     }
-
+    
     func getImage(
         for key: ImageKey,
-        _ completion: @escaping (UIImage, URL?) -> Void
+        _ completion: @escaping (GetImageResult) -> Void
     ) {
-        guard let unsplashImages = unsplashImages.first(where: { $0.id == key }),
-              let url = URL(string: unsplashImages.urls.regular) else {
+        guard let unsplashImage = unsplashImages.first(where: { $0.id == key }),
+              let url = URL(string: unsplashImage.urls.regular) else {
+            completion(.failure(.noImagesFound))
             return
         }
-        
         unsplashImageService.loadImage(from: url) { image in
-            guard let image else { return }
-            receiveOnMainThread {
-                completion(image, url)
+            DispatchQueue.main.async {
+                if let image = image {
+                    completion(.success(.image(image)))
+                } else {
+                    completion(.success(.url(url)))
+                }
             }
         }
     }
-
 }

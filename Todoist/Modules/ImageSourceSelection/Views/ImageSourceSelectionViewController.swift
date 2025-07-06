@@ -128,7 +128,7 @@ final class ImageSourceSelectionViewController: UIViewController {
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
         
-        getImages(with: "", page: 1)
+        getImages(with: "")
         
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -146,27 +146,28 @@ final class ImageSourceSelectionViewController: UIViewController {
         }
     }
     
-    private func getImages(with query: String, page: Int, isNewSearch: Bool = false) {
+    private func getImages(with query: String, isNewSearch: Bool = false) {
         guard !isLoading else { return }
         isLoading = true
-        
+
         if isNewSearch || mode == .local {
             self.images = []
-            self.page = 1
             collectionView.reloadData()
         }
-        
-        dataSource?.getImages(
-            query: query,
-            page: page,
-            completion: { [weak self] imagesKey in
-                self?.images.append(contentsOf: imagesKey)
-                self?.isLoading = false
-                self?.page += 1
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            })
+
+        dataSource?.getImages(query: query) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageKeys):
+                self.images.append(contentsOf: imageKeys)
+            case .failure:
+                self.images = []
+            }
+            self.isLoading = false
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
     }
 }
 
@@ -188,24 +189,8 @@ extension ImageSourceSelectionViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
         
-        switch mode {
-            
-        case .local:
-            let imageKey = images[indexPath.item]
-            dataSource?.getImage(for: imageKey, { image, _  in
-                cell.configureCell(with: image)
-            })
-            
-        case .remote:
-            
-            let imageKey = images[indexPath.item]
-            dataSource?.getImage(for: imageKey, { [weak collectionView] image, url  in
-                guard let cell = collectionView?.cellForItem(at: indexPath) as? PhotoCollectionViewCell else {
-                    return
-                }
-                cell.configureCell(with: image, url: url)
-            })
-        }
+        let imageKey = images[indexPath.item]
+        cell.configureCell(with: imageKey, dataSource: dataSource)
         
         return cell
     }
@@ -218,19 +203,23 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
         didSelectItemAt indexPath: IndexPath
     ) {
         
-        switch mode {
-            
-        case .local:
-            let selectedImageKey = images[indexPath.item]
-            dataSource?.getImage(for: selectedImageKey, { [weak self] image, _  in
-                self?.onImageReceived?(image)
-            })
-            
-        case .remote:
-            let selectedImageKey = images[indexPath.item]
-            dataSource?.getImage(for: selectedImageKey, { [weak self] image, _ in
-                self?.onImageReceived?(image)
-            })
+        let selectedImageKey = images[indexPath.item]
+        
+        dataSource?.getImage(for: selectedImageKey) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let value):
+                switch value {
+                case .image(let image):
+                    self.onImageReceived?(image)
+                case .url(let url):
+                    // если нужен url, обработайте соответствующим образом
+                    break
+                }
+            case .failure:
+                // обработка ошибки
+                break
+            }
         }
     }
     
@@ -238,15 +227,13 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
-        
-        if offsetY > contentHeight - height * 2 {
+
+        if offsetY > contentHeight - height * 2, !isLoading {
             guard let query = searchBar.text else { return }
-            
-            getImages(with: query, page: page)
+            getImages(with: query)
             view.endEditing(true)
         }
-    }
-}
+    }}
 
 // MARK: - Setup Views & Setup Constraints
 extension ImageSourceSelectionViewController {
@@ -290,10 +277,9 @@ extension ImageSourceSelectionViewController {
 // MARK: - UISearchBarDelegate
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        debouncer.run {
-            if !searchText.isEmpty {
-                self.getImages(with: searchText, page: 1, isNewSearch: true)
-            }
+        debouncer.run { [weak self] in
+            guard let self else { return }
+            self.getImages(with: searchText, isNewSearch: true)
         }
     }
 }

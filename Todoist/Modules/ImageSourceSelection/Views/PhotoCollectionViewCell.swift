@@ -20,6 +20,13 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - UI
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let element = UIActivityIndicatorView(style: .medium)
+        element.hidesWhenStopped = true
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+
     private lazy var imageView: UIImageView = {
         let element = UIImageView()
         element.layer.cornerRadius = 8
@@ -60,18 +67,38 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureCell(with image: UIImage, url: URL? = nil) {
-        if url != nil {
-            imageView.kf.indicatorType = .activity
-            imageView.kf.setImage(
-                with: url,
-                options: [
-                    .transition(.fade(0.5)),
-                    .scaleFactor(UIScreen.main.scale),
-                    .cacheOriginalImage
-                ])
-        } else {
-            imageView.image = image
+    func configureCell(
+        with key: ImageKey,
+        dataSource: ImageDataSourceProtocol?
+    ) {
+        imageView.image = nil
+        activityIndicator.startAnimating()
+        dataSource?.getImage(for: key) { [weak self] result in
+            guard let self else { return }
+            self.activityIndicator.stopAnimating()
+            switch result {
+            case let .success(value):
+                switch value {
+                case let .image(value):
+                    self.imageView.image = value
+                case let .url(value):
+                    self.imageView.kf.indicatorType = .none
+                    self.imageView.kf.setImage(
+                        with: value,
+                        options: [
+                            .transition(.fade(0.5)),
+                            .scaleFactor(UIScreen.main.scale),
+                            .cacheOriginalImage
+                        ],
+                        completionHandler: { _ in
+                            self.activityIndicator.stopAnimating()
+                        }
+                    )
+                }
+            case .failure(_):
+                // Можно показать плейсхолдер или иконку ошибки
+                self.imageView.image = UIImage(named: "image_placeholder")
+            }
         }
     }
     
@@ -93,6 +120,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        activityIndicator.stopAnimating()
         checkmarckImageView.isHidden = true
         checkmarckContainerView.isHidden = true
     }
@@ -101,6 +129,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
 private extension PhotoCollectionViewCell {
     func setupViews() {
         contentView.addSubview(imageView)
+        contentView.addSubview(activityIndicator)
         contentView.addSubview(checkmarckContainerView)
         checkmarckContainerView.addSubview(checkmarckImageView)
     }
@@ -111,6 +140,9 @@ private extension PhotoCollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             
             checkmarckContainerView.widthAnchor.constraint(equalToConstant: 24),
             checkmarckContainerView.heightAnchor.constraint(equalToConstant: 24),

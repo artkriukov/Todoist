@@ -9,17 +9,28 @@ import UIKit
 
 typealias ImageKey = String
 
+typealias GetImagesResult = Result<[ImageKey], ImageDataSourceError>
+typealias GetImageResult = Result<ImageDataSourceResult, ImageDataSourceError>
+
+enum ImageDataSourceError: Error {
+    case noImagesFound
+}
+
+enum ImageDataSourceResult {
+    case image(UIImage)
+    case url(URL)
+}
+
 protocol ImageDataSourceProtocol: AnyObject {
     var isQuerySearchAvailable: Bool { get }
     
     func getImages(
         query: String,
-        page: Int,
-        completion: @escaping ([ImageKey]) -> Void
+        completion: @escaping (GetImagesResult) -> Void
     )
     
     func getImage(
         for key: ImageKey,
-        _ completion: @escaping (UIImage, URL?) -> Void
+        _ completion: @escaping (GetImageResult) -> Void
     )
 }
