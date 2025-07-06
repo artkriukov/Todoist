@@ -73,5 +73,6 @@ enum Asset {
         static let circle = UIImage(systemName: "circle")
         static let chevron = UIImage(systemName: "chevron.forward")
         static let settings = UIImage(systemName: "gearshape.fill")
+        static let edit = UIImage(systemName: "pencil")
     }
 }

@@ -11,6 +11,7 @@ final class ProfileViewController: UIViewController {
     
     private let logger: Logger
     
+    private var user: UserInfo?
     // MARK: - UI
     
     private lazy var profileHeader: ProfileHeaderControl = {
@@ -31,6 +32,10 @@ final class ProfileViewController: UIViewController {
         let element = UIButton(type: .system)
         element.setImage(Asset.Images.settings, for: .normal)
         element.tintColor = .black
+        element.addAction(
+            UIAction { [weak self] _ in
+                self?.settingsButtonTapped()
+            }, for: .touchUpInside)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -73,7 +78,9 @@ final class ProfileViewController: UIViewController {
     // MARK: - Private Methods
     
     private func openProfileDetails() {
-        print("openProfileDetails")
+        guard let user else { return }
+        let editProfileVC = EditProfileViewController(user: user)
+        navigationController?.pushViewController(editProfileVC, animated: true)
     }
     
 //    private func changeUserImageButtonTapped() {
@@ -92,12 +99,17 @@ final class ProfileViewController: UIViewController {
 //    }
     
     private func loadDataFromUserDefoults() {
-        let userSettings = UserSettings.load()
+        user = UserInfo.load()
         
-        let name = userSettings?.name
-        let image = userSettings?.image ?? Asset.Images.defaultUserImage
+        let name = user?.name
+        let image = user?.image ?? Asset.Images.defaultUserImage
         
         profileHeader.configure(image: image, name: name, tasks: nil)
+    }
+    
+    private func settingsButtonTapped() {
+        let settingsVC = SettingsViewController()
+        navigationController?.pushViewController(settingsVC, animated: true)
     }
     
 //    private func saveButtonTapped() {
@@ -146,15 +158,6 @@ private extension ProfileViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(profileHeader)
-//        view.addSubview(userImageStackView)
-//        userImageStackView.addArrangedSubview(userImage)
-//        userImageStackView.addArrangedSubview(changeUserImageButton)
-//        
-//        view.addSubview(userInfoStackView)
-//        
-//        userInfoStackView.addArrangedSubview(nameLabel)
-//        userInfoStackView.addArrangedSubview(userNameTextField)
-//        view.addSubview(saveButton)
         
 //        view.addSubview(logsButton)
     }
@@ -167,29 +170,7 @@ private extension ProfileViewController {
                     equalTo: view.leadingAnchor, constant: 16),
             profileHeader.trailingAnchor.constraint(
                     equalTo: view.trailingAnchor, constant: -16),
-//            userImageStackView.topAnchor
-//                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
-//            userImageStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            
-//            userImage.heightAnchor.constraint(equalToConstant: 120),
-//            userImage.widthAnchor.constraint(equalToConstant: 120),
-//            
-//            userInfoStackView.topAnchor
-//                .constraint(equalTo: userImageStackView.bottomAnchor, constant: 15),
-//            userInfoStackView.leadingAnchor
-//                .constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-//            userInfoStackView.trailingAnchor
-//                .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-//            
-//            nameLabel.widthAnchor.constraint(equalToConstant: 60),
-//            
-//            saveButton.topAnchor
-//                .constraint(equalTo: userInfoStackView.bottomAnchor, constant: 10),
-//            saveButton.widthAnchor.constraint(equalToConstant: 120),
-//            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            
-//            saveButton.widthAnchor.constraint(equalToConstant: 120),
-//            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
 //            
 //            logsButton.topAnchor
 //                .constraint(equalTo: saveButton.bottomAnchor, constant: 50),

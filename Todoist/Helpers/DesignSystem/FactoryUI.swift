@@ -32,10 +32,25 @@ final class FactoryUI {
         
     }
     
-    func makeTetxField(placeholder: String, tamic: Bool = false) -> UITextField {
+    func makeTetxField(
+        placeholder: String,
+        cornerRadius: CGFloat = 8,
+        backgroundColor: UIColor? = .clear,
+        horizontalInset: CGFloat = 0,
+        image: UIImage? = nil,
+        tamic: Bool = false
+    ) -> UITextField {
         let textField = UITextField()
         textField.placeholder = placeholder
+        textField.backgroundColor = backgroundColor
+        textField.layer.cornerRadius = cornerRadius
         textField.translatesAutoresizingMaskIntoConstraints = tamic
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: horizontalInset, height: 0))
+        
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
         return textField
     }
     

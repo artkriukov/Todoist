@@ -9,5 +9,5 @@ import Foundation
 
 protocol ProfileProvider {
     func save()
-    static func load() -> UserSettings?
+    static func load() -> UserInfo?
 }
