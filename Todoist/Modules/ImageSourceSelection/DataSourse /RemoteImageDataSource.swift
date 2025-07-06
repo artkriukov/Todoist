@@ -30,6 +30,13 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
             unsplashImages = []
             lastQuery = query
         }
+
+        guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            DispatchQueue.main.async {
+                completion(.success([]))
+            }
+            return
+        }
         unsplashImageService.fetchImages(with: query, page: page) { [weak self] images in
             guard let self = self else { return }
             if images.isEmpty {
