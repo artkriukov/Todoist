@@ -162,6 +162,10 @@ final class ImageSourceSelectionViewController: UIViewController {
                 self.images.append(contentsOf: imageKeys)
             case .failure:
                 self.images = []
+                let alert = FactoryUI.shared.makeImageLoadErrorAlert {
+                    self.getImages(with: query, isNewSearch: isNewSearch)
+                }
+                self.present(alert, animated: true)
             }
             self.isLoading = false
             DispatchQueue.main.async {

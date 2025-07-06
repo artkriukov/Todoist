@@ -125,4 +125,29 @@ final class FactoryUI {
         
         return actionSheet
     }
+    
+    func makeImageLoadErrorAlert(
+        retryAction: (() -> Void)? = nil
+    ) -> UIAlertController {
+        let alert = UIAlertController(
+            title: "Не удалось загрузить изображения",
+            message: "Проверьте подключение к интернету или повторите попытку позже.",
+            preferredStyle: .alert
+        )
+        
+        if let retry = retryAction {
+            alert.addAction(UIAlertAction(
+                title: "Повторить",
+                style: .default,
+                handler: { _ in retry() }
+            ))
+        }
+        
+        alert.addAction(UIAlertAction(
+            title: "Ок",
+            style: .cancel
+        ))
+        
+        return alert
+    }
 }
