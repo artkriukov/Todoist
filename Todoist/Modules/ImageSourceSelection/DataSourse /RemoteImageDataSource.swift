@@ -11,7 +11,7 @@ final class RemoteImageDataSource: ImageDataSourceProtocol {
     private let unsplashImageService: UnsplashImageServiceProtocol
     private var unsplashImages: [UnsplashResult] = []
     private var page = 1
-    private var lastQuery: String = ""
+    private var lastQuery = ""
 
     var isQuerySearchAvailable = true
 

@@ -14,13 +14,14 @@ enum PhotoMode {
 final class ImageSourceSelectionViewController: UIViewController {
     
     private let debouncer = Debouncer(delay: 0.4)
+    private let logger: Logger
     
     private var mode: PhotoMode
     private var dataSource: ImageDataSourceProtocol?
     private var images = [ImageKey]()
     
     private var selectedImage: UIImage?
-    private var page = 1
+    
     private var isLoading = false
     
     var onImageReceived: ((UIImage) -> Void)?
@@ -84,9 +85,11 @@ final class ImageSourceSelectionViewController: UIViewController {
     // MARK: - Init
     
     init(
-        mode: PhotoMode
+        mode: PhotoMode,
+        logger: Logger = DependencyContainer.shared.logger
     ) {
         self.mode = mode
+        self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -121,7 +124,6 @@ final class ImageSourceSelectionViewController: UIViewController {
     
     private func configureLocalMode() {
         images = []
-        page = 1
         isLoading = false
         
         dataSource = LocalImageDataSource()
@@ -159,17 +161,30 @@ final class ImageSourceSelectionViewController: UIViewController {
             guard let self = self else { return }
             switch result {
             case .success(let imageKeys):
+                let startIndex = self.images.count
                 self.images.append(contentsOf: imageKeys)
+                let endIndex = self.images.count
+                let newIndexPaths = (startIndex..<endIndex).map { IndexPath(item: $0, section: 0) }
+                DispatchQueue.main.async {
+                    if isNewSearch || self.mode == .local {
+                        self.collectionView.reloadData()
+                    } else {
+                        self.collectionView.performBatchUpdates({
+                            self.collectionView.insertItems(at: newIndexPaths)
+                        }, completion: nil)
+                    }
+                    self.isLoading = false
+                }
             case .failure:
                 self.images = []
                 let alert = FactoryUI.shared.makeImageLoadErrorAlert {
                     self.getImages(with: query, isNewSearch: isNewSearch)
                 }
                 self.present(alert, animated: true)
-            }
-            self.isLoading = false
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
+                self.isLoading = false
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
             }
         }
     }
@@ -216,13 +231,14 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
                 switch value {
                 case .image(let image):
                     self.onImageReceived?(image)
-                case .url(let url):
-                    // если нужен url, обработайте соответствующим образом
+                    // swiftlint:disable:next empty_enum_arguments
+                case .url(_):
                     break
                 }
-            case .failure:
-                // обработка ошибки
-                break
+            case .failure(let error):
+                logger.log("Не удалось получить изображение: \(error)")
+                let alert = FactoryUI.shared.makeImageLoadErrorAlert()
+                self.present(alert, animated: true)
             }
         }
     }

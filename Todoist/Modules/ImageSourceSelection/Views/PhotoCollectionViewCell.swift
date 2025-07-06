@@ -95,9 +95,9 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
                         }
                     )
                 }
+                // swiftlint:disable:next empty_enum_arguments
             case .failure(_):
-                // Можно показать плейсхолдер или иконку ошибки
-                self.imageView.image = UIImage(named: "image_placeholder")
+                self.imageView.image = UIImage(systemName: "photo")
             }
         }
     }
