@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol UserSettingsProvider {
+protocol ProfileProvider {
     func save()
     static func load() -> UserSettings?
 }

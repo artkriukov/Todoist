@@ -22,7 +22,7 @@ struct UserSettings {
     }
 }
 
-extension UserSettings: UserSettingsProvider {
+extension UserSettings: ProfileProvider {
     func save() {
         UserDefaults.standard.set(name, forKey: SettingsKeys.userName.rawValue)
         UserDefaults.standard

@@ -17,7 +17,7 @@ class TabBarController: UITabBarController {
     
     private func setupTabBar() {
         let toDoListVC = ToDoListViewController()
-        let settingsVC = UserSettingsViewController()
+        let settingsVC = ProfileViewController()
         
         viewControllers = [
             configureNavigationBar(

@@ -17,6 +17,10 @@ enum Asset {
         static func medium(size: CGFloat) -> UIFont {
             UIFont.systemFont(ofSize: size, weight: .regular)
         }
+        
+        static func bold(size: CGFloat) -> UIFont {
+            UIFont.systemFont(ofSize: size, weight: .bold)
+        }
     }
     
     enum Colors {
@@ -67,5 +71,7 @@ enum Asset {
         static let defaultUserImage = UIImage(systemName: "person.circle.fill")
         static let defaultBackgroundImage = UIImage(systemName: "photo")
         static let circle = UIImage(systemName: "circle")
+        static let chevron = UIImage(systemName: "chevron.forward")
+        static let settings = UIImage(systemName: "gearshape.fill")
     }
 }
