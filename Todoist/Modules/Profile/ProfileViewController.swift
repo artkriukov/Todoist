@@ -17,7 +17,7 @@ final class ProfileViewController: UIViewController {
     private lazy var profileHeader: ProfileHeaderControl = {
         let config = ProfileHeaderControl.Configuration(
             image: Asset.Images.defaultUserImage,
-            name: "Artem Kriukov",
+            name: "Имя пользователя",
             tasks: nil,
             action: { [weak self] in
                 self?.openProfileDetails()
@@ -71,37 +71,26 @@ final class ProfileViewController: UIViewController {
         setupConstraints()
         
         loadDataFromUserDefoults()
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
+        configureNavigationBar()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadDataFromUserDefoults()
     }
     
     // MARK: - Private Methods
     
     private func openProfileDetails() {
-        guard let user else { return }
-        let editProfileVC = EditProfileViewController(user: user)
+        let userToEdit = user ?? UserInfo(name: "", imageData: nil)
+        let editProfileVC = EditProfileViewController(user: userToEdit)
         navigationController?.pushViewController(editProfileVC, animated: true)
     }
-    
-//    private func changeUserImageButtonTapped() {
-//        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
-//            onGalleryTap: { [weak self] in
-//                guard let self else { return }
-//                let imagePicker = self.createImagePickerController()
-//                self.present(imagePicker, animated: true)
-//            },
-//            onUnsplashTap: {
-//                print("onUnsplashTap")
-//            }
-//        )
-//        
-//        present(actionSheet, animated: true)
-//    }
     
     private func loadDataFromUserDefoults() {
         user = UserInfo.load()
         
-        let name = user?.name
+        let name = user?.name ?? "Имя пользователя"
         let image = user?.image ?? Asset.Images.defaultUserImage
         
         profileHeader.configure(image: image, name: name, tasks: nil)
@@ -112,17 +101,6 @@ final class ProfileViewController: UIViewController {
         navigationController?.pushViewController(settingsVC, animated: true)
     }
     
-//    private func saveButtonTapped() {
-//        guard let userName = userNameTextField.text, !userName.isEmpty else {
-//            return
-//        }
-//        
-//        let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
-//        
-//        let userSettings = UserSettings(name: userName, imageData: imageData)
-//        userSettings.save()
-//    }
-    
     private func logsButtonTapped() {
         let logsVC = LogsViewController()
         let navController = UINavigationController(rootViewController: logsVC)
@@ -130,29 +108,10 @@ final class ProfileViewController: UIViewController {
         present(navController, animated: true)
     }
     
-//    private func createImagePickerController() -> UIImagePickerController {
-//        let imagePickerController = UIImagePickerController()
-//        imagePickerController.delegate = self
-//        imagePickerController.sourceType = .photoLibrary
-//        return imagePickerController
-//    }
+    private func configureNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
+    }
 }
-
-//extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-//    
-//    func imagePickerController(
-//        _ picker: UIImagePickerController,
-//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-//    ) {
-//        if let image = info[.editedImage] as? UIImage {
-//            userImage.image = image
-//        } else if let image = info[.originalImage] as? UIImage {
-//            userImage.image = image
-//        }
-//        
-//        dismiss(animated: true)
-//    }
-//}
 
 private extension ProfileViewController {
     func setupViews() {
@@ -169,7 +128,7 @@ private extension ProfileViewController {
             profileHeader.leadingAnchor.constraint(
                     equalTo: view.leadingAnchor, constant: 16),
             profileHeader.trailingAnchor.constraint(
-                    equalTo: view.trailingAnchor, constant: -16),
+                    equalTo: view.trailingAnchor, constant: -16)
 
 //            
 //            logsButton.topAnchor

@@ -69,8 +69,8 @@ final class ProfileHeaderControl: UIControl {
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 64),
-            imageView.heightAnchor.constraint(equalToConstant: 64),
+            imageView.widthAnchor.constraint(equalToConstant: 55),
+            imageView.heightAnchor.constraint(equalToConstant: 55),
 
             chevronImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             chevronImageView.centerYAnchor.constraint(equalTo: centerYAnchor),

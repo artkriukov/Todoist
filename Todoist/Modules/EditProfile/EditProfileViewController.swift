@@ -29,9 +29,13 @@ final class EditProfileViewController: UIViewController {
     private lazy var changeImageButton: UIButton = {
         let element = UIButton(type: .system)
         element.setTitle(
-                ProfileStrings.changePhoto.rawValue.localized(),
-                for: .normal
-            )
+            ProfileStrings.changePhoto.rawValue.localized(),
+            for: .normal
+        )
+        element.addAction(
+            UIAction { [weak self] _ in
+                self?.changeUserImageButtonTapped()
+            }, for: .touchUpInside)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -54,7 +58,7 @@ final class EditProfileViewController: UIViewController {
         horizontalInset: 12,
         image: Asset.Images.edit
     )
-
+    
     // MARK: - Init
     
     init(user: UserInfo) {
@@ -72,13 +76,74 @@ final class EditProfileViewController: UIViewController {
         view.backgroundColor = .black
         setupViews()
         setupConstraints()
-        
-        loadDataFromUserDefoults()
+        configureNavigationBar()
+        configureUserData()
     }
     
-    private func loadDataFromUserDefoults() {
+    // MARK: - Private Methods
+    private func configureUserData() {
         userNameTextField.text = user.name
         userImage.image = user.image ?? Asset.Images.defaultUserImage
+    }
+    
+    private func changeUserImageButtonTapped() {
+        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
+            onGalleryTap: { [weak self] in
+                guard let self else { return }
+                let imagePicker = self.createImagePickerController()
+                self.present(imagePicker, animated: true)
+            },
+            onUnsplashTap: {
+                print("onUnsplashTap")
+            }
+        )
+        
+        present(actionSheet, animated: true)
+    }
+    
+    private func createImagePickerController() -> UIImagePickerController {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.sourceType = .photoLibrary
+        return imagePickerController
+    }
+    
+    private func saveItemTapped() {
+        guard let userName = userNameTextField.text, !userName.isEmpty else {
+            return
+        }
+        
+        let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
+        
+        let userInfo = UserInfo(name: userName, imageData: imageData)
+        userInfo.save()
+        
+        navigationController?.popViewController(animated: true)
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: GlobalStrings.save.rawValue.localized(),
+            primaryAction: UIAction { [weak self] _ in
+                self?.saveItemTapped()
+            }
+        )
+    }
+}
+
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        if let image = info[.editedImage] as? UIImage {
+            userImage.image = image
+        } else if let image = info[.originalImage] as? UIImage {
+            userImage.image = image
+        }
+
+        dismiss(animated: true)
     }
 }
 
@@ -98,7 +163,7 @@ private extension EditProfileViewController {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             imageStackView.topAnchor
-                .constraint( equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+                .constraint( equalTo: view.topAnchor, constant: 5),
             imageStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             userImage.widthAnchor.constraint(equalToConstant: 120),
