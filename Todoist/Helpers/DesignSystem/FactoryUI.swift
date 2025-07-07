@@ -104,8 +104,7 @@ final class FactoryUI {
     }
     
     func makeChangePhotoAlert(
-        onGalleryTap: @escaping () -> Void,
-        onUnsplashTap: @escaping () -> Void
+        onGalleryTap: @escaping () -> Void
     ) -> UIAlertController {
         let actionSheet = UIAlertController(
             title: ProfileStrings.changePhoto.rawValue.localized(),

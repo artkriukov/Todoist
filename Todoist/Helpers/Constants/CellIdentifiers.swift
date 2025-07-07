@@ -11,4 +11,7 @@ enum CellIdentifiers {
     static let mainToDoTableViewCell = "main.todoTableViewCell"
     static let loggsTableViewCell = "loggs.tableViewCell"
     static let photoCollectionViewCell = "PhotoCollectionViewCell"
+    static let toggleTableViewCell = "toggle.tableViewCell"
+    static let pickerTableViewCell = "picker.tableViewCell"
+    static let navigationTableViewCell = "navigation.tableViewCell"
 }

@@ -17,7 +17,7 @@ final class ProfileViewController: UIViewController {
     private lazy var profileHeader: ProfileHeaderControl = {
         let config = ProfileHeaderControl.Configuration(
             image: Asset.Images.defaultUserImage,
-            name: "Имя пользователя",
+            name: ProfileStrings.userName.rawValue.localized(),
             tasks: nil,
             action: { [weak self] in
                 self?.openProfileDetails()
@@ -90,7 +90,7 @@ final class ProfileViewController: UIViewController {
     private func loadDataFromUserDefoults() {
         user = UserInfo.load()
         
-        let name = user?.name ?? "Имя пользователя"
+        let name = user?.name ?? ProfileStrings.userName.rawValue.localized()
         let image = user?.image ?? Asset.Images.defaultUserImage
         
         profileHeader.configure(image: image, name: name, tasks: nil)

@@ -21,6 +21,7 @@
 "system_logs" = "Логи системы";
 "your_name" = "Ваше имя";
 "selectFromGallery" = "Выбрать из галереи";
+"user_name" = "Имя пользователя";
 
 // ToDoStrings
 "to_do_list" = "Список дел";
@@ -30,3 +31,4 @@
 "date" = "Дата";
 "time" = "Время";
 "new_reminders" = "Новое напоминание";
+"noTask" = "Задач нет";

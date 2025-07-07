@@ -92,9 +92,6 @@ final class EditProfileViewController: UIViewController {
                 guard let self else { return }
                 let imagePicker = self.createImagePickerController()
                 self.present(imagePicker, animated: true)
-            },
-            onUnsplashTap: {
-                print("onUnsplashTap")
             }
         )
         

@@ -13,5 +13,6 @@ enum ProfileStrings: String {
     case viewLogs = "view_logs"
     case systemLogs = "system_logs"
     case yourName = "your_name"
+    case userName = "user_name"
     case selectFromGallery
 }

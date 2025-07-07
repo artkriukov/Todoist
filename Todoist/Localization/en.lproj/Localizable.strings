@@ -21,6 +21,7 @@
 "system_logs" = "System Logs";
 "your_name" = "Your Name";
 "selectFromGallery" = "Select from Gallery";
+"user_name" = "User Name";
 
 // ToDoStrings
 "to_do_list" = "To-Do List";
@@ -30,3 +31,4 @@
 "date" = "Date";
 "time" = "Time";
 "new_reminders" = "New Reminders";
+"noTask" = "No Task";

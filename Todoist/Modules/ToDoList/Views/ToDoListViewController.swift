@@ -18,7 +18,7 @@ final class ToDoListViewController: UIViewController {
     
     private lazy var emptyLabel: UILabel = {
         let element = UILabel()
-        element.text = "Задач нет"
+        element.text = ToDoStrings.noTask.rawValue.localized()
         element.textColor = .lightGray
         element.isHidden = true
         element.font = Asset.CustomFont.medium(size: 27)

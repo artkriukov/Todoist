@@ -24,7 +24,7 @@ final class ProfileHeaderControl: UIControl {
         super.init(coder: coder)
     }
     
-    public func configure(image: UIImage?, name: String?, tasks: String?) {
+    func configure(image: UIImage?, name: String?, tasks: String?) {
         imageView.image = image
         nameLabel.text = name
         tasksLabel.text = tasks
@@ -39,7 +39,7 @@ final class ProfileHeaderControl: UIControl {
         imageView.image = configuration.image
         imageView.contentMode = .scaleAspectFill
         imageView.tintColor = .gray
-        imageView.layer.cornerRadius = 32
+        imageView.layer.cornerRadius = 27
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
 
