@@ -15,4 +15,5 @@ enum ProfileStrings: String {
     case yourName = "your_name"
     case userName = "user_name"
     case selectFromGallery
+    case settings = "settings"
 }

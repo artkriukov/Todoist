@@ -31,7 +31,7 @@ final class ProfileViewController: UIViewController {
     private lazy var rightBarButtonItem: UIButton = {
         let element = UIButton(type: .system)
         element.setImage(Asset.Images.settings, for: .normal)
-        element.tintColor = .black
+        element.tintColor = Asset.Colors.lightGrayColor
         element.addAction(
             UIAction { [weak self] _ in
                 self?.settingsButtonTapped()
@@ -39,17 +39,6 @@ final class ProfileViewController: UIViewController {
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
-    
-//    private lazy var logsButton: UIButton = {
-//        
-//        let element = FactoryUI.shared.makeStyledButton(
-//            title: ProfileStrings.systemLogs.rawValue.localized()) {
-//                self.logsButtonTapped()
-//            }
-//        
-//        element.translatesAutoresizingMaskIntoConstraints = false
-//        return element
-//    }()
     
     // MARK: - Init
     
@@ -117,8 +106,6 @@ private extension ProfileViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(profileHeader)
-        
-//        view.addSubview(logsButton)
     }
     
     func setupConstraints() {
@@ -129,14 +116,6 @@ private extension ProfileViewController {
                     equalTo: view.leadingAnchor, constant: 16),
             profileHeader.trailingAnchor.constraint(
                     equalTo: view.trailingAnchor, constant: -16)
-
-//            
-//            logsButton.topAnchor
-//                .constraint(equalTo: saveButton.bottomAnchor, constant: 50),
-//            logsButton.trailingAnchor
-//                .constraint(equalTo: view.trailingAnchor, constant: -15),
-//            logsButton.leadingAnchor
-//                .constraint(equalTo: view.leadingAnchor, constant: 15)
             
         ])
     }

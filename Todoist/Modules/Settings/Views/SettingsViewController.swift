@@ -7,22 +7,13 @@
 
 import UIKit
 
+protocol SettingsViewProtocol: AnyObject {
+    func didChange()
+}
+
 final class SettingsViewController: UIViewController {
-    
-    let settings: [SettingsSection] = [
-        SettingsSection(title: "Общие", items: [
-            .toggle(title: "Выберите тему", isOn: false),
-            .navigation(title: "Изменить язык", destination: { LogsViewController() })
-        ]),
-        SettingsSection(
-            title: "Разработчикам",
-            items: [
-                .navigation(
-                    title: "Посмотреть логи",
-                    destination: { LogsViewController() }
-                )
-        ])
-    ]
+
+    var presenter: SettingsPresenter?
     
     // MARK: - UI
     
@@ -54,26 +45,27 @@ final class SettingsViewController: UIViewController {
         view.backgroundColor = .red
         setupViews()
         setupConstraints()
+        presenter = SettingsPresenter(view: self)
     }
     
     // MARK: - Private Methods
-    
+
 }
 
 // MARK: - UITableViewDataSource
 extension SettingsViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        settings.count
+        presenter?.settings.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        settings[section].items.count
+        presenter?.settings[section].items.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let item = settings[indexPath.section].items[indexPath.row]
+        let item = presenter?.settings[indexPath.section].items[indexPath.row]
         
         switch item {
         case .toggle(title: let title, isOn: let isOn):
@@ -85,6 +77,9 @@ extension SettingsViewController: UITableViewDataSource {
             }
             
             cell.configureCell(with: title, isOn: isOn)
+            cell.switchChanged = { [weak self] isOn in
+                self?.presenter?.changeTheme()
+            }
             return cell
             
         case .picker(title: let title, selectedValue: let selectedValue):
@@ -108,6 +103,8 @@ extension SettingsViewController: UITableViewDataSource {
             
             cell.configureCell(with: title)
             return cell
+        case .none:
+            return UITableViewCell()
         }
     }
 
@@ -119,7 +116,7 @@ extension SettingsViewController: UITableViewDelegate {
         _ tableView: UITableView,
         titleForHeaderInSection section: Int
     ) -> String? {
-        settings[section].title
+        presenter?.settings[section].title
     }
     
     func tableView(
@@ -127,16 +124,18 @@ extension SettingsViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = settings[indexPath.section].items[indexPath.row]
+        let item = presenter?.settings[indexPath.section].items[indexPath.row]
         
         switch item {
-        case .toggle(title: let title, isOn: let isOn):
+        case .toggle(title: _, isOn: let isOn):
             break
         case .picker(title: let title, selectedValue: let selectedValue):
             break
         case .navigation(title: _, destination: let destination):
             let vc = destination()
             navigationController?.pushViewController(vc, animated: true)
+        case .none:
+            break
         }
     }
 }
@@ -146,6 +145,8 @@ private extension SettingsViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(settingsTableView)
+        navigationItem.title = ProfileStrings.settings.rawValue.localized()
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     func setupConstraints() {
@@ -159,5 +160,11 @@ private extension SettingsViewController {
             settingsTableView.bottomAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
         ])
+    }
+}
+
+extension SettingsViewController: SettingsViewProtocol {
+    func didChange() {
+        
     }
 }

@@ -40,6 +40,12 @@ class ToggleCell: UITableViewCell {
         super.init(coder: coder)
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        toggleSwitch.isOn = false
+    }
+    
     // MARK: - Publick Methods
     func configureCell(with title: String, isOn: Bool) {
         titleLabel.text = title
@@ -52,9 +58,9 @@ class ToggleCell: UITableViewCell {
     }
     
     private func setupUI() {
+        backgroundColor = Asset.Colors.secondaryBackground
         contentView.addSubview(titleLabel)
         contentView.addSubview(toggleSwitch)
-
         selectionStyle = .none
     }
     

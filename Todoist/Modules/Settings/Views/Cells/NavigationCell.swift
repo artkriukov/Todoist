@@ -26,6 +26,11 @@ class NavigationCell: UITableViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+    }
 
     // MARK: - Publick Methods
     func configureCell(with title: String) {
@@ -34,8 +39,8 @@ class NavigationCell: UITableViewCell {
     
     // MARK: - Private Methods 
     private func setupViews() {
-        contentView.addSubview(titleLabel)
-
+        backgroundColor = Asset.Colors.secondaryBackground
+        contentView.addSubview(titleLabel)        
         accessoryType = .disclosureIndicator
         selectionStyle = .default
     }

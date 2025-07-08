@@ -22,6 +22,7 @@
 "your_name" = "Ваше имя";
 "selectFromGallery" = "Выбрать из галереи";
 "user_name" = "Имя пользователя";
+"settings" = "Настройки";
 
 // ToDoStrings
 "to_do_list" = "Список дел";

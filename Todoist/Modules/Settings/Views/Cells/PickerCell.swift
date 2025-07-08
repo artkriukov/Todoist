@@ -38,6 +38,12 @@ class PickerCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource 
         super.init(coder: coder)
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        valueLabel.text = nil
+    }
+    
     // MARK: - Publick Methods
      func configureCell(with title: String, and value: String) {
         titleLabel.text = title
@@ -46,6 +52,7 @@ class PickerCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource 
     
     // MARK: - Private Methods
     private func setupUI() {
+        backgroundColor = Asset.Colors.secondaryBackground
         contentView.addSubview(titleLabel)
         contentView.addSubview(valueLabel)
         selectionStyle = .default

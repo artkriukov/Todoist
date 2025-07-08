@@ -22,6 +22,7 @@
 "your_name" = "Your Name";
 "selectFromGallery" = "Select from Gallery";
 "user_name" = "User Name";
+"settings" = "Settings";
 
 // ToDoStrings
 "to_do_list" = "To-Do List";

@@ -60,7 +60,7 @@ final class LogsViewController: UIViewController {
     }
     
     private func cancelButtonTapped() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     private func loadLogs() {
