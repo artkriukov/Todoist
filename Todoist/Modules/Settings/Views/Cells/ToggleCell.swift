@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ToggleCell: UITableViewCell {
+final class ToggleCell: UITableViewCell {
     
     var switchChanged: ((Bool) -> Void)?
     

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PickerCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource {
+final class PickerCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource {
     
     var didSelectItem: ((String) -> Void)?
     private var isPickerVisible = false

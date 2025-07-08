@@ -127,9 +127,9 @@ extension SettingsViewController: UITableViewDelegate {
         let item = presenter?.settings[indexPath.section].items[indexPath.row]
         
         switch item {
-        case .toggle(title: _, isOn: let isOn):
+        case .toggle(title: _, isOn: _):
             break
-        case .picker(title: let title, selectedValue: let selectedValue):
+        case .picker(title: _, selectedValue: _):
             break
         case .navigation(title: _, destination: let destination):
             let vc = destination()

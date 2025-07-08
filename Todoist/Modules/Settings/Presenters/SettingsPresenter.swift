@@ -21,8 +21,8 @@ struct SettingsPresenter: SettingsProtocol {
                     title: SettingsStrings.darkTheme.rawValue.localized(),
                     isOn: Theme.current == .dark),
                 .navigation(
-                    title: SettingsStrings.changeLanguage.rawValue.localized(),
-                    destination: { LogsViewController() }
+                    title: SettingsStrings.language.rawValue.localized(),
+                    destination: { LanguageViewController() }
                 )
             ]),
         SettingsSection(

@@ -36,7 +36,7 @@
 // SettingsStrings
 "general" = "Общие";
 "dark_theme" = "Чёрная тема";
-"change_language" = "Изменить язык";
+"language" = "Язык";
 "system_logs" = "Логи системы";
 "view_logs" = "Посмотреть логи";
 "for_developers" = "Разработчикам";

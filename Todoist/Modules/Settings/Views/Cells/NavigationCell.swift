@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NavigationCell: UITableViewCell {
+final class NavigationCell: UITableViewCell {
     
     // MARK: - UI
     private lazy var titleLabel: UILabel = {

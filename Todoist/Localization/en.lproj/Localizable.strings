@@ -35,7 +35,7 @@
 // SettingsStrings
 "general" = "General";
 "dark_theme" = "Dark Theme";
-"change_language" = "Change Language";
+"language" = "Language";
 "system_logs" = "System Logs";
 "view_logs" = "View Logs";
 "for_developers" = "For Developers";
