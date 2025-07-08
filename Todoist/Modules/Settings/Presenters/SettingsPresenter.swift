@@ -9,13 +9,13 @@ import Foundation
 
 protocol SettingsProtocol {
     var settings: [SettingsSection] { get }
-    func changeTheme()
+    func changeTheme(isDark: Bool)
 }
 
 struct SettingsPresenter: SettingsProtocol {
     let settings: [SettingsSection] = [
         SettingsSection(title: "Общие", items: [
-            .toggle(title: "Черная тема", isOn: false),
+            .toggle(title: "Черная тема", isOn: Theme.current == .dark),
             .navigation(title: "Изменить язык", destination: { LogsViewController() })
         ]),
         SettingsSection(
@@ -33,8 +33,11 @@ struct SettingsPresenter: SettingsProtocol {
     init(view: SettingsViewProtocol) {
         self.view = view
     }
-    func changeTheme() {
-        print("changeTheme")
+    
+    func changeTheme(isDark: Bool) {
+        let theme: Theme = isDark ? .dark : .light
+        theme.setActive()
+        view?.didChange()
     }
 
 }

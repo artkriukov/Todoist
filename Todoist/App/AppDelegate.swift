@@ -18,11 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         dependencies.logger.log("App launched")
-        
+    
         window = UIWindow()
         
         self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
+        window?.initTheme()
 
         return true
     }

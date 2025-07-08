@@ -78,7 +78,7 @@ extension SettingsViewController: UITableViewDataSource {
             
             cell.configureCell(with: title, isOn: isOn)
             cell.switchChanged = { [weak self] isOn in
-                self?.presenter?.changeTheme()
+                self?.presenter?.changeTheme(isDark: isOn)
             }
             return cell
             
