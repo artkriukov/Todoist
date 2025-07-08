@@ -49,7 +49,7 @@ final class LogsViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        title = ProfileStrings.systemLogs.rawValue.localized()
+        title = SettingsStrings.systemLogs.rawValue.localized()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: GlobalStrings.back.rawValue.localized(),

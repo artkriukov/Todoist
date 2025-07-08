@@ -17,8 +17,7 @@
 // ProfileStrings
 "profile_key" = "Профиль";
 "change_photo" = "Изменить фото";
-"view_logs" = "Посмотреть логи";
-"system_logs" = "Логи системы";
+
 "your_name" = "Ваше имя";
 "selectFromGallery" = "Выбрать из галереи";
 "user_name" = "Имя пользователя";
@@ -33,3 +32,11 @@
 "time" = "Время";
 "new_reminders" = "Новое напоминание";
 "noTask" = "Задач нет";
+
+// SettingsStrings
+"general" = "Общие";
+"dark_theme" = "Чёрная тема";
+"change_language" = "Изменить язык";
+"system_logs" = "Логи системы";
+"view_logs" = "Посмотреть логи";
+"for_developers" = "Разработчикам";

@@ -17,8 +17,6 @@
 // ProfileStrings
 "profile_key" = "Profile";
 "change_photo" = "Change Photo";
-"view_logs" = "View Logs";
-"system_logs" = "System Logs";
 "your_name" = "Your Name";
 "selectFromGallery" = "Select from Gallery";
 "user_name" = "User Name";
@@ -33,3 +31,11 @@
 "time" = "Time";
 "new_reminders" = "New Reminders";
 "noTask" = "No Task";
+
+// SettingsStrings
+"general" = "General";
+"dark_theme" = "Dark Theme";
+"change_language" = "Change Language";
+"system_logs" = "System Logs";
+"view_logs" = "View Logs";
+"for_developers" = "For Developers";

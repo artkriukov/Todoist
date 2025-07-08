@@ -14,15 +14,22 @@ protocol SettingsProtocol {
 
 struct SettingsPresenter: SettingsProtocol {
     let settings: [SettingsSection] = [
-        SettingsSection(title: "Общие", items: [
-            .toggle(title: "Черная тема", isOn: Theme.current == .dark),
-            .navigation(title: "Изменить язык", destination: { LogsViewController() })
-        ]),
         SettingsSection(
-            title: "Разработчикам",
+            title: SettingsStrings.general.rawValue.localized(),
+            items: [
+                .toggle(
+                    title: SettingsStrings.darkTheme.rawValue.localized(),
+                    isOn: Theme.current == .dark),
+                .navigation(
+                    title: SettingsStrings.changeLanguage.rawValue.localized(),
+                    destination: { LogsViewController() }
+                )
+            ]),
+        SettingsSection(
+            title: SettingsStrings.forDevelopers.rawValue.localized(),
             items: [
                 .navigation(
-                    title: "Посмотреть логи",
+                    title: SettingsStrings.viewLogs.rawValue.localized(),
                     destination: { LogsViewController() }
                 )
             ])
@@ -37,7 +44,6 @@ struct SettingsPresenter: SettingsProtocol {
     func changeTheme(isDark: Bool) {
         let theme: Theme = isDark ? .dark : .light
         theme.setActive()
-        view?.didChange()
     }
 
 }
