@@ -15,7 +15,7 @@ protocol SettingsProtocol {
 struct SettingsPresenter: SettingsProtocol {
     let settings: [SettingsSection] = [
         SettingsSection(title: "Общие", items: [
-            .toggle(title: "Выберите тему", isOn: false),
+            .toggle(title: "Черная тема", isOn: false),
             .navigation(title: "Изменить язык", destination: { LogsViewController() })
         ]),
         SettingsSection(
