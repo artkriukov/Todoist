@@ -53,6 +53,7 @@ final class NewToDoViewController: UIViewController {
     }()
     
     private lazy var expirationDateStackView = FactoryUI.shared.makeStackView(
+        spacing: 15,
         layoutMargins: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
     )
     
@@ -119,13 +120,13 @@ final class NewToDoViewController: UIViewController {
     }()
     
     private lazy var toDoImageButton: UIButton = {
-        let element = UIButton(type: .system)
-        element.setTitle("Загрузить изображение", for: .normal)
-        element.isHidden = true
-        element.addAction(
-            UIAction { _ in
+        let element = FactoryUI.shared.makeStyledButton(
+            title: "Загрузить изображение",
+            alignment: .center
+        ) {
                 self.toDoImageButtonTapped()
-            }, for: .touchUpInside)
+            }
+        element.isHidden = true
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -244,15 +245,15 @@ final class NewToDoViewController: UIViewController {
             selectedDate = date
             formatter.dateFormat = "MMM d"
             let dateString = formatter.string(from: date)
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 self.datePickerSV.subtitleLabel.text = dateString
             }
-            
+
         case .time:
             selectedTime = date
             formatter.dateFormat = "HH:mm"
             let timeString = formatter.string(from: date)
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 self.timePickerSV.subtitleLabel.text = timeString
             }
         }
@@ -341,11 +342,13 @@ private extension NewToDoViewController {
             expirationDateStackView.bottomAnchor
                 .constraint(equalTo: contentView.bottomAnchor, constant: -20),
             
+            toDoImageButton.heightAnchor.constraint(equalToConstant: 44),
+            
             toDoSelectedImageView.leadingAnchor
                 .constraint(equalTo: expirationDateStackView.leadingAnchor, constant: 15),
             toDoSelectedImageView.trailingAnchor
                 .constraint(equalTo: expirationDateStackView.trailingAnchor, constant: -15),
-            toDoSelectedImageView.heightAnchor.constraint(equalToConstant: 200)
+            toDoSelectedImageView.heightAnchor.constraint(equalToConstant: 230)
         ])
     }
 }

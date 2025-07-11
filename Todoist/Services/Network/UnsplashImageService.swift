@@ -14,6 +14,7 @@ enum UnsplashServiceError: Error {
 protocol UnsplashImageServiceProtocol {
     func fetchImages(
         with query: String,
+        page: Int,
         completion: @escaping ([UnsplashResult]) -> Void
     )
     func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void)
@@ -32,11 +33,12 @@ final class UnsplashImageService: UnsplashImageServiceProtocol {
     
     func fetchImages(
         with query: String,
+        page: Int,
         completion: @escaping ([UnsplashResult]) -> Void
     ) {
         currentTask = nil
         
-        guard let request = makeRequest(with: query) else {
+        guard let request = makeRequest(with: query, page: page) else {
             self.logger
                 .log(
                     "[UnsplashImageService.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
@@ -48,8 +50,7 @@ final class UnsplashImageService: UnsplashImageServiceProtocol {
             guard let data = data,
                   error == nil else {
                 
-                self.logger
-                    .log(
+                self.logger.log(
                         "[UnsplashImageService.fetchImages]: \(UnsplashServiceError.couldNotMakeRequest)"
                     )
                 return
@@ -77,19 +78,21 @@ final class UnsplashImageService: UnsplashImageServiceProtocol {
                 return
             }
             
-            DispatchQueue.main.async {
+            receiveOnMainThread {
                 completion(image)
             }
+
         }.resume()
     }
     
-    private func makeRequest(with query: String) -> URLRequest? {
+    private func makeRequest(with query: String, page: Int) -> URLRequest? {
         guard var urlComponents = URLComponents(string: UnsplashConstants.unsplashURLString)
         else { return nil }
         
         urlComponents.queryItems = [
             URLQueryItem(name: "query", value: "\(query)"),
             URLQueryItem(name: "per_page", value: "\(perPage)"),
+            URLQueryItem(name: "page", value: "\(page)"),
             URLQueryItem(name: "client_id", value: UnsplashConstants.accessKey)
         ]
         
