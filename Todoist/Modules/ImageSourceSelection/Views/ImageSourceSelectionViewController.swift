@@ -11,20 +11,18 @@ enum PhotoMode {
     case local, remote
 }
 
-protocol LocalImageSourceViewProtocol: AnyObject {
-    func displayFetchedImages(_ images: [UIImage])
-}
-
-protocol RemoteImageSourceViewProtocol: AnyObject {
-    func displayFetchedImages(_ images: [UnsplashResult])
-}
-
 final class ImageSourceSelectionViewController: UIViewController {
     
+    private let debouncer = Debouncer(delay: 0.4)
+    private let logger: Logger
+    
     private var mode: PhotoMode
-    private let remoteImageSourcePresenter: RemoteImageSourceProtocol?
-    private let localImageSourcePresenter: LocalImageSourceProtocol?
+    private var dataSource: ImageDataSourceProtocol?
+    private var images = [ImageKey]()
+    
     private var selectedImage: UIImage?
+    
+    private var isLoading = false
     
     var onImageReceived: ((UIImage) -> Void)?
     // MARK: - UI
@@ -88,15 +86,11 @@ final class ImageSourceSelectionViewController: UIViewController {
     
     init(
         mode: PhotoMode,
-        remoteImageSourcePresenter: RemoteImageSourcePresenter = RemoteImageSourcePresenter(),
-        localImageSourcePresenter: LocalImageSourceProtocol = LocalImageSourcePresenter()
+        logger: Logger = DependencyContainer.shared.logger
     ) {
         self.mode = mode
-        self.remoteImageSourcePresenter = remoteImageSourcePresenter
-        self.localImageSourcePresenter = localImageSourcePresenter
+        self.logger = logger
         super.init(nibName: nil, bundle: nil)
-        self.remoteImageSourcePresenter?.view = self
-        self.localImageSourcePresenter?.view = self
     }
     
     required init?(coder: NSCoder) {
@@ -109,7 +103,6 @@ final class ImageSourceSelectionViewController: UIViewController {
         setupViews()
         setupConstraints()
         switchMode(to: mode)
-        localImageSourcePresenter?.requestPhotoLibraryAccess()
     }
     
     // MARK: - Private Methods
@@ -130,63 +123,93 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
     
     private func configureLocalMode() {
+        images = []
+        isLoading = false
+        
+        dataSource = LocalImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 0
         searchBar.isHidden = true
-        collectionView.reloadData()
+        
+        getImages(with: "")
+        
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
     }
     
     private func configureRemoteMode() {
+        dataSource = RemoteImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false
-        
         collectionView.reloadData()
+        
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func getImages(with query: String, isNewSearch: Bool = false) {
+        guard !isLoading else { return }
+        isLoading = true
+
+        if isNewSearch || mode == .local {
+            self.images = []
+            collectionView.reloadData()
+        }
+
+        dataSource?.getImages(query: query) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageKeys):
+                let startIndex = self.images.count
+                self.images.append(contentsOf: imageKeys)
+                let endIndex = self.images.count
+                let newIndexPaths = (startIndex..<endIndex).map { IndexPath(item: $0, section: 0) }
+                DispatchQueue.main.async {
+                    if isNewSearch || self.mode == .local {
+                        self.collectionView.reloadData()
+                    } else {
+                        self.collectionView.performBatchUpdates({
+                            self.collectionView.insertItems(at: newIndexPaths)
+                        }, completion: nil)
+                    }
+                    self.isLoading = false
+                }
+            case .failure:
+                self.images = []
+                let alert = FactoryUI.shared.makeImageLoadErrorAlert {
+                    self.getImages(with: query, isNewSearch: isNewSearch)
+                }
+                self.present(alert, animated: true)
+                self.isLoading = false
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            }
         }
     }
 }
 
 // MARK: - UICollectionViewDataSource
 extension ImageSourceSelectionViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch mode {
-        case .local:
-            localImageSourcePresenter?.numberOfImages() ?? 0
-        case .remote:
-            remoteImageSourcePresenter?.numberOfImages() ?? 0
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int) -> Int {
+            images.count
         }
-    }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: CellIdentifiers.photoCollectionViewCell,
             for: indexPath
         ) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
         
-        switch mode {
-            
-        case .local:
-            let localImages = localImageSourcePresenter?.getLocalImages()[indexPath.item]
-            
-            guard let image = localImages else {
-                return UICollectionViewCell()
-            }
-            
-            cell.configureCell(with: image)
-        case .remote:
-            
-            if remoteImageSourcePresenter?.numberOfImages() == 0 {
-                return cell
-            } else {
-                if let images = remoteImageSourcePresenter?.getUnsplashImages() {
-                    let unsplashImage = images[indexPath.item].urls.regular
-                    cell.configureCell(with: unsplashImage)
-                }
-            }
-        }
+        let imageKey = images[indexPath.item]
+        cell.configureCell(with: imageKey, dataSource: dataSource)
         
         return cell
     }
@@ -199,46 +222,38 @@ extension ImageSourceSelectionViewController: UICollectionViewDelegate {
         didSelectItemAt indexPath: IndexPath
     ) {
         
-        switch mode {
-            
-        case .local:
-            
-            let localImages = localImageSourcePresenter?.getLocalImages()
-            selectedImage = localImages?[indexPath.item]
-            
-            if let selectedImage = selectedImage {
-                onImageReceived?(selectedImage)
-            }
-            
-        case .remote:
-            
-            guard let remoteImages = remoteImageSourcePresenter?.getUnsplashImages(),
-                  indexPath.item < remoteImages.count else {
-                return
-            }
-            
-            let imageUrlString = remoteImages[indexPath.item].urls.regular
-            
-            guard let url = URL(string: imageUrlString) else { return }
-            
-            UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
-                guard let self, let image else { return }
-                onImageReceived?(image)
+        let selectedImageKey = images[indexPath.item]
+        
+        dataSource?.getImage(for: selectedImageKey) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let value):
+                switch value {
+                case .image(let image):
+                    self.onImageReceived?(image)
+                    // swiftlint:disable:next empty_enum_arguments
+                case .url(_):
+                    break
+                }
+            case .failure(let error):
+                logger.log("Не удалось получить изображение: \(error)")
+                let alert = FactoryUI.shared.makeImageLoadErrorAlert()
+                self.present(alert, animated: true)
             }
         }
     }
-}
-
-// MARK: - RemoteImageSourceViewProtocol & LocalImageSourceViewProtocol
-extension ImageSourceSelectionViewController: RemoteImageSourceViewProtocol, LocalImageSourceViewProtocol {
-    func displayFetchedImages(_ images: [UIImage]) {
-        collectionView.reloadData()
-    }
     
-    func displayFetchedImages(_ images: [UnsplashResult]) {
-        collectionView.reloadData()
-    }
-}
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+
+        if offsetY > contentHeight - height * 2, !isLoading {
+            guard let query = searchBar.text else { return }
+            getImages(with: query)
+            view.endEditing(true)
+        }
+    }}
 
 // MARK: - Setup Views & Setup Constraints
 extension ImageSourceSelectionViewController {
@@ -254,7 +269,6 @@ extension ImageSourceSelectionViewController {
     }
     
     func setupConstraints() {
-        
         NSLayoutConstraint.activate([
             stackView.topAnchor
                 .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -282,10 +296,11 @@ extension ImageSourceSelectionViewController {
 
 // MARK: - UISearchBarDelegate
 extension ImageSourceSelectionViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        remoteImageSourcePresenter?.fetchRemoteImages(with: query)
-        view.endEditing(true)
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        debouncer.run { [weak self] in
+            guard let self else { return }
+            self.getImages(with: searchText, isNewSearch: true)
+        }
     }
 }
 

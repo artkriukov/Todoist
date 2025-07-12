@@ -5,11 +5,14 @@
 //  Created by Artem Kriukov on 05.06.2025.
 //
 
+import Kingfisher
 import UIKit
 
 final class PhotoCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Private Properties
+    private var propertyAnimator: UIViewPropertyAnimator?
+    
     override var isSelected: Bool {
         didSet {
             updateSelectionUI()
@@ -17,6 +20,13 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - UI
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let element = UIActivityIndicatorView(style: .medium)
+        element.hidesWhenStopped = true
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+
     private lazy var imageView: UIImageView = {
         let element = UIImageView()
         element.layer.cornerRadius = 8
@@ -57,40 +67,69 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureCell(with image: UIImage) {
-        imageView.image = image
-    }
-    
-    func configureCell(with imageURL: String) {
-        guard let url = URL(string: imageURL) else { return }
-        
-        UnsplashImageService.shared.loadImage(from: url) { [weak self] image in
-            self?.imageView.image = image
+    func configureCell(
+        with key: ImageKey,
+        dataSource: ImageDataSourceProtocol?
+    ) {
+        imageView.image = nil
+        activityIndicator.startAnimating()
+        dataSource?.getImage(for: key) { [weak self] result in
+            guard let self else { return }
+            self.activityIndicator.stopAnimating()
+            switch result {
+            case let .success(value):
+                switch value {
+                case let .image(value):
+                    self.imageView.image = value
+                case let .url(value):
+                    self.imageView.kf.indicatorType = .none
+                    self.imageView.kf.setImage(
+                        with: value,
+                        options: [
+                            .transition(.fade(0.5)),
+                            .scaleFactor(UIScreen.main.scale),
+                            .cacheOriginalImage
+                        ],
+                        completionHandler: { _ in
+                            self.activityIndicator.stopAnimating()
+                        }
+                    )
+                }
+                // swiftlint:disable:next empty_enum_arguments
+            case .failure(_):
+                self.imageView.image = UIImage(systemName: "photo")
+            }
         }
     }
     
-#warning("Кажется не обсудили этот метод")
     private func updateSelectionUI() {
-        UIView.animate(withDuration: 0.2) {
+        propertyAnimator?.stopAnimation(true)
+        
+        propertyAnimator = UIViewPropertyAnimator(
+            duration: 0.2,
+            curve: .easeInOut
+        ) {
             self.imageView.layer.opacity = self.isSelected ? 0.6 : 1
             self.checkmarckContainerView.isHidden = !self.isSelected
             self.checkmarckImageView.isHidden = !self.isSelected
         }
+        
+        propertyAnimator?.startAnimation()
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
-        checkmarckImageView.image = nil
-        checkmarckContainerView.backgroundColor = nil
-        checkmarckContainerView.layer.borderColor = nil
-        checkmarckContainerView.layer.borderWidth = 0
+        activityIndicator.stopAnimating()
+        checkmarckImageView.isHidden = true
+        checkmarckContainerView.isHidden = true
     }
 }
 
 private extension PhotoCollectionViewCell {
     func setupViews() {
         contentView.addSubview(imageView)
+        contentView.addSubview(activityIndicator)
         contentView.addSubview(checkmarckContainerView)
         checkmarckContainerView.addSubview(checkmarckImageView)
     }
@@ -101,6 +140,9 @@ private extension PhotoCollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             
             checkmarckContainerView.widthAnchor.constraint(equalToConstant: 24),
             checkmarckContainerView.heightAnchor.constraint(equalToConstant: 24),
