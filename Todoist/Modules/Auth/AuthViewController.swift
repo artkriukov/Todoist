@@ -11,25 +11,15 @@ final class AuthViewController: UIViewController {
     private let mode: AuthMode
     
     // MARK: - UI
-    private lazy var topInfoStackView = FactoryUI.shared.makeStackView(
-        spacing: 15,
-        layoutMargins: .zero,
-        backgroundColor: .clear
-    )
     
-    private lazy var titleLabel: UILabel = {
-        let element = UILabel()
-        element.font = Asset.CustomFont.medium(size: 24)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var descrLabel: UILabel = {
-        let element = UILabel()
-        element.font = Asset.CustomFont.regular(size: 17)
-        element.text = AuthStrings.enterEmailAndPassword.rawValue.localized()
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
+    private lazy var topInfoStackView: InfoHeaderView = {
+        let config = InfoHeaderView.Configuration(
+            title: AuthStrings.signIn.rawValue.localized(),
+            description: AuthStrings.enterEmailAndPassword.rawValue.localized()
+        )
+        let view = InfoHeaderView(configuration: config)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     private lazy var inputFieldsStackView = FactoryUI.shared.makeStackView(
@@ -105,10 +95,10 @@ final class AuthViewController: UIViewController {
         
         switch mode {
         case .signIn:
-            titleLabel.text = signInString
+            topInfoStackView.title = signInString
             actionButton.setTitle(signInString, for: .normal)
         case .signUp:
-            titleLabel.text = signUpString
+            topInfoStackView.title = signUpString
             actionButton.setTitle(signUpString, for: .normal)
         }
     }
@@ -120,6 +110,7 @@ final class AuthViewController: UIViewController {
     private func actionButtonTapped() {
         let isEmailValid = validateEmail()
         let isPasswordValid = validatePassword()
+        
         if isEmailValid && isPasswordValid {
             print("Good info")
         } else {
@@ -171,9 +162,6 @@ private extension AuthViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
         view.addSubview(topInfoStackView)
-        
-        topInfoStackView.addArrangedSubview(titleLabel)
-        topInfoStackView.addArrangedSubview(descrLabel)
         
         view.addSubview(inputFieldsStackView)
         inputFieldsStackView.addArrangedSubview(emailTextField)
