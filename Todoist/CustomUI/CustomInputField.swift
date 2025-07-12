@@ -17,6 +17,10 @@ final class CustomInputField: UIView {
 
     private var isSecure = false
 
+    var text: String? {
+        return textField.text
+    }
+    
     init(configuration: Configuration) {
         super.init(frame: .zero)
         setup(configuration: configuration)

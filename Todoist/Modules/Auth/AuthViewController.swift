@@ -118,7 +118,7 @@ final class AuthViewController: UIViewController {
     }
     
     private func actionButtonTapped() {
-        
+        print("email: \(emailTextField.text ?? "none"), psw: \(passwordTextField.text ?? "none")")
     }
 }
 
