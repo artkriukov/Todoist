@@ -20,7 +20,7 @@ final class ProfileSetupViewController: UIViewController {
         return view
     }()
     
-    private lazy var mainViewStack: UIStackView = {
+    private lazy var mainStackView: UIStackView = {
         let element = UIStackView()
         element.layer.borderColor = Asset.Colors.secondaryBackground.cgColor
         element.layer.borderWidth = 1
@@ -126,11 +126,11 @@ private extension ProfileSetupViewController {
         view.backgroundColor = Asset.Colors.mainBackground
         
         view.addSubview(topInfoStackView)
-        view.addSubview(mainViewStack)
-        mainViewStack.addArrangedSubview(profileLabel)
-        mainViewStack.addArrangedSubview(imageView)
-        mainViewStack.addArrangedSubview(uploadPhotoButton)
-        mainViewStack.addArrangedSubview(nameTextField)
+        view.addSubview(mainStackView)
+        mainStackView.addArrangedSubview(profileLabel)
+        mainStackView.addArrangedSubview(imageView)
+        mainStackView.addArrangedSubview(uploadPhotoButton)
+        mainStackView.addArrangedSubview(nameTextField)
         
         view.addSubview(actionButton)
     }
@@ -144,28 +144,28 @@ private extension ProfileSetupViewController {
             topInfoStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             
-            mainViewStack.topAnchor
-                .constraint(equalTo: topInfoStackView.bottomAnchor, constant: 65),
-            mainViewStack.leadingAnchor
+            mainStackView.topAnchor
+                .constraint(equalTo: topInfoStackView.bottomAnchor, constant: 45),
+            mainStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 16),
-            mainViewStack.trailingAnchor
+            mainStackView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor, constant: -16),
             
             imageView.widthAnchor.constraint(equalToConstant: 100),
             imageView.heightAnchor.constraint(equalToConstant: 100),
             
             uploadPhotoButton.leadingAnchor
-                .constraint(equalTo: mainViewStack.leadingAnchor, constant: 16),
+                .constraint(equalTo: mainStackView.leadingAnchor, constant: 16),
             uploadPhotoButton.trailingAnchor
-                .constraint(equalTo: mainViewStack.trailingAnchor, constant: -16),
+                .constraint(equalTo: mainStackView.trailingAnchor, constant: -16),
             
             nameTextField.leadingAnchor
-                .constraint(equalTo: mainViewStack.leadingAnchor, constant: 16),
+                .constraint(equalTo: mainStackView.leadingAnchor, constant: 16),
             nameTextField.trailingAnchor
-                .constraint(equalTo: mainViewStack.trailingAnchor, constant: -16),
+                .constraint(equalTo: mainStackView.trailingAnchor, constant: -16),
             
             actionButton.topAnchor
-                .constraint(equalTo: mainViewStack.bottomAnchor, constant: 30),
+                .constraint(equalTo: mainStackView.bottomAnchor, constant: 30),
             actionButton.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor
