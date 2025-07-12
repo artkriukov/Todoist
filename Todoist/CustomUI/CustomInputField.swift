@@ -9,8 +9,10 @@ import UIKit
 
 final class CustomInputField: UIView {
 
+    private let stackView = UIStackView()
     private let label = UILabel()
     private let textField = InsetTextField()
+    private let warningLabel = UILabel()
     private let toggleButton = UIButton(type: .custom)
 
     private var isSecure = false
@@ -27,6 +29,8 @@ final class CustomInputField: UIView {
     private func setup(configuration: Configuration) {
         makeLabel(configuration: configuration)
         makeTextField(configuration: configuration)
+        makeWarningLabel()
+        makeStackView()
         setupViews()
     }
 }
@@ -54,7 +58,6 @@ private extension CustomInputField {
         textField.autocapitalizationType = .none
         textField.backgroundColor = Asset.Colors.secondaryBackground
         textField.layer.cornerRadius = 8
-        textField.layoutMargins = .init(top: 0, left: 16, bottom: 0, right: 16)
         textField.translatesAutoresizingMaskIntoConstraints = false
 
         isSecure = configuration.isSecure
@@ -68,6 +71,22 @@ private extension CustomInputField {
             textField.rightView = nil
             textField.rightViewMode = .never
         }
+    }
+
+    func makeWarningLabel() {
+        warningLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        warningLabel.textColor = .systemRed
+        warningLabel.numberOfLines = 0
+        warningLabel.isHidden = true
+        warningLabel.translatesAutoresizingMaskIntoConstraints = false
+    }
+
+    func makeStackView() {
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
     }
 
     func setupToggleButton() {
@@ -89,20 +108,33 @@ private extension CustomInputField {
         toggleButton.setImage(image, for: .normal)
     }
 
-     func setupViews() {
-        addSubview(label)
-        addSubview(textField)
+    func setupViews() {
+        addSubview(stackView)
+
+        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(textField)
+        stackView.addArrangedSubview(warningLabel)
 
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor),
-
-            textField.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 6),
-            textField.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textField.trailingAnchor.constraint(equalTo: trailingAnchor),
-            textField.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             textField.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+}
+
+// MARK: - Public API для работы с warningLabel
+
+extension CustomInputField {
+    func showWarning(_ message: String) {
+        warningLabel.text = message
+        warningLabel.isHidden = false
+    }
+
+    func hideWarning() {
+        warningLabel.text = nil
+        warningLabel.isHidden = true
     }
 }
