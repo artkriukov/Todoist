@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class AuthButton: UIControl {
+final class ActionButton: UIControl {
     
     private let stackView = UIStackView()
     private let imageView = UIImageView()
@@ -72,11 +72,11 @@ final class AuthButton: UIControl {
         stackView.addArrangedSubview(titleLabel)
         
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            stackView.heightAnchor.constraint(equalToConstant: 44),
+            stackView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
             
             imageView.heightAnchor.constraint(equalToConstant: 25),
             imageView.widthAnchor.constraint(equalToConstant: 25)
@@ -84,7 +84,7 @@ final class AuthButton: UIControl {
     }
 }
 
-extension AuthButton {
+extension ActionButton {
     struct Configuration {
         let title: String
         let image: UIImage?

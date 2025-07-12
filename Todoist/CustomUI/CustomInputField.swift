@@ -24,6 +24,7 @@ final class CustomInputField: UIView {
     init(configuration: Configuration) {
         super.init(frame: .zero)
         setup(configuration: configuration)
+        textField.text = "test@test.com"
     }
 
     required init?(coder: NSCoder) {

@@ -19,10 +19,14 @@
 // ProfileStrings
 "profile_key" = "Profile";
 "change_photo" = "Change Photo";
+"profile_uploadPhoto" = "Upload photo";
 "view_logs" = "View Logs";
 "system_logs" = "System Logs";
 "your_name" = "Your Name";
+"profile_yourProfile" = "Your Profile";
 "selectFromGallery" = "Select from Gallery";
+"profile_welcomeTitle" = "Glad to see you here 🎉";
+"profile_welcomeSubtitle" = "You’ve just taken the first step toward a productive day!";
 
 // ToDoStrings
 "to_do_list" = "To-Do List";
@@ -44,6 +48,7 @@
 "auth_emailTitle" = "Your Email";
 "auth_passwordTitle" = "Your Password";
 "auth_passwordShort" = "Password";
+"auth_goToTasks" = "Go to tasks";
 
 // Alert
 "alert_imageLoadFailedTitle" = "Unable to load images";

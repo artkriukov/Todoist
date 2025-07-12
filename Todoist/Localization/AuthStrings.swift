@@ -18,4 +18,5 @@ enum AuthStrings: String {
     case emailTitle = "auth_emailTitle"
     case passwordTitle = "auth_passwordTitle"
     case passwordShort = "auth_passwordShort"
+    case goToTask = "auth_goToTasks"
 }

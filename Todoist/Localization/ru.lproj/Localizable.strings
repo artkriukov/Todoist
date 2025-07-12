@@ -19,10 +19,15 @@
 // ProfileStrings
 "profile_key" = "Профиль";
 "change_photo" = "Изменить фото";
+"profile_uploadPhoto" = "Загрузить фото";
 "view_logs" = "Посмотреть логи";
 "system_logs" = "Логи системы";
 "your_name" = "Ваше имя";
+"profile_yourProfile" = "Ваш профиль";
 "selectFromGallery" = "Выбрать из галереи";
+"profile_welcomeTitle" = "Рады видеть вас здесь 🎉";
+"profile_welcomeSubtitle" = "Вы только что сделали первый шаг к продуктивному дню!";
+
 
 // ToDoStrings
 "to_do_list" = "Список дел";
@@ -44,6 +49,7 @@
 "auth_emailTitle" = "Ваш Email";
 "auth_passwordTitle" = "Ваш пароль";
 "auth_passwordShort" = "Пароль";
+"auth_goToTasks" = "Перейти к задачам";
 
 // Alert
 "alert_imageLoadFailedTitle" = "Не удалось загрузить изображения";

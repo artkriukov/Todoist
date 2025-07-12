@@ -8,25 +8,169 @@
 import UIKit
 
 final class ProfileSetupViewController: UIViewController {
-
+    
+    // MARK: - UI
+    private lazy var topInfoStackView: InfoHeaderView = {
+        let config = InfoHeaderView.Configuration(
+            title: ProfileStrings.welcomeTitle.rawValue.localized(),
+            description: ProfileStrings.welcomeSubtitle.rawValue.localized()
+        )
+        let view = InfoHeaderView(configuration: config)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var mainViewStack: UIStackView = {
+        let element = UIStackView()
+        element.layer.borderColor = Asset.Colors.secondaryBackground.cgColor
+        element.layer.borderWidth = 1
+        element.spacing = 20
+        element.alignment = .center
+        element.axis = .vertical
+        element.layer.cornerRadius = 8
+        element.isLayoutMarginsRelativeArrangement = true
+        element.layoutMargins = UIEdgeInsets(top: 26, left: 0, bottom: 26, right: 0)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var profileLabel: UILabel = {
+        let element = UILabel()
+        element.font = Asset.CustomFont.medium(size: 17)
+        element.text = ProfileStrings.yourProfile.rawValue.localized()
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var imageView: UIImageView = {
+        let element = UIImageView()
+        element.contentMode = .scaleAspectFill
+        element.image = Asset.Images.defaultUserImage
+        element.layer.cornerRadius = 50
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var uploadPhotoButton: ActionButton = {
+        let config = ActionButton.Configuration(
+            title: ProfileStrings.uploadPhoto.rawValue.localized(),
+            image: Asset.Images.camera,
+            backgroundColor: Asset.Colors.secondaryBackground,
+            action: { [weak self] in
+                self?.uploadPhotoButtonTapped()
+            })
+        let element = ActionButton(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var nameTextField: CustomInputField = {
+        let config = CustomInputField.Configuration(
+            title: ProfileStrings.yourName.rawValue.localized(),
+            placeholder: ProfileStrings.yourName.rawValue.localized(),
+            isSecure: false,
+            keyboardType: .default
+        )
+        let element = CustomInputField(configuration: config)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var actionButton: UIButton = {
+        let element = FactoryUI.shared.makeStyledButton(
+            title: AuthStrings.goToTask.rawValue.localized(),
+            alignment: .center,
+            backgroundColor: Asset.Colors.blueColor,
+            contentInsets: .zero
+        ) {
+            self.actionButtonTapped()
+        }
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupViews()
         setupConstraints()
+        setupNavigationBar()
+    }
+    
+    // MARK: - Private Methods
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: GlobalStrings.back.rawValue.localized(),
+            primaryAction: UIAction { [weak self] _ in
+                self?.cancelButtonTapped()
+            }
+        )
+    }
+    
+    private func cancelButtonTapped() {
+        dismiss(animated: true)
+    }
+    
+    private func uploadPhotoButtonTapped() {
+        print("Hello World!")
+    }
+    
+    private func actionButtonTapped() {
+        print("actionButtonTapped")
     }
 }
 
 // MARK: - Setup Views & Setup Constraints
 private extension ProfileSetupViewController {
     func setupViews() {
+        view.backgroundColor = Asset.Colors.mainBackground
         
+        view.addSubview(topInfoStackView)
+        view.addSubview(mainViewStack)
+        mainViewStack.addArrangedSubview(profileLabel)
+        mainViewStack.addArrangedSubview(imageView)
+        mainViewStack.addArrangedSubview(uploadPhotoButton)
+        mainViewStack.addArrangedSubview(nameTextField)
+        
+        view.addSubview(actionButton)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            topInfoStackView.topAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
+            topInfoStackView.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15),
+            topInfoStackView.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
             
+            mainViewStack.topAnchor
+                .constraint(equalTo: topInfoStackView.bottomAnchor, constant: 65),
+            mainViewStack.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 16),
+            mainViewStack.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            imageView.widthAnchor.constraint(equalToConstant: 100),
+            imageView.heightAnchor.constraint(equalToConstant: 100),
+            
+            uploadPhotoButton.leadingAnchor
+                .constraint(equalTo: mainViewStack.leadingAnchor, constant: 16),
+            uploadPhotoButton.trailingAnchor
+                .constraint(equalTo: mainViewStack.trailingAnchor, constant: -16),
+            
+            nameTextField.leadingAnchor
+                .constraint(equalTo: mainViewStack.leadingAnchor, constant: 16),
+            nameTextField.trailingAnchor
+                .constraint(equalTo: mainViewStack.trailingAnchor, constant: -16),
+            
+            actionButton.topAnchor
+                .constraint(equalTo: mainViewStack.bottomAnchor, constant: 30),
+            actionButton.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 16),
+            actionButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -16),
+            actionButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 }

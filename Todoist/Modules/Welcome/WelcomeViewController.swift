@@ -15,41 +15,41 @@ final class WelcomeViewController: UIViewController {
         backgroundColor: .clear
     )
     
-    private lazy var appleAuthButton: AuthButton = {
-        let config = AuthButton.Configuration(
+    private lazy var appleAuthButton: ActionButton = {
+        let config = ActionButton.Configuration(
             title: AuthStrings.signInWithApple.rawValue.localized(),
             image: Asset.Images.authApple,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
                 self?.appleAuthButtonTapped()
             })
-        let element = AuthButton(configuration: config)
+        let element = ActionButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var googleAuthButton: AuthButton = {
-        let config = AuthButton.Configuration(
+    private lazy var googleAuthButton: ActionButton = {
+        let config = ActionButton.Configuration(
             title: AuthStrings.signInWithGoogle.rawValue.localized(),
             image: Asset.Images.authGoogle,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
                 self?.googleAuthButtonTapped()
             })
-        let element = AuthButton(configuration: config)
+        let element = ActionButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var emailAuthButton: AuthButton = {
-        let config = AuthButton.Configuration(
+    private lazy var emailAuthButton: ActionButton = {
+        let config = ActionButton.Configuration(
             title: AuthStrings.signInWithEmail.rawValue.localized(),
             image: Asset.Images.authMail,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
                 self?.mailAuthButtonTapped()
             })
-        let element = AuthButton(configuration: config)
+        let element = ActionButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()

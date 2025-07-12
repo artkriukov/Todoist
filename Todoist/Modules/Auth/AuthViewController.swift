@@ -69,7 +69,7 @@ final class AuthViewController: UIViewController {
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -80,7 +80,11 @@ final class AuthViewController: UIViewController {
         setupViews()
         setupConstraints()
         configureViewController(with: mode)
-        
+        setupNavigationBar()
+    }
+    
+    // MARK: - Private Methods
+    private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: GlobalStrings.back.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
@@ -112,7 +116,16 @@ final class AuthViewController: UIViewController {
         let isPasswordValid = validatePassword()
         
         if isEmailValid && isPasswordValid {
-            print("Good info")
+            switch mode {
+            case .signIn:
+                print("Go to TabBarController")
+            case .signUp:
+                let profileSetupVC = ProfileSetupViewController()
+                let navController = UINavigationController(
+                    rootViewController: profileSetupVC
+                )
+                present(navController, animated: true)
+            }
         } else {
             print("Bad info")
         }
@@ -130,8 +143,8 @@ final class AuthViewController: UIViewController {
         } else {
             UIView.animate(withDuration: 0.3) {
                 self.emailTextField.showWarning(
-                        GlobalStrings.invalidEmail.rawValue.localized()
-                    )
+                    GlobalStrings.invalidEmail.rawValue.localized()
+                )
             }
             return false
         }
@@ -149,8 +162,8 @@ final class AuthViewController: UIViewController {
         } else {
             UIView.animate(withDuration: 0.3) {
                 self.passwordTextField.showWarning(
-                        GlobalStrings.passwordRequirements.rawValue.localized()
-                    )
+                    GlobalStrings.passwordRequirements.rawValue.localized()
+                )
             }
             return false
         }
