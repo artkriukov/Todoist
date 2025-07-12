@@ -30,3 +30,12 @@
 "date" = "Date";
 "time" = "Time";
 "new_reminders" = "New Reminders";
+
+// Auth
+"auth_signInWithApple" = "Sign in with Apple";
+"auth_signInWithGoogle" = "Sign in with Google";
+"auth_signInWithMail" = "Sign in with Email";
+"auth_signIn" = "Sign In";
+"auth_signUp" = "Sign Up";
+
+

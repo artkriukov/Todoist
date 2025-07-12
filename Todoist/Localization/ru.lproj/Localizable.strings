@@ -30,3 +30,10 @@
 "date" = "Дата";
 "time" = "Время";
 "new_reminders" = "Новое напоминание";
+
+// Auth
+"auth_signInWithApple" = "Войти через Apple";
+"auth_signInWithGoogle" = "Войти через Google";
+"auth_signInWithMail" = "Войти через Email";
+"auth_signIn" = "Войти";
+"auth_signUp" = "Зарегистрироваться";

@@ -125,9 +125,8 @@ final class UserSettingsViewController: UIViewController {
         let actionSheet = FactoryUI.shared.makeBottomAlert(
             alertTitle: ProfileStrings.changePhoto.rawValue.localized(),
             primaryActionTitle: ProfileStrings.selectFromGallery.rawValue.localized(),
-            secondaryActionTitle: GlobalStrings.cancel.rawValue
-                .localized(),
-            tertiaryActionTitle: nil,
+            secondaryActionTitle: nil,
+            cancelActionTitle: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: { [weak self] in
                 guard let self else { return }
                 let imagePicker = self.createImagePickerController()
@@ -137,9 +136,7 @@ final class UserSettingsViewController: UIViewController {
                 print("onUnsplashTap")
             }
         )
-        
         present(actionSheet, animated: true)
-        
     }
     
     private func loadDataFromUserDefoults() {

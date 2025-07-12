@@ -95,11 +95,11 @@ final class FactoryUI {
     func makeBottomAlert(
         alertTitle: String?,
         primaryActionTitle: String,
-        secondaryActionTitle: String?,
-        tertiaryActionTitle: String?,
+        secondaryActionTitle: String? = nil,
+        cancelActionTitle: String? = nil,
         primaryAction: @escaping () -> Void,
         secondaryAction: (() -> Void)? = nil,
-        tertiaryAction: (() -> Void)? = nil
+        cancelAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let actionSheet = UIAlertController(
             title: alertTitle,
@@ -112,16 +112,22 @@ final class FactoryUI {
             style: .default,
             handler: { _ in primaryAction() }
         ))
-        actionSheet.addAction(UIAlertAction(
-            title: secondaryActionTitle,
-            style: .default,
-            handler: { _ in secondaryAction?() }
-        ))
-        actionSheet.addAction(UIAlertAction(
-            title: tertiaryActionTitle,
-            style: .cancel,
-            handler: { _ in tertiaryAction?() }
-        ))
+
+        if let secondaryTitle = secondaryActionTitle {
+            actionSheet.addAction(UIAlertAction(
+                title: secondaryTitle,
+                style: .default,
+                handler: { _ in secondaryAction?() }
+            ))
+        }
+
+        if let cancelTitle = cancelActionTitle {
+            actionSheet.addAction(UIAlertAction(
+                title: cancelTitle,
+                style: .cancel,
+                handler: { _ in cancelAction?() }
+            ))
+        }
 
         return actionSheet
     }

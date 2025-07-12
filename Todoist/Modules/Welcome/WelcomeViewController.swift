@@ -9,6 +9,7 @@ import UIKit
 
 final class WelcomeViewController: UIViewController {
 
+    // MARK: - UI
     private lazy var buttonsStackView = FactoryUI.shared.makeStackView(
         spacing: 20,
         backgroundColor: .clear
@@ -16,7 +17,7 @@ final class WelcomeViewController: UIViewController {
     
     private lazy var appleAuthButton: AuthButton = {
         let config = AuthButton.Configuration(
-            title: "Войти через Apple",
+            title: AuthStrings.signInWithApple.rawValue.localized(),
             image: Asset.Images.authApple,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
@@ -29,7 +30,7 @@ final class WelcomeViewController: UIViewController {
     
     private lazy var googleAuthButton: AuthButton = {
         let config = AuthButton.Configuration(
-            title: "Войти через Google",
+            title: AuthStrings.signInWithGoogle.rawValue.localized(),
             image: Asset.Images.authGoogle,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
@@ -42,7 +43,7 @@ final class WelcomeViewController: UIViewController {
     
     private lazy var emailAuthButton: AuthButton = {
         let config = AuthButton.Configuration(
-            title: "Продолжить через Email",
+            title: AuthStrings.signInWithMail.rawValue.localized(),
             image: Asset.Images.authMail,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
@@ -53,6 +54,7 @@ final class WelcomeViewController: UIViewController {
         return element
     }()
     
+    // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,6 +63,7 @@ final class WelcomeViewController: UIViewController {
         
     }
     
+    // MARK: - Private Methods
     private func appleAuthButtonTapped() {
         print("appleAuthButtonTapped")
     }
@@ -72,16 +75,16 @@ final class WelcomeViewController: UIViewController {
     private func mailAuthButtonTapped() {
         let actionSheet = FactoryUI.shared.makeBottomAlert(
             alertTitle: nil,
-            primaryActionTitle: "Зарегистрироваться",
-            secondaryActionTitle: "Войти",
-            tertiaryActionTitle: "Отменить",
+            primaryActionTitle: AuthStrings.signIn.rawValue.localized(),
+            secondaryActionTitle: AuthStrings.signUp.rawValue.localized(),
+            cancelActionTitle: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: {
                 print("Регистрация")
             },
             secondaryAction: {
                 print("Вход")
             },
-            tertiaryAction: {
+            cancelAction: {
                 print("Отмена")
             }
         )
@@ -89,6 +92,7 @@ final class WelcomeViewController: UIViewController {
     }
 }
 
+// MARK: - Setup Views & Setup Constraints
 private extension WelcomeViewController {
     func setupViews() {
         view.backgroundColor = Asset.Colors.mainBackground
