@@ -135,6 +135,7 @@ final class UserSettingsViewController: UIViewController {
             secondaryAction: {
                 print("onUnsplashTap")
             }
+
         )
         present(actionSheet, animated: true)
     }

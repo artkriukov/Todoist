@@ -62,6 +62,18 @@ final class AuthViewController: UIViewController {
         return element
     }()
     
+    private lazy var actionButton: UIButton = {
+        let element = FactoryUI.shared.makeStyledButton(
+            alignment: .center,
+            backgroundColor: Asset.Colors.blueColor,
+            contentInsets: .zero
+        ) {
+            self.actionButtonTapped()
+        }
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Init
     init(mode: AuthMode) {
         self.mode = mode
@@ -71,6 +83,7 @@ final class AuthViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     // MARK: - Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,16 +100,25 @@ final class AuthViewController: UIViewController {
     }
     
     private func configureViewController(with mode: AuthMode) {
+        let signInString = AuthStrings.signIn.rawValue.localized()
+        let signUpString = AuthStrings.signUp.rawValue.localized()
+        
         switch mode {
         case .signIn:
-            titleLabel.text = AuthStrings.signIn.rawValue.localized()
+            titleLabel.text = signInString
+            actionButton.setTitle(signInString, for: .normal)
         case .signUp:
-            titleLabel.text = AuthStrings.signUp.rawValue.localized()
+            titleLabel.text = signUpString
+            actionButton.setTitle(signUpString, for: .normal)
         }
     }
     
     private func cancelButtonTapped() {
         dismiss(animated: true)
+    }
+    
+    private func actionButtonTapped() {
+        
     }
 }
 
@@ -112,6 +134,7 @@ private extension AuthViewController {
         view.addSubview(inputFieldsStackView)
         inputFieldsStackView.addArrangedSubview(emailTextField)
         inputFieldsStackView.addArrangedSubview(passwordTextField)
+        inputFieldsStackView.addArrangedSubview(actionButton)
     }
     
     func setupConstraints() {
@@ -128,7 +151,9 @@ private extension AuthViewController {
             inputFieldsStackView.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 16),
             inputFieldsStackView.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -16)
+                .constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            actionButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 }
