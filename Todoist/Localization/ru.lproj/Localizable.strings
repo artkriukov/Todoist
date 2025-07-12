@@ -13,6 +13,8 @@
 "cancel" = "Отменить";
 "back" = "Назад";
 "delete" = "Удалить";
+"invalid_email" = "Невалидный Email";
+"password_requirements" = "Пароль должен содержать минимум 5 символов, одну цифру и одну заглавную букву";
 
 // ProfileStrings
 "profile_key" = "Профиль";

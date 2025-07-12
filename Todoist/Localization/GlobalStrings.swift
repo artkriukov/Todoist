@@ -14,4 +14,6 @@ enum GlobalStrings: String {
     case back
     case cancel
     case delete
+    case invalidEmail = "invalid_email"
+    case passwordRequirements = "password_requirements"
 }

@@ -118,7 +118,51 @@ final class AuthViewController: UIViewController {
     }
     
     private func actionButtonTapped() {
-        print("email: \(emailTextField.text ?? "none"), psw: \(passwordTextField.text ?? "none")")
+        let isEmailValid = validateEmail()
+        let isPasswordValid = validatePassword()
+        if isEmailValid && isPasswordValid {
+            print("Good info")
+        } else {
+            print("Bad info")
+        }
+    }
+    
+    private func validateEmail() -> Bool {
+        if let email = emailTextField.text,
+           !email.isEmpty,
+           email.isValidEmail() {
+            print("Good")
+            UIView.animate(withDuration: 0.3) {
+                self.emailTextField.hideWarning()
+            }
+            return true
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.emailTextField.showWarning(
+                        GlobalStrings.invalidEmail.rawValue.localized()
+                    )
+            }
+            return false
+        }
+    }
+    
+    private func validatePassword() -> Bool {
+        if let psw = passwordTextField.text,
+           !psw.isEmpty,
+           psw.isValidPassword() {
+            print("Good")
+            UIView.animate(withDuration: 0.3) {
+                self.passwordTextField.hideWarning()
+            }
+            return true
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.passwordTextField.showWarning(
+                        GlobalStrings.passwordRequirements.rawValue.localized()
+                    )
+            }
+            return false
+        }
     }
 }
 
