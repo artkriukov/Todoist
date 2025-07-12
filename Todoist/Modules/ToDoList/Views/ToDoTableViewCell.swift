@@ -42,26 +42,9 @@ final class ToDoTableViewCell: UITableViewCell {
     
     private lazy var toDoMainSV: UIStackView = {
         let element = UIStackView()
-        element.axis = .horizontal
-        element.distribution = .fillEqually
-        element.alignment = .center
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var mainInfoStackView: UIStackView = {
-        let element = UIStackView()
         element.axis = .vertical
-        element.spacing = 4
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
-    private lazy var selectedImage: UIImageView = {
-        let element = UIImageView()
-        element.contentMode = .scaleAspectFit
-        element.isHidden = true
-        element.layer.cornerRadius = 12
+        element.alignment = .leading
+        element.spacing = 5
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -91,6 +74,14 @@ final class ToDoTableViewCell: UITableViewCell {
         return element
     }()
     
+    private lazy var imageIndicatorView: UIImageView = {
+        let element = UIImageView()
+        element.contentMode = .scaleAspectFill
+        element.isHidden = true
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -105,41 +96,29 @@ final class ToDoTableViewCell: UITableViewCell {
     // MARK: - Public Method
     func configureCell(with item: ToDoItem) {
         self.item = item
-        if let imageData = item.selectedImage, let image = UIImage(data: imageData) {
-            selectedImage.image = image
-            selectedImage.isHidden = false
-        } else {
-            selectedImage.image = nil
-            selectedImage.isHidden = true
-        }
-
-        toDoTitleLabel.text = item.title
-        toDoDescrLabel.text = item.description
         
-        let checker = DefaultExpirationChecker()
+        hideOptionalElements()
+        
+        toDoTitleLabel.text = item.title
+        toDoTitleLabel.isHidden = false
+        
+        if let description = item.description, !description.isEmpty {
+            toDoDescrLabel.text = description
+            toDoDescrLabel.isHidden = false
+        }
         
         if let expirationDate = item.expirationDate {
-            
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM d, HH:mm"
-            formatter.timeZone = .current
-            let timeLabel = formatter.string(from: expirationDate)
-            
-            switch checker.check(date: expirationDate) {
-            case .moreThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemGreen
-                
-            case .lessThanHalfHour:
-                expirationDateLabel.text = timeLabel
-                expirationDateLabel.textColor = .systemYellow
-                
-            case .failed:
-                expirationDateLabel.text = "Просрочено"
-                expirationDateLabel.textColor = .systemRed
-            }
+            let data = ExpirationDateHelper().getExpirationDate(for: expirationDate)
+            expirationDateLabel.text = data.text
+            expirationDateLabel.textColor = data.uiColor
+            expirationDateLabel.isHidden = false
         } else {
             expirationDateLabel.textColor = .systemGray
+        }
+        
+        if item.selectedImage != nil {
+            imageIndicatorView.image = UIImage(systemName: "photo.artframe.circle.fill")
+            imageIndicatorView.isHidden = false
         }
     }
     
@@ -153,18 +132,19 @@ final class ToDoTableViewCell: UITableViewCell {
 
     }
     
+    private func hideOptionalElements() {
+        toDoDescrLabel.isHidden = true
+        expirationDateLabel.isHidden = true
+        imageIndicatorView.isHidden = true
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        toDoTitleLabel.text = nil
-        toDoDescrLabel.text = nil
-        expirationDateLabel.text = nil
-        selectedImage.image = nil
+        toDoTitleLabel.isHidden = true
+        toDoDescrLabel.isHidden = true
+        expirationDateLabel.isHidden = true
+        imageIndicatorView.isHidden = true
         doneButton.setImage(nil, for: .normal)
-        
-        toDoDescrLabel.isHidden = false
-        expirationDateLabel.isHidden = false
-        selectedImage.isHidden = false
-        
     }
 }
 
@@ -178,13 +158,10 @@ private extension ToDoTableViewCell {
         
         contentSV.addArrangedSubview(toDoMainSV)
         
-        toDoMainSV.addArrangedSubview(mainInfoStackView)
-        
-        mainInfoStackView.addArrangedSubview(toDoTitleLabel)
-        mainInfoStackView.addArrangedSubview(toDoDescrLabel)
-        mainInfoStackView.addArrangedSubview(expirationDateLabel)
-        
-        toDoMainSV.addArrangedSubview(selectedImage)
+        toDoMainSV.addArrangedSubview(toDoTitleLabel)
+        toDoMainSV.addArrangedSubview(toDoDescrLabel)
+        toDoMainSV.addArrangedSubview(expirationDateLabel)
+        toDoMainSV.addArrangedSubview(imageIndicatorView)
         
     }
     
@@ -195,8 +172,8 @@ private extension ToDoTableViewCell {
             contentSV.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contentSV.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             
-            selectedImage.widthAnchor.constraint(equalToConstant: 80),
-            selectedImage.heightAnchor.constraint(equalToConstant: 60),
+            imageIndicatorView.widthAnchor.constraint(equalToConstant: 25),
+            imageIndicatorView.heightAnchor.constraint(equalToConstant: 25),
             
             doneButton.widthAnchor.constraint(equalToConstant: 24),
             doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)

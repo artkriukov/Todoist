@@ -38,11 +38,11 @@ final class NewToDoViewController: UIViewController {
     private lazy var infoStackView = FactoryUI.shared.makeStackView()
     
     private lazy var titleTextField = FactoryUI.shared.makeTetxField(
-        placeholder: "Название"
+        placeholder: ToDoStrings.title.rawValue.localized()
     )
     
     private lazy var descriptionTextField = FactoryUI.shared.makeTetxField(
-        placeholder: "Заметка"
+        placeholder: ToDoStrings.note.rawValue.localized()
     )
     
     private lazy var lineView: UIView = {
@@ -60,7 +60,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var datePickerSV: TitledSwitchView = {
         let config = TitledSwitchView.Configuration(
             image: UIImage(systemName: "calendar"),
-            title: "Дата",
+            title: ToDoStrings.date.rawValue.localized(),
             subtitle: nil,
             backgroundColor: .red,
             switcherAction: { [weak self] in
@@ -83,7 +83,7 @@ final class NewToDoViewController: UIViewController {
     private lazy var timePickerSV: TitledSwitchView = {
         let config = TitledSwitchView.Configuration(
             image: UIImage(systemName: "clock"),
-            title: "Время",
+            title: ToDoStrings.time.rawValue.localized(),
             subtitle: nil,
             backgroundColor: .systemBlue,
             switcherAction: { [weak self] in
@@ -193,17 +193,17 @@ final class NewToDoViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        title = "Новое напоминание"
+        title = ToDoStrings.newReminders.rawValue.localized()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Отменить",
+            title: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
                 self?.cancelButtonTapped()
             }
         )
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Добавить",
+            title: GlobalStrings.add.rawValue.localized(),
             primaryAction: UIAction { [weak self] _ in
                 self?.addNewItemTapped()
             }

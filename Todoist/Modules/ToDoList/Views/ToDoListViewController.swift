@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import SwiftUI
 import UIKit
 
 final class ToDoListViewController: UIViewController {
@@ -33,7 +34,7 @@ final class ToDoListViewController: UIViewController {
             ToDoTableViewCell.self,
             forCellReuseIdentifier: CellIdentifiers.mainToDoTableViewCell
         )
-        element.rowHeight = 100
+        element.rowHeight = UITableView.automaticDimension
         element.estimatedRowHeight = 100
         element.backgroundColor = Asset.Colors.mainBackground
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -139,9 +140,16 @@ extension ToDoListViewController: UITableViewDataSource {
         }
         
         cell.handlerButtonTapped = { [weak self] in
-            self?.itemsProvider.removeItem(at: indexPath.row)
+            guard let self = self else { return }
+            guard let currentIndexPath = tableView.indexPath(for: cell) else { return }
             
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.itemsProvider.removeItem(at: currentIndexPath.row)
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [currentIndexPath], with: .automatic)
+            }, completion: { _ in
+                self.checkTasks()
+            })
         }
         
         let item = itemsProvider.getAllToDoItems()[indexPath.row]
@@ -154,15 +162,25 @@ extension ToDoListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension ToDoListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
+        let detailView = DetailToDoView(toDo: selectedToDo)
+        let hostingVC = UIHostingController(rootView: detailView)
+        navigationController?.pushViewController(hostingVC, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
         
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Удалить"
+            title: GlobalStrings.delete.rawValue.localized()
         ) { _, _, completionHandler in
             
             self.itemsProvider.removeItem(at: indexPath.row)
