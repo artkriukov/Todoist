@@ -10,7 +10,12 @@ import Foundation
 enum AuthStrings: String {
     case signInWithApple = "auth_signInWithApple"
     case signInWithGoogle = "auth_signInWithGoogle"
-    case signInWithMail = "auth_signInWithMail"
+    case signInWithEmail = "auth_signInWithEmail"
+    case signUpWithEmail = "auth_signUpWithEmail"
     case signIn = "auth_signIn"
     case signUp = "auth_signUp"
+    case enterEmailAndPassword = "auth_enterEmailAndPassword"
+    case emailTitle = "auth_emailTitle"
+    case passwordTitle = "auth_passwordTitle"
+    case passwordShort = "auth_passwordShort"
 }

@@ -43,7 +43,7 @@ final class WelcomeViewController: UIViewController {
     
     private lazy var emailAuthButton: AuthButton = {
         let config = AuthButton.Configuration(
-            title: AuthStrings.signInWithMail.rawValue.localized(),
+            title: AuthStrings.signInWithEmail.rawValue.localized(),
             image: Asset.Images.authMail,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
@@ -75,20 +75,27 @@ final class WelcomeViewController: UIViewController {
     private func mailAuthButtonTapped() {
         let actionSheet = FactoryUI.shared.makeBottomAlert(
             alertTitle: nil,
-            primaryActionTitle: AuthStrings.signIn.rawValue.localized(),
-            secondaryActionTitle: AuthStrings.signUp.rawValue.localized(),
+            primaryActionTitle: AuthStrings.signInWithEmail.rawValue.localized(),
+            secondaryActionTitle: AuthStrings.signUpWithEmail.rawValue
+                .localized(),
             cancelActionTitle: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: {
-                print("Регистрация")
+                self.openAuthVC(with: .signIn)
             },
             secondaryAction: {
-                print("Вход")
+                self.openAuthVC(with: .signUp)
             },
             cancelAction: {
                 print("Отмена")
             }
         )
         present(actionSheet, animated: true)
+    }
+    
+    private func openAuthVC(with mode: AuthMode) {
+        let authVC = AuthViewController(mode: mode)
+        let navVC = UINavigationController(rootViewController: authVC)
+        self.present(navVC, animated: true)
     }
 }
 

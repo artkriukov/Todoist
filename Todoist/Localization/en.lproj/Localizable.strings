@@ -34,8 +34,12 @@
 // Auth
 "auth_signInWithApple" = "Sign in with Apple";
 "auth_signInWithGoogle" = "Sign in with Google";
-"auth_signInWithMail" = "Sign in with Email";
+"auth_signInWithEmail" = "Sign in with Email";
+"auth_signUpWithEmail" = "Sign up with Email";
 "auth_signIn" = "Sign In";
 "auth_signUp" = "Sign Up";
-
+"auth_enterEmailAndPassword" = "Enter your email and password";
+"auth_emailTitle" = "Your Email";
+"auth_passwordTitle" = "Your Password";
+"auth_passwordShort" = "Password";
 

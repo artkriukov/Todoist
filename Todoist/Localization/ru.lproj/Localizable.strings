@@ -34,6 +34,11 @@
 // Auth
 "auth_signInWithApple" = "Войти через Apple";
 "auth_signInWithGoogle" = "Войти через Google";
-"auth_signInWithMail" = "Войти через Email";
+"auth_signInWithEmail" = "Войти через Email";
+"auth_signUpWithEmail" = "Зарегистрироваться через Email";
 "auth_signIn" = "Войти";
 "auth_signUp" = "Зарегистрироваться";
+"auth_enterEmailAndPassword" = "Введите email и пароль";
+"auth_emailTitle" = "Ваш Email";
+"auth_passwordTitle" = "Ваш пароль";
+"auth_passwordShort" = "Пароль";
