@@ -122,18 +122,24 @@ final class UserSettingsViewController: UIViewController {
     // MARK: - Private Methods
     
     private func changeUserImageButtonTapped() {
-        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
-            onGalleryTap: { [weak self] in
+        let actionSheet = FactoryUI.shared.makeBottomAlert(
+            alertTitle: ProfileStrings.changePhoto.rawValue.localized(),
+            primaryActionTitle: ProfileStrings.selectFromGallery.rawValue.localized(),
+            secondaryActionTitle: GlobalStrings.cancel.rawValue
+                .localized(),
+            tertiaryActionTitle: nil,
+            primaryAction: { [weak self] in
                 guard let self else { return }
                 let imagePicker = self.createImagePickerController()
                 self.present(imagePicker, animated: true)
             },
-            onUnsplashTap: {
+            secondaryAction: {
                 print("onUnsplashTap")
             }
         )
         
         present(actionSheet, animated: true)
+        
     }
     
     private func loadDataFromUserDefoults() {

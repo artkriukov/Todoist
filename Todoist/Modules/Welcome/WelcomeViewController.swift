@@ -20,7 +20,7 @@ final class WelcomeViewController: UIViewController {
             image: Asset.Images.authApple,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
-                self?.emailButtonTapped()
+                self?.appleAuthButtonTapped()
             })
         let element = AuthButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -33,7 +33,7 @@ final class WelcomeViewController: UIViewController {
             image: Asset.Images.authGoogle,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
-                self?.emailButtonTapped()
+                self?.googleAuthButtonTapped()
             })
         let element = AuthButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +46,7 @@ final class WelcomeViewController: UIViewController {
             image: Asset.Images.authMail,
             backgroundColor: Asset.Colors.secondaryBackground,
             action: { [weak self] in
-                self?.emailButtonTapped()
+                self?.mailAuthButtonTapped()
             })
         let element = AuthButton(configuration: config)
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -60,9 +60,32 @@ final class WelcomeViewController: UIViewController {
         setupConstraints()
         
     }
+    
+    private func appleAuthButtonTapped() {
+        print("appleAuthButtonTapped")
+    }
+    
+    private func googleAuthButtonTapped() {
+        print("googleAuthButtonTapped")
+    }
 
-    private func emailButtonTapped() {
-        print(1)
+    private func mailAuthButtonTapped() {
+        let actionSheet = FactoryUI.shared.makeBottomAlert(
+            alertTitle: nil,
+            primaryActionTitle: "Зарегистрироваться",
+            secondaryActionTitle: "Войти",
+            tertiaryActionTitle: "Отменить",
+            primaryAction: {
+                print("Регистрация")
+            },
+            secondaryAction: {
+                print("Вход")
+            },
+            tertiaryAction: {
+                print("Отмена")
+            }
+        )
+        present(actionSheet, animated: true)
     }
 }
 

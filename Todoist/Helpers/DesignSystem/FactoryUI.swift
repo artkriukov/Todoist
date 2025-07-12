@@ -92,29 +92,37 @@ final class FactoryUI {
         return button
     }
     
-    func makeChangePhotoAlert(
-        onGalleryTap: @escaping () -> Void,
-        onUnsplashTap: @escaping () -> Void
+    func makeBottomAlert(
+        alertTitle: String?,
+        primaryActionTitle: String,
+        secondaryActionTitle: String?,
+        tertiaryActionTitle: String?,
+        primaryAction: @escaping () -> Void,
+        secondaryAction: (() -> Void)? = nil,
+        tertiaryAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let actionSheet = UIAlertController(
-            title: ProfileStrings.changePhoto.rawValue.localized(),
+            title: alertTitle,
             message: nil,
             preferredStyle: .actionSheet
         )
-        
+
         actionSheet.addAction(UIAlertAction(
-            title: ProfileStrings.selectFromGallery.rawValue.localized(),
+            title: primaryActionTitle,
             style: .default,
-            handler: { _ in
-                onGalleryTap()
-            })
-        )
-        
-        actionSheet.addAction(UIAlertAction(
-            title: GlobalStrings.cancel.rawValue.localized(),
-            style: .cancel
+            handler: { _ in primaryAction() }
         ))
-        
+        actionSheet.addAction(UIAlertAction(
+            title: secondaryActionTitle,
+            style: .default,
+            handler: { _ in secondaryAction?() }
+        ))
+        actionSheet.addAction(UIAlertAction(
+            title: tertiaryActionTitle,
+            style: .cancel,
+            handler: { _ in tertiaryAction?() }
+        ))
+
         return actionSheet
     }
     
