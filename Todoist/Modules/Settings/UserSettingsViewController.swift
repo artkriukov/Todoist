@@ -61,7 +61,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
         element.text = GlobalStrings.name.rawValue.localized()
-        element.font = UIConstants.CustomFont.medium(size: 17)
+        element.font = Asset.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()

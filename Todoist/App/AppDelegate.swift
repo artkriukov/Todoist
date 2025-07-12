@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import FirebaseCore
 import UIKit
 
 @main
@@ -23,7 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
-
+        
+        FirebaseApp.configure()
+        
         return true
     }
 }
