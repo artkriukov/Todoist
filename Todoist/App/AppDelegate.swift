@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
         
-        self.window?.rootViewController = TabBarController()
+        self.window?.rootViewController = WelcomeViewController()
         self.window?.makeKeyAndVisible()
         
         FirebaseApp.configure()
