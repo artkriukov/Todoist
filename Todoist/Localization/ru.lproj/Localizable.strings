@@ -50,6 +50,7 @@
 "auth_passwordTitle" = "Ваш пароль";
 "auth_passwordShort" = "Пароль";
 "auth_goToTasks" = "Перейти к задачам";
+"auth_motto" = "Планируй. Действуй. Успевай больше с нами!";
 
 // Alert
 "alert_imageLoadFailedTitle" = "Не удалось загрузить изображения";

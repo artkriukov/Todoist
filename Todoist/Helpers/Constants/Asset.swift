@@ -80,5 +80,6 @@ enum Asset {
         static let authApple = UIImage(named: "apple")
         static let authGoogle = UIImage(named: "google")
         static let authMail = UIImage(named: "mail")
+        static let welcomeImage = UIImage(named: "welcomeImage")
     }
 }

@@ -49,6 +49,7 @@
 "auth_passwordTitle" = "Your Password";
 "auth_passwordShort" = "Password";
 "auth_goToTasks" = "Go to tasks";
+"auth_motto" = "Plan. Act. Achieve more with us!";
 
 // Alert
 "alert_imageLoadFailedTitle" = "Unable to load images";
