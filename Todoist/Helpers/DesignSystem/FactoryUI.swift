@@ -136,14 +136,14 @@ final class FactoryUI {
         retryAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let alert = UIAlertController(
-            title: "Не удалось загрузить изображения",
-            message: "Проверьте подключение к интернету или повторите попытку позже.",
+            title: AlertStrings.imageLoadFailedTitle.rawValue.localized(),
+            message: AlertStrings.imageLoadFailedMessage.rawValue.localized(),
             preferredStyle: .alert
         )
         
         if let retry = retryAction {
             alert.addAction(UIAlertAction(
-                title: "Повторить",
+                title: AlertStrings.retry.rawValue.localized(),
                 style: .default,
                 handler: { _ in retry() }
             ))

@@ -43,3 +43,7 @@
 "auth_passwordTitle" = "Your Password";
 "auth_passwordShort" = "Password";
 
+// Alert
+"alert_imageLoadFailedTitle" = "Unable to load images";
+"alert_imageLoadFailedMessage" = "Check your internet connection or try again later.";
+"alert_retry" = "Retry";

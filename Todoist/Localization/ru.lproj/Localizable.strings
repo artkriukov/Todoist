@@ -42,3 +42,8 @@
 "auth_emailTitle" = "Ваш Email";
 "auth_passwordTitle" = "Ваш пароль";
 "auth_passwordShort" = "Пароль";
+
+// Alert
+"alert_imageLoadFailedTitle" = "Не удалось загрузить изображения";
+"alert_imageLoadFailedMessage" = "Проверьте подключение к интернету или повторите попытку позже.";
+"alert_retry" = "Повторить";
