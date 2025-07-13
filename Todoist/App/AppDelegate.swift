@@ -11,18 +11,24 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
     let dependencies = DependencyContainer.shared
+    
+    var window: UIWindow?
+    var authCoordinator = CoordinatorFactory.createAuthCoordinator(
+        navigationController: UINavigationController()
+    )
     
     func application(_ application: UIApplication,
                      // swiftlint:disable:next discouraged_optional_collection
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         dependencies.logger.log("App launched")
-        
+    
         window = UIWindow()
         
-        self.window?.rootViewController = WelcomeViewController()
+        self.window?.rootViewController = authCoordinator.navigationController
+        authCoordinator.start()
+        
         self.window?.makeKeyAndVisible()
         
         FirebaseApp.configure()

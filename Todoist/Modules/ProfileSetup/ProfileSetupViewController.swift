@@ -7,7 +7,9 @@
 
 import UIKit
 
-final class ProfileSetupViewController: UIViewController {
+final class ProfileSetupViewController: UIViewController, FlowController {
+    
+    var completionHandler: ((String, String) -> Void)?
     
     // MARK: - UI
     private lazy var topInfoStackView: InfoHeaderView = {
@@ -116,7 +118,8 @@ final class ProfileSetupViewController: UIViewController {
     }
     
     private func actionButtonTapped() {
-        print("actionButtonTapped")
+        guard let name = nameTextField.text else { return }
+        completionHandler?(name, "image")
     }
 }
 

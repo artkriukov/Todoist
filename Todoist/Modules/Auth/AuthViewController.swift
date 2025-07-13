@@ -7,7 +7,9 @@
 
 import UIKit
 
-final class AuthViewController: UIViewController {
+final class AuthViewController: UIViewController, FlowController {
+    var completionHandler: ((String, String) -> Void)?
+
     private let mode: AuthMode
     
     // MARK: - UI
@@ -111,20 +113,21 @@ final class AuthViewController: UIViewController {
         dismiss(animated: true)
     }
     
+#warning("[AuthViewController] actionButtonTapped")
     private func actionButtonTapped() {
         let isEmailValid = validateEmail()
         let isPasswordValid = validatePassword()
         
+        guard let email = emailTextField.text,
+              let password = passwordTextField.text else { return }
+        
         if isEmailValid && isPasswordValid {
             switch mode {
             case .signIn:
-                print("Go to TabBarController")
+                completionHandler?(email, password)
             case .signUp:
-                let profileSetupVC = ProfileSetupViewController()
-                let navController = UINavigationController(
-                    rootViewController: profileSetupVC
-                )
-                present(navController, animated: true)
+                print("\(email) \(password)")
+                completionHandler?(email, password)
             }
         } else {
             print("Bad info")

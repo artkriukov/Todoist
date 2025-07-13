@@ -8,7 +8,9 @@
 import UIKit
 
 final class WelcomeViewController: UIViewController {
-
+    var onSignIn: (() -> Void)?
+    var onSignUp: (() -> Void)?
+    
     // MARK: - UI
 
     private lazy var titleLabel: UILabel = {
@@ -119,10 +121,11 @@ final class WelcomeViewController: UIViewController {
             secondaryActionTitle: AuthStrings.signUpWithEmail.rawValue.localized(),
             cancelActionTitle: GlobalStrings.cancel.rawValue.localized(),
             primaryAction: {
-                self.openAuthVC(with: .signIn)
+                self.onSignIn?()
+
             },
             secondaryAction: {
-                self.openAuthVC(with: .signUp)
+                self.onSignUp?()
             },
             cancelAction: {
                 print("Отмена")
