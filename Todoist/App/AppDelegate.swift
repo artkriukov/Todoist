@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let dependencies = DependencyContainer.shared
     
     var window: UIWindow?
-    var authCoordinator = CoordinatorFactory.createAuthCoordinator(
+    var appCoordinator = CoordinatorFactory.createAppCoordinator(
         navigationController: UINavigationController()
     )
     
@@ -26,8 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         window = UIWindow()
         
-        self.window?.rootViewController = authCoordinator.navigationController
-        authCoordinator.start()
+        self.window?.rootViewController = appCoordinator.navigationController
+        appCoordinator.start()
         
         self.window?.makeKeyAndVisible()
         

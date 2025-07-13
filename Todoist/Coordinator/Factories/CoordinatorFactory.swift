@@ -8,6 +8,12 @@
 import UIKit
 
 final class CoordinatorFactory {
+    static func createAppCoordinator(
+        navigationController: UINavigationController
+    ) -> AppCoordinator {
+        AppCoordinator(navigationController: navigationController)
+    }
+    
     static func createAuthCoordinator(
         navigationController: UINavigationController
     ) -> AuthCoordinator {

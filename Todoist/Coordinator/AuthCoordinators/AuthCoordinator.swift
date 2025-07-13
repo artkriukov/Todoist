@@ -48,6 +48,7 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] email, password in
             self?.userDraft.email = email
             self?.userDraft.password = password
+            self?.completionHandler?()
             print("Успешный вход")
             // проверка firebase - вход на aminVC
         }
@@ -73,6 +74,7 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] name, userPhoto in
             self?.userDraft.name = name
             self?.userDraft.userPhoto = userPhoto
+            self?.completionHandler?()
             // решистрация firebase - вход на aminVC
             print("Успешный вход")
         }
