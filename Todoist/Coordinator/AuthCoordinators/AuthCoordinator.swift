@@ -12,14 +12,14 @@ final class AuthCoordinator: Coordinator {
     var completionHandler: CoordinatorHandler?
     
     private let moduleFactory = ModuleFactory()
-    
-    private var userDraft = UserDraft(
+
+    private var registrationData = RegistrationData(
         email: nil,
         password: nil,
         name: nil,
         userPhoto: nil
     )
-
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
@@ -46,11 +46,15 @@ final class AuthCoordinator: Coordinator {
         let controller = moduleFactory.createEmailLoginModule()
         
         controller.completionHandler = { [weak self] email, password in
-            self?.userDraft.email = email
-            self?.userDraft.password = password
+            self?.registrationData.email = email
+            self?.registrationData.password = password
             self?.completionHandler?()
             print("Успешный вход")
             // проверка firebase - вход на aminVC
+        }
+        
+        controller.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
         }
         
         navigationController.pushViewController(controller, animated: true)
@@ -60,9 +64,13 @@ final class AuthCoordinator: Coordinator {
         let controller = moduleFactory.createEmailRegistrationModule()
         
         controller.completionHandler = { [weak self] email, password in
-            self?.userDraft.email = email
-            self?.userDraft.password = password
+            self?.registrationData.email = email
+            self?.registrationData.password = password
             self?.showProfileInfo()
+        }
+        
+        controller.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
         }
         
         navigationController.pushViewController(controller, animated: true)
@@ -72,11 +80,14 @@ final class AuthCoordinator: Coordinator {
         let controller = moduleFactory.createProfileInfoModule()
         
         controller.completionHandler = { [weak self] name, userPhoto in
-            self?.userDraft.name = name
-            self?.userDraft.userPhoto = userPhoto
+            self?.registrationData.name = name
+            self?.registrationData.userPhoto = userPhoto
             self?.completionHandler?()
-            // решистрация firebase - вход на aminVC
             print("Успешный вход")
+        }
+        
+        controller.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
         }
         
         navigationController.pushViewController(controller, animated: true)

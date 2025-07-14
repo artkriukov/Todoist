@@ -158,7 +158,10 @@ final class UserSettingsViewController: UIViewController {
         
         let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
         
-        let userSettings = UserSettings(name: userName, imageData: imageData)
+        let userSettings = UserSettings(
+            name: userName,
+            imageData: imageData
+        )
         userSettings.save()
     }
     

@@ -15,7 +15,7 @@ enum SettingsKeys: String {
 struct UserSettings {
     let name: String
     let imageData: Data?
-    
+
     var image: UIImage? {
         guard let imageData else { return nil }
         return UIImage(data: imageData)

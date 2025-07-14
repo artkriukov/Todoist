@@ -20,7 +20,7 @@ extension String {
     }
     
     func isValidPassword() -> Bool {
-        let passwordRegEx = "^(?=.*[A-Z])(?=.*\\d).{5,}$"
+        let passwordRegEx = "^(?=.*[A-ZА-ЯЁ])(?=.*\\d).{5,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return predicate.evaluate(with: self)
     }

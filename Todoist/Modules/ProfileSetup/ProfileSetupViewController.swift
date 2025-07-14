@@ -8,8 +8,8 @@
 import UIKit
 
 final class ProfileSetupViewController: UIViewController, FlowController {
-    
     var completionHandler: ((String, String) -> Void)?
+    var onBack: (() -> Void)?
     
     // MARK: - UI
     private lazy var topInfoStackView: InfoHeaderView = {
@@ -110,7 +110,7 @@ final class ProfileSetupViewController: UIViewController, FlowController {
     }
     
     private func cancelButtonTapped() {
-        dismiss(animated: true)
+        onBack?()
     }
     
     private func uploadPhotoButtonTapped() {

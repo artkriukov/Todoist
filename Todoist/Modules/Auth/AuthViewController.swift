@@ -7,11 +7,22 @@
 
 import UIKit
 
-final class AuthViewController: UIViewController, FlowController {
-    var completionHandler: ((String, String) -> Void)?
+protocol AuthViewProtocol: AnyObject {
+    func showError(_ message: String)
+    func showLoadingIndicator()
+    func hideLoadingIndicator()
+}
 
+final class AuthViewController: UIViewController, FlowController {
+
+    // MARK: - Private Properties
     private let mode: AuthMode
     
+    // MARK: - Public Properties
+    var completionHandler: ((String, String) -> Void)?
+    var onBack: (() -> Void)?
+    
+    var presenter: AuthPresenter?
     // MARK: - UI
     
     private lazy var topInfoStackView: InfoHeaderView = {
@@ -83,6 +94,7 @@ final class AuthViewController: UIViewController, FlowController {
         setupConstraints()
         configureViewController(with: mode)
         setupNavigationBar()
+        presenter = AuthPresenter(view: self)
     }
     
     // MARK: - Private Methods
@@ -110,7 +122,7 @@ final class AuthViewController: UIViewController, FlowController {
     }
     
     private func cancelButtonTapped() {
-        dismiss(animated: true)
+        onBack?()
     }
     
 #warning("[AuthViewController] actionButtonTapped")
@@ -170,6 +182,20 @@ final class AuthViewController: UIViewController, FlowController {
             }
             return false
         }
+    }
+}
+
+extension AuthViewController: AuthViewProtocol {
+    func showError(_ message: String) {
+        
+    }
+
+    func showLoadingIndicator() {
+        
+    }
+
+    func hideLoadingIndicator() {
+        
     }
 }
 

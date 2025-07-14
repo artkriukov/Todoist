@@ -10,7 +10,7 @@ import Foundation
 // Когда модуль заканчивает свою работу, ему по завершению, нужно будет передать какие то данные по этому протоколу
 
 protocol FlowController {
-    // swiftlint:disable:next type_name
     associatedtype T
     var completionHandler: ((T, T) -> Void)? { get set }
+    var onBack: (() -> Void)? { get set }
 }
