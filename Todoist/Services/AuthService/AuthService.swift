@@ -26,4 +26,19 @@ final class AuthService: AuthServiceProtocol {
                 completion(.success(true))
             }
     }
+    
+    func signIn(
+        with user: User,
+        completion: @escaping (Result<Bool, any Error>) -> Void
+    ) {
+        auth.signIn(withEmail: user.email, password: user.password) { result, error in
+            if let error = error {
+                print("Auth error:", error.localizedDescription)
+                completion(.failure(error))
+                return
+            }
+            
+            completion(.success(true))
+        }
+    }
 }

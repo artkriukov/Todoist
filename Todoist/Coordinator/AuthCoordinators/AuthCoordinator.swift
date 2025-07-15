@@ -51,7 +51,8 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] email, password in
             self?.registrationData.email = email
             self?.registrationData.password = password
-            self?.completionHandler?()
+            guard let user = self?.registrationData else { return }
+            self?.didCompleteAuth(with: user, authMode: .signIn)
             print("Успешный вход")
             // проверка firebase - вход на aminVC
         }
@@ -107,15 +108,22 @@ final class AuthCoordinator: Coordinator {
         
         switch authMode {
         case .signIn:
-            break
+            authService.signIn(with: user) { result in
+                switch result {
+                case .success(let succes):
+                    self.completionHandler?()
+                case .failure(let error):
+                    print("Error in Coordinator")
+                }
+            }
         case .signUp:
             // start animation
             authService.signUp(with: user) { result in
                 switch result {
-                case .success(_):
+                case .success(let succes):
                     self.showProfileInfo()
                     // stop animation
-                case .failure(_):
+                case .failure(let error):
                     print("Error in Coordinator")
                 }
             }
