@@ -22,6 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      // swiftlint:disable:next discouraged_optional_collection
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        FirebaseApp.configure()
+        
         dependencies.logger.log("App launched")
     
         window = UIWindow()
@@ -30,8 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appCoordinator.start()
         
         self.window?.makeKeyAndVisible()
-        
-        FirebaseApp.configure()
         
         return true
     }

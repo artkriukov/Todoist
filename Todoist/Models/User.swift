@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct User {
+    let email: String
+    let name: String
+    let userPhoto: String
+    let toDo: [ToDoItem]
+}

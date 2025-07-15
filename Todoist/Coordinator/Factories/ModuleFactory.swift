@@ -23,4 +23,5 @@ final class ModuleFactory {
     func createProfileInfoModule() -> ProfileSetupViewController {
         ProfileSetupViewController()
     }
+    
 }

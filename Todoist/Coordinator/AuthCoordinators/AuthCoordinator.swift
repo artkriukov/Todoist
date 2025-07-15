@@ -12,7 +12,7 @@ final class AuthCoordinator: Coordinator {
     var completionHandler: CoordinatorHandler?
     
     private let moduleFactory = ModuleFactory()
-
+    private let authService: AuthServiceProtocol
     private var registrationData = RegistrationData(
         email: nil,
         password: nil,
@@ -20,8 +20,11 @@ final class AuthCoordinator: Coordinator {
         userPhoto: nil
     )
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController,
+         authService: AuthServiceProtocol = AuthService()
+    ) {
         self.navigationController = navigationController
+        self.authService = authService
     }
     
     func start() {
@@ -83,6 +86,7 @@ final class AuthCoordinator: Coordinator {
             self?.registrationData.name = name
             self?.registrationData.userPhoto = userPhoto
             self?.completionHandler?()
+            
             print("Успешный вход")
         }
         

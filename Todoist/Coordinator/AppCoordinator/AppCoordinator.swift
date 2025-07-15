@@ -8,6 +8,7 @@
 import UIKit
 
 final class AppCoordinator: Coordinator {
+
     var navigationController: UINavigationController
     var completionHandler: CoordinatorHandler?
 
