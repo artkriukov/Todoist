@@ -69,7 +69,9 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] email, password in
             self?.registrationData.email = email
             self?.registrationData.password = password
-            self?.showProfileInfo()
+            
+            guard let user = self?.registrationData else { return }
+            self?.didCompleteAuth(with: user, authMode: .signUp)
         }
         
         controller.onBack = { [weak self] in
@@ -95,5 +97,28 @@ final class AuthCoordinator: Coordinator {
         }
         
         navigationController.pushViewController(controller, animated: true)
+    }
+    
+    private func didCompleteAuth(
+        with user: RegistrationData,
+        authMode: AuthMode
+    ) {
+        let user = UserFactory.makeAuthData(from: user)
+        
+        switch authMode {
+        case .signIn:
+            break
+        case .signUp:
+            // start animation
+            authService.signUp(with: user) { result in
+                switch result {
+                case .success(_):
+                    self.showProfileInfo()
+                    // stop animation
+                case .failure(_):
+                    print("Error in Coordinator")
+                }
+            }
+        }
     }
 }

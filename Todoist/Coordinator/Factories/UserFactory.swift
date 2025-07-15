@@ -8,19 +8,15 @@
 import Foundation
 
 struct UserFactory {
-    static func makeUser(from draft: RegistrationData) -> User {
+    static func makeAuthData(from draft: RegistrationData) -> User {
         guard let email = draft.email,
-              let password = draft.password,
-              let name = draft.name,
-              let userPhoto = draft.userPhoto else {
+              let password = draft.password else {
             fatalError("Invalid user data")
         }
         
         return User(
             email: email,
-            name: name,
-            userPhoto: userPhoto,
-            toDo: []
+            password: password
         )
     }
 }

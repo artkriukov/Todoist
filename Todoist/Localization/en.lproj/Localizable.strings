@@ -14,7 +14,7 @@
 "back" = "Back";
 "delete" = "Delete";
 "invalid_email" = "Invalid email address";
-"password_requirements" = "Password must be at least 5 characters long and contain at least one digit and one uppercase letter";
+"password_requirements" = "Password must be at least 6 characters long and contain at least one digit and one uppercase letter";
 
 // ProfileStrings
 "profile_key" = "Profile";

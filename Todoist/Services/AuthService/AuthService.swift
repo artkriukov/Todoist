@@ -12,9 +12,18 @@ final class AuthService: AuthServiceProtocol {
     private let auth = Auth.auth()
 
     func signUp(
-        userData: RegistrationData,
-        completion: @escaping (Result<User, any Error>) -> Void
+        with user: User,
+        completion: @escaping (Result<Bool, Error>) -> Void
     ) {
-            
+        auth.createUser(
+            withEmail: user.email, password: user.password) { result, error in
+                if let error = error {
+                    print("Auth error:", error.localizedDescription)
+                    completion(.failure(error))
+                    return
+                }
+                
+                completion(.success(true))
+            }
     }
 }

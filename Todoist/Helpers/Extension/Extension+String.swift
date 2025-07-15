@@ -20,11 +20,11 @@ extension String {
     }
     
     func isValidPassword() -> Bool {
-        let passwordRegEx = "^(?=.*[A-ZА-ЯЁ])(?=.*\\d).{5,}$"
+        let passwordRegEx = "^(?=.*[A-ZА-ЯЁ])(?=.*\\d).{6,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return predicate.evaluate(with: self)
     }
-    // минимум 5 символов,
+    // минимум 6 символов,
     // содержит хотя бы одну цифру,
     // содержит хотя бы одну заглавную букву.
 }
