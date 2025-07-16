@@ -13,6 +13,8 @@ final class AuthService: AuthServiceProtocol {
     private let auth = Auth.auth()
     private let firestore = Firestore.firestore()
 
+    var isSignedIn: Bool { auth.currentUser != nil }
+    
     func signUp(
         with user: User,
         completion: @escaping (Result<Bool, Error>) -> Void

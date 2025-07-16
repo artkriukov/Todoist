@@ -9,22 +9,25 @@ import UIKit
 
 final class AppCoordinator: Coordinator {
 
+    private let authService: AuthServiceProtocol
+    private var childCoordinators: [Coordinator] = []
+
     var navigationController: UINavigationController
     var completionHandler: CoordinatorHandler?
 
-    private var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        authService: AuthServiceProtocol = AuthService()
+    ) {
         self.navigationController = navigationController
+        self.authService = authService
     }
     
     func start() {
-        let isAuth = false
-        
-        if !isAuth {
-            showAuthFlow()
-        } else {
+        if authService.isSignedIn {
             showMainFlow()
+        } else {
+            showAuthFlow()
         }
     }
 

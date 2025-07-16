@@ -11,28 +11,23 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let dependencies = DependencyContainer.shared
-    
     var window: UIWindow?
-    var appCoordinator = CoordinatorFactory.createAppCoordinator(
-        navigationController: UINavigationController()
-    )
-    
+    private var appCoordinator: Coordinator?   
+
     func application(_ application: UIApplication,
                      // swiftlint:disable:next discouraged_optional_collection
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
         FirebaseApp.configure()
-        
-        dependencies.logger.log("App launched")
-    
-        window = UIWindow()
-        
-        self.window?.rootViewController = appCoordinator.navigationController
-        appCoordinator.start()
-        
-        self.window?.makeKeyAndVisible()
-        
+
+        let nav = UINavigationController()
+        appCoordinator = CoordinatorFactory.createAppCoordinator(navigationController: nav)
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = nav
+        window?.makeKeyAndVisible()
+
+        appCoordinator?.start()
         return true
     }
 }

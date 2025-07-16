@@ -8,9 +8,11 @@
 import Foundation
 
 protocol AuthServiceProtocol {
+    
+    var isSignedIn: Bool { get }
     func signUp(with user: User,
                 completion: @escaping (Result<Bool, Error>) -> Void)
     
-        func signIn(with user: User,
-                    completion: @escaping (Result<Bool, Error>) -> Void)
+    func signIn(with user: User,
+                completion: @escaping (Result<Bool, Error>) -> Void)
 }

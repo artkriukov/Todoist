@@ -103,30 +103,34 @@ final class AuthCoordinator: Coordinator {
     }
     
     private func didCompleteAuth(
-        with user: RegistrationData,
-        authMode: AuthMode
+            with user: RegistrationData,
+            authMode: AuthMode
     ) {
         switch authMode {
         case .signIn:
-            let loginUser = UserFactory.makeLoginData(from: registrationData)
-            authService.signIn(with: loginUser) { [weak self] result in
-                switch result {
-                case .success:
-                    self?.completionHandler?()
-                case .failure(let error):
-                    print("Sign-in error:", error)
+            do {
+                let loginUser = try UserFactory.makeLoginData(from: registrationData)
+                authService.signIn(with: loginUser) { [weak self] result in
+                    switch result {
+                    case .success: self?.completionHandler?()
+                    case .failure(let error):  print("Sign-in error:", error)
+                    }
                 }
+            } catch {
+                print("❌ Validation error:", error.localizedDescription)
             }
             
         case .signUp:
-            let newUser = UserFactory.makeAuthData(from: registrationData)
-            authService.signUp(with: newUser) { [weak self] result in
-                switch result {
-                case .success:
-                    self?.completionHandler?()
-                case .failure(let error):
-                    print("Sign-up error:", error)
+            do {
+                let newUser = try UserFactory.makeAuthData(from: registrationData)
+                authService.signUp(with: newUser) { [weak self] result in
+                    switch result {
+                    case .success: self?.completionHandler?()
+                    case .failure(let error): print("Sign-up error:", error)
+                    }
                 }
+            } catch {
+                print("❌ Validation error:", error.localizedDescription)
             }
         }
     }
