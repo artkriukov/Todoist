@@ -8,6 +8,7 @@
 import UIKit
 
 struct ToDoItem: Codable {
+    var id: String = UUID().uuidString
     let title: String
     let description: String?
     let expirationDate: Date?

@@ -59,7 +59,7 @@ final class AuthService: AuthServiceProtocol {
         guard let userPhoto = user.userPhoto else { return }
         
         firestore
-            .collection("users")
+            .collection(FirebaseKeys.collectionMain)
             .document(userId)
             .setData([
                 "name": user.name,

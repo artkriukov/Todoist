@@ -18,6 +18,7 @@ final class NewToDoViewController: UIViewController {
     private var selectedTime: Date?
     private var expirationDate: Date?
     private var selectedImage: UIImage?
+    private let toDoService: ToDoService
     
     var saveItem: ((ToDoItem) -> Void)?
     var onImageReceived: ((UIImage) -> Void)?
@@ -146,10 +147,12 @@ final class NewToDoViewController: UIViewController {
     // MARK: - Init
     init(
         saveItem: ((ToDoItem) -> Void)? = nil,
-        onImageReceived: ((UIImage) -> Void)? = nil
+        onImageReceived: ((UIImage) -> Void)? = nil,
+        toDoService: ToDoService = ToDoService()
     ) {
         self.saveItem = saveItem
         self.onImageReceived = onImageReceived
+        self.toDoService = toDoService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -183,9 +186,14 @@ final class NewToDoViewController: UIViewController {
             expirationDate: date,
             selectedImage: dataImage
         )
-        saveItem?(newItem)
         
-        dismiss(animated: true)
+        toDoService.createToDo(toDo: newItem) { [weak self] isAdd in
+            guard let self else { return }
+            if isAdd {
+                self.saveItem?(newItem)
+                self.dismiss(animated: true)
+            }
+        }
     }
     
     private func cancelButtonTapped() {

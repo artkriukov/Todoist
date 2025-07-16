@@ -10,10 +10,11 @@ import UIKit
 
 final class ToDoListViewController: UIViewController {
     
-    private let itemsProvider: ToDoItemsProvider
+//    private let itemsProvider: ToDoItemsProvider
+    private let toDoService: ToDoService
     private var observer: Any?
     private let logger: Logger
-    
+    private var toDo: [ToDoItem] = []
     // MARK: - UI
     
     private lazy var emptyLabel: UILabel = {
@@ -57,10 +58,12 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Init
     
     init(
-        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
+//        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
+        toDoService: ToDoService = ToDoService(),
         logger: Logger = DependencyContainer.shared.logger
     ) {
-        self.itemsProvider = itemsProvider
+//        self.itemsProvider = itemsProvider
+        self.toDoService = toDoService
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
@@ -86,6 +89,7 @@ final class ToDoListViewController: UIViewController {
             )
     }
     
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -102,7 +106,21 @@ final class ToDoListViewController: UIViewController {
     private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
-            try? itemsProvider.save(with: newItem)
+
+            toDoService.getAllToDo { [weak self] result in
+                switch result {
+                case .success(let items):
+                    self?.toDo = items
+                    
+                    receiveOnMainThread {
+                        self?.toDoList.reloadData()
+                    }
+                    
+                case .failure(_):
+                    print("Error")
+                }
+            }
+            
             self.checkTasks()
             
             receiveOnMainThread {
@@ -116,7 +134,7 @@ final class ToDoListViewController: UIViewController {
     }
     
     private func checkTasks() {
-        emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
+//        emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
 }
 
@@ -124,7 +142,9 @@ final class ToDoListViewController: UIViewController {
 extension ToDoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        itemsProvider.getAllToDoItems().count
+        
+//        itemsProvider.getAllToDoItems().count
+        toDo.count
     }
     
     func tableView(
@@ -143,7 +163,7 @@ extension ToDoListViewController: UITableViewDataSource {
             guard let self = self else { return }
             guard let currentIndexPath = tableView.indexPath(for: cell) else { return }
             
-            self.itemsProvider.removeItem(at: currentIndexPath.row)
+//            self.itemsProvider.removeItem(at: currentIndexPath.row)
             
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [currentIndexPath], with: .automatic)
@@ -152,7 +172,8 @@ extension ToDoListViewController: UITableViewDataSource {
             })
         }
         
-        let item = itemsProvider.getAllToDoItems()[indexPath.row]
+//        let item = itemsProvider.getAllToDoItems()[indexPath.row]
+        let item = toDo[indexPath.row]
         cell.configureCell(with: item)
         
         return cell
@@ -167,10 +188,10 @@ extension ToDoListViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
-        let detailView = DetailToDoView(toDo: selectedToDo)
-        let hostingVC = UIHostingController(rootView: detailView)
-        navigationController?.pushViewController(hostingVC, animated: true)
+//        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
+//        let detailView = DetailToDoView(toDo: selectedToDo)
+//        let hostingVC = UIHostingController(rootView: detailView)
+//        navigationController?.pushViewController(hostingVC, animated: true)
     }
     
     func tableView(
@@ -183,7 +204,7 @@ extension ToDoListViewController: UITableViewDelegate {
             title: GlobalStrings.delete.rawValue.localized()
         ) { _, _, completionHandler in
             
-            self.itemsProvider.removeItem(at: indexPath.row)
+//            self.itemsProvider.removeItem(at: indexPath.row)
             
             tableView.deleteRows(at: [indexPath], with: .automatic)
             
