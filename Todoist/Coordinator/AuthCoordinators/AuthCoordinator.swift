@@ -31,6 +31,7 @@ final class AuthCoordinator: Coordinator {
         showWelcome()
     }
     
+    // welcome
     private func showWelcome() {
         let controller = moduleFactory.createWelcomeModule()
         
@@ -45,6 +46,7 @@ final class AuthCoordinator: Coordinator {
         navigationController.pushViewController(controller, animated: true)
     }
     
+    // login
     private func showEmailLogin() {
         let controller = moduleFactory.createEmailLoginModule()
         
@@ -70,9 +72,7 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] email, password in
             self?.registrationData.email = email
             self?.registrationData.password = password
-            
-            guard let user = self?.registrationData else { return }
-            self?.didCompleteAuth(with: user, authMode: .signUp)
+            self?.showProfileInfo()
         }
         
         controller.onBack = { [weak self] in
@@ -88,7 +88,9 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] name, userPhoto in
             self?.registrationData.name = name
             self?.registrationData.userPhoto = userPhoto
-            self?.completionHandler?()
+            
+            guard let user = self?.registrationData else { return }
+            self?.didCompleteAuth(with: user, authMode: .signUp)
             
             print("Успешный вход")
         }
@@ -104,27 +106,26 @@ final class AuthCoordinator: Coordinator {
         with user: RegistrationData,
         authMode: AuthMode
     ) {
-        let user = UserFactory.makeAuthData(from: user)
-        
         switch authMode {
         case .signIn:
-            authService.signIn(with: user) { result in
+            let loginUser = UserFactory.makeLoginData(from: registrationData)
+            authService.signIn(with: loginUser) { [weak self] result in
                 switch result {
-                case .success(let succes):
-                    self.completionHandler?()
+                case .success:
+                    self?.completionHandler?()
                 case .failure(let error):
-                    print("Error in Coordinator")
+                    print("Sign-in error:", error)
                 }
             }
+            
         case .signUp:
-            // start animation
-            authService.signUp(with: user) { result in
+            let newUser = UserFactory.makeAuthData(from: registrationData)
+            authService.signUp(with: newUser) { [weak self] result in
                 switch result {
-                case .success(let succes):
-                    self.showProfileInfo()
-                    // stop animation
+                case .success:
+                    self?.completionHandler?()
                 case .failure(let error):
-                    print("Error in Coordinator")
+                    print("Sign-up error:", error)
                 }
             }
         }

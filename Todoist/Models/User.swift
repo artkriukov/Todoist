@@ -10,7 +10,6 @@ import Foundation
 struct User {
     let email: String
     let password: String
-    let name: String? = nil
-    let userPhoto: String? = nil
-    let toDo: [ToDoItem]? = nil
+    let name: String?
+    let userPhoto: String?
 }
