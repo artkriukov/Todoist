@@ -12,8 +12,13 @@ import Foundation
 final class AuthService: AuthServiceProtocol {
     private let auth = Auth.auth()
     private let firestore = Firestore.firestore()
+    private let logger: Logger
 
     var isSignedIn: Bool { auth.currentUser != nil }
+    
+    init(logger: Logger = DependencyContainer.shared.logger) {
+        self.logger = logger
+    }
     
     func signUp(
         with user: User,
@@ -22,7 +27,7 @@ final class AuthService: AuthServiceProtocol {
         auth.createUser(
             withEmail: user.email, password: user.password) { result, error in
                 if let error = error {
-                    print("Auth error:", error.localizedDescription)
+                    self.logger.log("Auth error: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }
@@ -44,7 +49,7 @@ final class AuthService: AuthServiceProtocol {
     ) {
         auth.signIn(withEmail: user.email, password: user.password) { result, error in
             if let error = error {
-                print("Auth error:", error.localizedDescription)
+                self.logger.log("Auth error: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }

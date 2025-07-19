@@ -13,6 +13,8 @@ final class AuthCoordinator: Coordinator {
     
     private let moduleFactory = ModuleFactory()
     private let authService: AuthServiceProtocol
+    private let logger: Logger
+    
     private var registrationData = RegistrationData(
         email: nil,
         password: nil,
@@ -21,17 +23,18 @@ final class AuthCoordinator: Coordinator {
     )
     
     init(navigationController: UINavigationController,
-         authService: AuthServiceProtocol = AuthService()
+         authService: AuthServiceProtocol = AuthService(),
+         logger: Logger = DependencyContainer.shared.logger
     ) {
         self.navigationController = navigationController
         self.authService = authService
+        self.logger = logger
     }
     
     func start() {
         showWelcome()
     }
     
-    // welcome
     private func showWelcome() {
         let controller = moduleFactory.createWelcomeModule()
         
@@ -46,7 +49,6 @@ final class AuthCoordinator: Coordinator {
         navigationController.pushViewController(controller, animated: true)
     }
     
-    // login
     private func showEmailLogin() {
         let controller = moduleFactory.createEmailLoginModule()
         
@@ -55,8 +57,6 @@ final class AuthCoordinator: Coordinator {
             self?.registrationData.password = password
             guard let user = self?.registrationData else { return }
             self?.didCompleteAuth(with: user, authMode: .signIn)
-            print("Успешный вход")
-            // проверка firebase - вход на aminVC
         }
         
         controller.onBack = { [weak self] in
@@ -91,8 +91,6 @@ final class AuthCoordinator: Coordinator {
             
             guard let user = self?.registrationData else { return }
             self?.didCompleteAuth(with: user, authMode: .signUp)
-            
-            print("Успешный вход")
         }
         
         controller.onBack = { [weak self] in
@@ -112,12 +110,14 @@ final class AuthCoordinator: Coordinator {
                 let loginUser = try UserFactory.makeLoginData(from: registrationData)
                 authService.signIn(with: loginUser) { [weak self] result in
                     switch result {
-                    case .success: self?.completionHandler?()
-                    case .failure(let error):  print("Sign-in error:", error)
+                    case .success:
+                        self?.completionHandler?()
+                    case .failure(let error):
+                        self?.logger.log("Sign-in error: \(error)")
                     }
                 }
             } catch {
-                print("❌ Validation error:", error.localizedDescription)
+                self.logger.log("Validation error: \(error.localizedDescription)")
             }
             
         case .signUp:
@@ -125,12 +125,14 @@ final class AuthCoordinator: Coordinator {
                 let newUser = try UserFactory.makeAuthData(from: registrationData)
                 authService.signUp(with: newUser) { [weak self] result in
                     switch result {
-                    case .success: self?.completionHandler?()
-                    case .failure(let error): print("Sign-up error:", error)
+                    case .success:
+                        self?.completionHandler?()
+                    case .failure(let error):
+                        self?.logger.log("Sign-up error: \(error)")
                     }
                 }
             } catch {
-                print("❌ Validation error:", error.localizedDescription)
+                self.logger.log("Validation error: \(error.localizedDescription)")
             }
         }
     }

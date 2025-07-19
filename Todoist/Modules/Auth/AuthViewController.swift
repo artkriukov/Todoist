@@ -117,7 +117,6 @@ final class AuthViewController: UIViewController, FlowController {
         onBack?()
     }
     
-#warning("[AuthViewController] actionButtonTapped")
     private func actionButtonTapped() {
         let isEmailValid = validateEmail()
         let isPasswordValid = validatePassword()

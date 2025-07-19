@@ -5,11 +5,11 @@
 //  Created by Artem Kriukov on 16.07.2025.
 //
 
-import FirebaseFirestore
 import FirebaseAuth
+import FirebaseFirestore
 import Foundation
 
-final class ToDoService {
+final class ToDoService: ToDoServiceProtocol {
     private let uid = Auth.auth().currentUser?.uid
     private let firestore = Firestore.firestore()
     
@@ -24,7 +24,7 @@ final class ToDoService {
             .setData([
                 FirebaseToDoKeys.title: toDo.title,
                 FirebaseToDoKeys.description: toDo.description ?? "",
-                FirebaseToDoKeys.expirationDate: toDo.expirationDate ?? Date(),
+                FirebaseToDoKeys.expirationDate: toDo.expirationDate ?? nil,
                 FirebaseToDoKeys.selectedImage: toDo.selectedImage ?? ""
             ]) { err in
                 guard err == nil else { return }
@@ -32,7 +32,7 @@ final class ToDoService {
             }
     }
     
-    func getAllToDo(completion: @escaping (Result<[ToDoItem], Error>) -> Void){
+    func getAllToDo(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         guard let uid else { return }
         
         firestore
@@ -65,6 +65,25 @@ final class ToDoService {
                 }
                 
                 completion(.success(toDos))
+            }
+    }
+    
+    func deleteToDo(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let uid else {
+            completion(.failure(URLError(.userAuthenticationRequired)))
+            return
+        }
+        
+        firestore.collection(FirebaseKeys.collectionMain)
+            .document(uid)
+            .collection(FirebaseKeys.collectionToDo)
+            .document(id)
+            .delete { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
             }
     }
 }
