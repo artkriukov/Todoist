@@ -187,17 +187,19 @@ final class NewToDoViewController: UIViewController {
             selectedImage: dataImage
         )
         
-        toDoService.createToDo(toDo: newItem) { [weak self] isAdd in
-            guard let self else { return }
-            if isAdd {
-                self.saveItem?(newItem)
-                self.dismiss(animated: true)
-            }
-        }
+        saveItemToFirebase(with: newItem)
+        saveItem?(newItem)
+        dismiss(animated: true)
     }
     
     private func cancelButtonTapped() {
         dismiss(animated: true)
+    }
+    
+    private func saveItemToFirebase(with item: ToDoItem) {
+        toDoService.createToDo(toDo: item) { _ in
+            print("Данные сохранены в Firebase")
+        }
     }
     
     private func configureNavigationBar() {

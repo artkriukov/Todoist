@@ -10,11 +10,10 @@ import UIKit
 
 final class ToDoListViewController: UIViewController {
     
-    //    private let itemsProvider: ToDoItemsProvider
+    private let itemsProvider: ToDoItemsProvider
     private let toDoService: ToDoService
     private var observer: Any?
     private let logger: Logger
-    private var toDoItems: [ToDoItem] = []
     // MARK: - UI
     
     private lazy var emptyLabel: UILabel = {
@@ -58,11 +57,11 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Init
     
     init(
-        //        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
+        itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
         toDoService: ToDoService = ToDoService(),
         logger: Logger = DependencyContainer.shared.logger
     ) {
-        //        self.itemsProvider = itemsProvider
+        self.itemsProvider = itemsProvider
         self.toDoService = toDoService
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
@@ -78,7 +77,6 @@ final class ToDoListViewController: UIViewController {
         
         setupViews()
         setupConstraints()
-        loadData()
         checkTasks()
         
         observer = NotificationCenter.default
@@ -96,40 +94,6 @@ final class ToDoListViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    private func loadData() {
-        toDoService.getAllToDo { [weak self] result in
-            switch result {
-            case .success(let items):
-                self?.toDoItems = items
-                receiveOnMainThread {
-                    self?.toDoList.reloadData()
-                    self?.checkTasks()
-                }
-            case .failure(let error):
-                self?.logger.log("Load error: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private func deleteItem(at index: Int) {
-        let item = toDoItems[index]
-        
-        toDoService.deleteToDo(id: item.id) { [weak self] result in
-            guard let self else { return }
-            
-            switch result {
-            case .success:
-                receiveOnMainThread {
-                    self.toDoItems.remove(at: index)
-                    self.toDoList.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-                    self.checkTasks()
-                }
-            case .failure(let error):
-                self.logger.log("Delete error: \(error.localizedDescription)")
-            }
-        }
-    }
-    
     private func handleNotification(_ notification: Notification) {
         receiveOnMainThread { [weak self] in
             self?.toDoList.reloadData()
@@ -139,21 +103,7 @@ final class ToDoListViewController: UIViewController {
     private func addNewItemTapped() {
         let newToDoVC = NewToDoViewController(saveItem: { [weak self] newItem in
             guard let self else { return }
-            
-            toDoService.getAllToDo { [weak self] result in
-                switch result {
-                case .success(let items):
-                    self?.toDoItems = items
-                    
-                    receiveOnMainThread {
-                        self?.toDoList.reloadData()
-                    }
-                    // swiftlint:disable:next empty_enum_arguments
-                case .failure(_):
-                    self?.logger.log("Сouldn't get the data")
-                }
-            }
-            
+            try? itemsProvider.save(with: newItem)
             self.checkTasks()
             
             receiveOnMainThread {
@@ -167,7 +117,7 @@ final class ToDoListViewController: UIViewController {
     }
     
     private func checkTasks() {
-        emptyLabel.isHidden = !toDoItems.isEmpty
+        emptyLabel.isHidden = !itemsProvider.getAllToDoItems().isEmpty
     }
 }
 
@@ -176,7 +126,7 @@ extension ToDoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         
-        toDoItems.count
+        itemsProvider.getAllToDoItems().count
     }
     
     func tableView(
@@ -191,16 +141,20 @@ extension ToDoListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.handlerButtonTapped = { [weak self, weak cell] in
-            guard let self,
-                  let cell = cell,
-                  let currentIndexPath = tableView.indexPath(for: cell)
-            else { return }
+        cell.handlerButtonTapped = { [weak self] in
+            guard let self = self else { return }
+            guard let currentIndexPath = tableView.indexPath(for: cell) else { return }
             
-            self.deleteItem(at: currentIndexPath.row)
+            self.itemsProvider.removeItem(at: currentIndexPath.row)
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [currentIndexPath], with: .automatic)
+            }, completion: { _ in
+                self.checkTasks()
+            })
         }
         
-        let item = toDoItems[indexPath.row]
+        let item = itemsProvider.getAllToDoItems()[indexPath.row]
         cell.configureCell(with: item)
         
         return cell
@@ -215,9 +169,9 @@ extension ToDoListViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let selectedToDo = toDoItems[indexPath.row]
+        let selectedToDo = itemsProvider.getAllToDoItems()[indexPath.row]
         let detailView = DetailToDoView(toDo: selectedToDo)
-        let hostingVC  = UIHostingController(rootView: detailView)
+        let hostingVC = UIHostingController(rootView: detailView)
         navigationController?.pushViewController(hostingVC, animated: true)
     }
     
@@ -228,12 +182,16 @@ extension ToDoListViewController: UITableViewDelegate {
         
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: GlobalStrings.delete.rawValue.localized()) {
-                // swiftlint:disable:next closure_parameter_position
-                [weak self] _, _, completion in
-                self?.deleteItem(at: indexPath.row)
-                completion(true)
-            }
+            title: GlobalStrings.delete.rawValue.localized()
+        ) { _, _, completionHandler in
+            
+            self.itemsProvider.removeItem(at: indexPath.row)
+            
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            
+            self.checkTasks()
+            completionHandler(true)
+        }
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }

@@ -17,21 +17,21 @@ final class DefaultToDoItemsProvider: ToDoItemsProvider {
         return directory.appendingPathComponent("ToDoItems.plist")
     }()
 
-//    func getAllToDoItems() -> [ToDoItem] {
-//
-//        if let jsonData = try? Data(contentsOf: dataFilePath) {
-//            let decoder = PropertyListDecoder()
-//            
-//            do {
-//                toDoItems = try decoder.decode([ToDoItem].self, from: jsonData)
-//                return toDoItems
-//            } catch {
-//                assertionFailure("Error decoding items: \(error)")
-//                return []
-//            }
-//        }
-//        return toDoItems
-//    }
+    func getAllToDoItems() -> [ToDoItem] {
+
+        if let jsonData = try? Data(contentsOf: dataFilePath) {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                toDoItems = try decoder.decode([ToDoItem].self, from: jsonData)
+                return toDoItems
+            } catch {
+                assertionFailure("Error decoding items: \(error)")
+                return []
+            }
+        }
+        return toDoItems
+    }
 
     func save(with item: ToDoItem) throws {
         toDoItems.append(item)
