@@ -87,10 +87,6 @@ final class ToDoListViewController: UIViewController {
                 queue: .main,
                 using: handleNotification
             )
-        
-        Analytics.logEvent("screen_opened", parameters: [
-            "screen_name": "todo_list"
-        ])
     }
     
     deinit {
