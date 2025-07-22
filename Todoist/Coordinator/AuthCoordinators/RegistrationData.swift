@@ -10,8 +10,8 @@ import Foundation
 struct RegistrationData {
     var email: String?
     var password: String?
-    var name: String?
-    var userPhoto: String?
+    var name: String? = nil
+    var userPhoto: String? = nil
 }
 
 extension RegistrationData {

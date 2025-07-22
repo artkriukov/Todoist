@@ -21,27 +21,39 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func signUp(
-        with user: User,
-        completion: @escaping (Result<Bool, Error>) -> Void
-    ) {
-        auth.createUser(
-            withEmail: user.email, password: user.password) { result, error in
-                if let error = error {
-                    self.logger.log("Auth error: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let uid = result?.user.uid else { return }
-                
-                self.setUserData(user: user, userId: uid) { isAdd in
-                    if isAdd {
-                        completion(.success(true))
-                    }
-                    return
-                }
+          with user: User,
+          completion: @escaping (Result<Bool, Error>) -> Void
+        ) {
+          auth.createUser(withEmail: user.email, password: user.password) { result, error in
+            if let error = error {
+              self.logger.log("Auth error: \(error.localizedDescription)")
+              completion(.failure(error))
+              return
             }
-    }
+              
+            completion(.success(true))
+
+              guard let uid = result?.user.uid,
+                    let name = user.name,
+                    let photo = user.userPhoto
+              else {
+                  return
+              }
+
+            self.firestore
+              .collection(FirebaseKeys.collectionMain)
+              .document(uid)
+              .setData([
+                 "email": user.email,
+                 "name": name,
+                 "image": photo
+              ]) { err in
+                 if let err = err {
+                   self.logger.log("Firestore save error: \(err)")
+                 }
+              }
+          }
+        }
     
     func signIn(
         with user: User,

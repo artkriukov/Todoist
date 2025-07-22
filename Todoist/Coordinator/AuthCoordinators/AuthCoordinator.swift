@@ -17,9 +17,7 @@ final class AuthCoordinator: Coordinator {
     
     private var registrationData = RegistrationData(
         email: nil,
-        password: nil,
-        name: nil,
-        userPhoto: nil
+        password: nil
     )
     
     init(navigationController: UINavigationController,
@@ -72,22 +70,6 @@ final class AuthCoordinator: Coordinator {
         controller.completionHandler = { [weak self] email, password in
             self?.registrationData.email = email
             self?.registrationData.password = password
-            self?.showProfileInfo()
-        }
-        
-        controller.onBack = { [weak self] in
-            self?.navigationController.popViewController(animated: true)
-        }
-        
-        navigationController.pushViewController(controller, animated: true)
-    }
-    
-    private func showProfileInfo() {
-        let controller = moduleFactory.createProfileInfoModule()
-        
-        controller.completionHandler = { [weak self] name, userPhoto in
-            self?.registrationData.name = name
-            self?.registrationData.userPhoto = userPhoto
             
             guard let user = self?.registrationData else { return }
             self?.didCompleteAuth(with: user, authMode: .signUp)
@@ -100,40 +82,52 @@ final class AuthCoordinator: Coordinator {
         navigationController.pushViewController(controller, animated: true)
     }
     
+    //    private func showProfileInfo() {
+    //        let controller = moduleFactory.createProfileInfoModule()
+    //
+    //        controller.completionHandler = { [weak self] name, userPhoto in
+    //            self?.registrationData.name = name
+    //            self?.registrationData.userPhoto = userPhoto
+    //
+    //            guard let user = self?.registrationData else { return }
+    //            self?.didCompleteAuth(with: user, authMode: .signUp)
+    //        }
+    //
+    //        controller.onBack = { [weak self] in
+    //            self?.navigationController.popViewController(animated: true)
+    //        }
+    //
+    //        navigationController.pushViewController(controller, animated: true)
+    //    }
+    
     private func didCompleteAuth(
-            with user: RegistrationData,
-            authMode: AuthMode
+      with user: RegistrationData,
+      authMode: AuthMode
     ) {
-        switch authMode {
-        case .signIn:
-            do {
-                let loginUser = try UserFactory.makeLoginData(from: registrationData)
-                authService.signIn(with: loginUser) { [weak self] result in
-                    switch result {
-                    case .success:
-                        self?.completionHandler?()
-                    case .failure(let error):
-                        self?.logger.log("Sign-in error: \(error)")
-                    }
-                }
-            } catch {
-                self.logger.log("Validation error: \(error.localizedDescription)")
+      switch authMode {
+      case .signIn:
+        do {
+          let user = try UserFactory.makeLoginData(from: user)
+          authService.signIn(with: user) { [weak self] result in
+            if case .success = result {
+              self?.completionHandler?()
             }
-            
-        case .signUp:
-            do {
-                let newUser = try UserFactory.makeAuthData(from: registrationData)
-                authService.signUp(with: newUser) { [weak self] result in
-                    switch result {
-                    case .success:
-                        self?.completionHandler?()
-                    case .failure(let error):
-                        self?.logger.log("Sign-up error: \(error)")
-                    }
-                }
-            } catch {
-                self.logger.log("Validation error: \(error.localizedDescription)")
-            }
+          }
+        } catch {
+          logger.log("Validation error: \(error)")
         }
+
+      case .signUp:
+        do {
+          let user = try UserFactory.makeLoginData(from: user)
+          authService.signUp(with: user) { [weak self] result in
+            if case .success = result {
+              self?.completionHandler?()
+            }
+          }
+        } catch {
+          logger.log("Validation error: \(error)")
+        }
+      }
     }
 }
