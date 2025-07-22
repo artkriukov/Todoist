@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 import UIKit
 
@@ -86,6 +87,10 @@ final class ToDoListViewController: UIViewController {
                 queue: .main,
                 using: handleNotification
             )
+        
+        Analytics.logEvent("screen_opened", parameters: [
+            "screen_name": "todo_list"
+        ])
     }
     
     deinit {
@@ -109,6 +114,10 @@ final class ToDoListViewController: UIViewController {
             receiveOnMainThread {
                 self.toDoList.reloadData()
             }
+            
+            Analytics.logEvent("task_created", parameters: [
+                "source": "todo_list"
+            ])
         })
         
         let navController = UINavigationController(rootViewController: newToDoVC)

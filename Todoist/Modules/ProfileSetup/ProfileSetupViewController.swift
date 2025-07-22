@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 12.07.2025.
 //
 
+import FirebaseAnalytics
 import UIKit
 
 final class ProfileSetupViewController: UIViewController, FlowController {
@@ -97,6 +98,10 @@ final class ProfileSetupViewController: UIViewController, FlowController {
         setupViews()
         setupConstraints()
         setupNavigationBar()
+        
+        Analytics.logEvent("screen_opened", parameters: [
+            "screen_name": "profile"
+        ])
     }
     
     // MARK: - Private Methods

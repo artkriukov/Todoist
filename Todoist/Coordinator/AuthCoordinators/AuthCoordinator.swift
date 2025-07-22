@@ -5,6 +5,7 @@
 //  Created by Artem Kriukov on 13.07.2025.
 //
 
+import FirebaseAnalytics
 import UIKit
 
 final class AuthCoordinator: Coordinator {
@@ -101,33 +102,36 @@ final class AuthCoordinator: Coordinator {
     //    }
     
     private func didCompleteAuth(
-      with user: RegistrationData,
-      authMode: AuthMode
+        with user: RegistrationData,
+        authMode: AuthMode
     ) {
-      switch authMode {
-      case .signIn:
-        do {
-          let user = try UserFactory.makeLoginData(from: user)
-          authService.signIn(with: user) { [weak self] result in
-            if case .success = result {
-              self?.completionHandler?()
+        switch authMode {
+        case .signIn:
+            do {
+                let user = try UserFactory.makeLoginData(from: user)
+                authService.signIn(with: user) { [weak self] result in
+                    if case .success = result {
+                        self?.completionHandler?()
+                        Analytics.logEvent("sign_in_success", parameters: [
+                            "method": "email"
+                        ])
+                    }
+                }
+            } catch {
+                logger.log("Validation error: \(error)")
             }
-          }
-        } catch {
-          logger.log("Validation error: \(error)")
-        }
-
-      case .signUp:
-        do {
-          let user = try UserFactory.makeLoginData(from: user)
-          authService.signUp(with: user) { [weak self] result in
-            if case .success = result {
-              self?.completionHandler?()
+            
+        case .signUp:
+            do {
+                let user = try UserFactory.makeLoginData(from: user)
+                authService.signUp(with: user) { [weak self] result in
+                    if case .success = result {
+                        self?.completionHandler?()
+                    }
+                }
+            } catch {
+                logger.log("Validation error: \(error)")
             }
-          }
-        } catch {
-          logger.log("Validation error: \(error)")
         }
-      }
     }
 }
