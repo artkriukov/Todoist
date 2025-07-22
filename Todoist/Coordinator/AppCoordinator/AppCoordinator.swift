@@ -46,6 +46,10 @@ final class AppCoordinator: Coordinator {
     
     private func showMainFlow() {
         let tabBarController = TabBarController()
-        navigationController.setViewControllers([tabBarController], animated: true)
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first {
+            window.rootViewController = tabBarController
+            window.makeKeyAndVisible()
+        }
     }
 }
