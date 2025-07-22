@@ -10,6 +10,7 @@ import UIKit
 final class UserSettingsViewController: UIViewController {
     
     private let logger: Logger
+    private let authService: AuthServiceProtocol
     
     // MARK: - UI
     
@@ -97,10 +98,24 @@ final class UserSettingsViewController: UIViewController {
         return element
     }()
     
+    private lazy var logOutButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle("Выход", for: .normal)
+        element.addAction(UIAction { [weak self] _ in
+            self?.logOutButtonTapped()
+        }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Init
     
-    init(logger: Logger = DependencyContainer.shared.logger) {
+    init(
+        logger: Logger = DependencyContainer.shared.logger,
+        authService: AuthServiceProtocol = AuthService()
+    ) {
         self.logger = logger
+        self.authService = authService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -178,6 +193,47 @@ final class UserSettingsViewController: UIViewController {
         imagePickerController.sourceType = .photoLibrary
         return imagePickerController
     }
+    
+    private func logOutButtonTapped() {
+        print(1)
+        authService.signOut { [weak self] result in
+            switch result {
+            case .success:
+                self?.openWelcomeScreen()
+            case .failure(let error):
+                self?.showAlert(title: "Ошибка", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func openWelcomeScreen() {
+        DispatchQueue.main.async {
+            let welcomeVC = WelcomeViewController()
+            let navVC     = UINavigationController(rootViewController: welcomeVC)
+
+            guard let window = UIApplication.shared
+                    .connectedScenes
+                    .compactMap({ ($0 as? UIWindowScene)?.windows.first })
+                    .first
+            else { return }
+
+            window.rootViewController = navVC
+            window.makeKeyAndVisible()
+
+            UIView.transition(with: window,
+                              duration: 0.35,
+                              options: [.transitionFlipFromLeft],
+                              animations: nil)
+        }
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
 }
 
 extension UserSettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -211,6 +267,7 @@ private extension UserSettingsViewController {
         view.addSubview(saveButton)
         
         view.addSubview(logsButton)
+        view.addSubview(logOutButton)
     }
     
     func setupConstraints() {
@@ -247,7 +304,15 @@ private extension UserSettingsViewController {
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             logsButton.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
-            logsButton.heightAnchor.constraint(equalToConstant: 44)
+            logsButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            logOutButton.topAnchor
+                .constraint(equalTo: logsButton.bottomAnchor, constant: 20),
+            logOutButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
+            logOutButton.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15),
+            logOutButton.heightAnchor.constraint(equalToConstant: 44)
             
         ])
     }
