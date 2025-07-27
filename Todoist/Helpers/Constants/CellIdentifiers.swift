@@ -1,0 +1,14 @@
+//
+//  CellIdentifiers.swift
+//  Todoist
+//
+//  Created by Artem Kriukov on 13.04.2025.
+//
+
+import Foundation
+
+enum CellIdentifiers {
+    static let mainToDoTableViewCell = "main.todoTableViewCell"
+    static let loggsTableViewCell = "loggs.tableViewCell"
+    static let photoCollectionViewCell = "PhotoCollectionViewCell"
+}
