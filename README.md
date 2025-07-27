@@ -1,5 +1,8 @@
 # Todoist
 
+<img width="1348" height="575" alt="Screenshot 2025-07-27 at 17 27 24" src="https://github.com/user-attachments/assets/a9cbdcb0-0537-4c55-8877-b2648ebe12bc" />
+
+
 [![Swift](https://img.shields.io/badge/swift-5.5%2B-orange.svg)](https://swift.org)
 [![iOS](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)](https://developer.apple.com/ios/)
 [![Xcode](https://img.shields.io/badge/Xcode-14.0%2B-lightgrey.svg)](https://developer.apple.com/xcode/)
