@@ -13,48 +13,45 @@ final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var completionHandler: CoordinatorHandler?
     
-    private let moduleFactory = ModuleFactory()
+    private let moduleFactory: ModuleFactory
     private let authService: AuthServiceProtocol
     private let logger: Logger
     
-    private var registrationData = RegistrationData(
-        email: nil,
-        password: nil
-    )
+    // Данные для регистрации/логина
+    private var registrationData = RegistrationData(email: nil, password: nil)
     
-    init(navigationController: UINavigationController,
-         authService: AuthServiceProtocol = AuthService(),
-         logger: Logger = DependencyContainer.shared.logger
+    init(
+        navigationController: UINavigationController,
+        authService: AuthServiceProtocol,
+        logger: Logger,
+        moduleFactory: ModuleFactory
     ) {
         self.navigationController = navigationController
         self.authService = authService
         self.logger = logger
+        self.moduleFactory = moduleFactory
     }
     
     func start() {
         showWelcome()
     }
     
-    private func showWelcome() {
+    // MARK: Навигация
+    
+    func showWelcome() {
         let controller = moduleFactory.createWelcomeModule()
-        
-        controller.onSignIn = { [weak self] in
-            self?.showEmailLogin()
-        }
-        controller.onSignUp = { [weak self] in
-            self?.showEmailRegistration()
-        }
-        
-        navigationController.pushViewController(controller, animated: true)
+        controller.onSignIn = { [weak self] in self?.showEmailLogin() }
+        controller.onSignUp = { [weak self] in self?.showEmailRegistration() }
+        navigationController.setViewControllers([controller], animated: false)
     }
     
-    private func showEmailLogin() {
+    func showEmailLogin() {
         let controller = moduleFactory.createEmailLoginModule()
         controller.delegate = self
         navigationController.pushViewController(controller, animated: true)
     }
     
-    private func showEmailRegistration() {
+    func showEmailRegistration() {
         let controller = moduleFactory.createEmailRegistrationModule()
         controller.delegate = self
         navigationController.pushViewController(controller, animated: true)
@@ -64,7 +61,6 @@ final class AuthCoordinator: Coordinator {
 // MARK: - AuthViewControllerDelegate
 
 extension AuthCoordinator: AuthViewControllerDelegate {
-    
     func authViewController(
         _ controller: AuthViewController,
         didAuthenticateWith email: String,
@@ -74,12 +70,10 @@ extension AuthCoordinator: AuthViewControllerDelegate {
         registrationData.email = email
         registrationData.password = password
         let userData = registrationData
-        
+
         switch mode {
-        case .signIn:
-            performSignIn(with: userData)
-        case .signUp:
-            performSignUp(with: userData, from: controller)
+        case .signIn: performSignIn(with: userData)
+        case .signUp: performSignUp(with: userData, from: controller)
         }
     }
     
@@ -98,7 +92,7 @@ extension AuthCoordinator: AuthViewControllerDelegate {
         }
     }
     
-    // MARK: - Private Helpers
+    // MARK: - Бизнес обработка
     
     private func performSignIn(with userData: RegistrationData) {
         do {
@@ -150,7 +144,7 @@ extension AuthCoordinator: AuthViewControllerDelegate {
     }
     
     // MARK: - Ошибки
-
+    
     private func isEmailAlreadyRegisteredError(_ error: Error) -> Bool {
         let nsError = error as NSError
         if let code = AuthErrorCode.Code(rawValue: nsError.code) {

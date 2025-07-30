@@ -17,12 +17,14 @@ final class CoordinatorFactory {
     static func createAuthCoordinator(
         navigationController: UINavigationController,
         authService: AuthServiceProtocol,
-        logger: Logger
+        logger: Logger,
+        moduleFactory: ModuleFactory
     ) -> AuthCoordinator {
-        return AuthCoordinator(
+        AuthCoordinator(
             navigationController: navigationController,
             authService: authService,
-            logger: logger
+            logger: logger,
+            moduleFactory: moduleFactory
         )
     }
 }
