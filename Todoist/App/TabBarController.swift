@@ -18,42 +18,23 @@ final class TabBarController: UITabBarController {
     private func setupTabBar() {
         let toDoListVC = ToDoListViewController()
         let settingsVC = UserSettingsViewController()
-        
-        settingsVC.onLogout = { [weak self] in
-            print("Logout triggered")
-            NotificationCenter.default.post(name: .didLogoutNotification, object: nil)
-        }
-        
+        settingsVC.onLogout = { NotificationCenter.default.post(name: .didLogoutNotification, object: nil) }
+
         viewControllers = [
-            configureNavigationBar(
-                with: toDoListVC,
-                title: ToDoStrings.toDoList.rawValue.localized(),
-                image: "calendar.circle"
-            ),
-            configureNavigationBar(
-                with: settingsVC,
-                title: ProfileStrings.profileKey.rawValue.localized(),
-                image: "person.circle.fill"
-            )
+            toDoListVC,
+            settingsVC
         ]
         
-    }
-    
-    private func configureNavigationBar(
-        with viewController: UIViewController,
-        title: String,
-        image: String
-    ) -> UIViewController {
-        
-        let navController = UINavigationController(rootViewController: viewController)
-        
-        navController.tabBarItem.title = title
-        navController.tabBarItem.image = UIImage(systemName: image)
-        navController.navigationBar.prefersLargeTitles = true
-        
-        viewController.navigationItem.title = title
-        
-        return navController
+        toDoListVC.tabBarItem = UITabBarItem(
+            title: ToDoStrings.toDoList.rawValue.localized(),
+            image: UIImage(systemName: "calendar.circle"),
+            tag: 0
+        )
+        settingsVC.tabBarItem = UITabBarItem(
+            title: ProfileStrings.profileKey.rawValue.localized(),
+            image: UIImage(systemName: "person.circle.fill"),
+            tag: 1
+        )
     }
 }
 
