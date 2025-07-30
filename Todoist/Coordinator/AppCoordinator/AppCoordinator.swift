@@ -8,22 +8,20 @@
 import UIKit
 
 final class AppCoordinator: Coordinator {
-
-    private let authService: AuthServiceProtocol
+    
+    private let dependencyContainer: DependencyContainer
     private var childCoordinators: [Coordinator] = []
-
+    
     var navigationController: UINavigationController
     var completionHandler: CoordinatorHandler?
-
-    init(
-        navigationController: UINavigationController,
-        authService: AuthServiceProtocol = AuthService()
-    ) {
+    
+    init(navigationController: UINavigationController, dependencyContainer: DependencyContainer = .shared) {
         self.navigationController = navigationController
-        self.authService = authService
+        self.dependencyContainer = dependencyContainer
     }
     
     func start() {
+        let authService = dependencyContainer.authDependencyContainer.authService
         if authService.isSignedIn {
             showMainFlow()
         } else {
@@ -32,15 +30,15 @@ final class AppCoordinator: Coordinator {
     }
 
     private func showAuthFlow() {
+        let authContainer = dependencyContainer.authDependencyContainer
         let authCoordinator = CoordinatorFactory.createAuthCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            authService: authContainer.authService,
+            logger: dependencyContainer.logger
         )
         childCoordinators.append(authCoordinator)
         
-        authCoordinator.completionHandler = { [weak self] in
-            self?.showMainFlow()
-        }
-        
+        authCoordinator.completionHandler = { [weak self] in self?.showMainFlow() }
         authCoordinator.start()
     }
     

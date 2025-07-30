@@ -9,12 +9,17 @@ import Foundation
 
 struct DependencyContainer {
     let logger: Logger
-    
-#if DEBUG
-    static let shared = DependencyContainer(
-        logger: Loggers.combined(loggers: [ConsoleLogger(), FileLogger.shared])
-    )
-#else
-    static let shared = DependencyContainer(logger: NullLogger())
-#endif
+    let authDependencyContainer: AuthDependencyContainer
+
+    static let shared: DependencyContainer = {
+        #if DEBUG
+        let logger = Loggers.combined(loggers: [ConsoleLogger(), FileLogger.shared])
+        #else
+        let logger = NullLogger()
+        #endif
+        return DependencyContainer(
+            logger: logger,
+            authDependencyContainer: AuthDependencyContainer(logger: logger)
+        )
+    }()
 }

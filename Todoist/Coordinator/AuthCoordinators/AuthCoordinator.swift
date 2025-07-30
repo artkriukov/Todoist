@@ -50,88 +50,72 @@ final class AuthCoordinator: Coordinator {
     
     private func showEmailLogin() {
         let controller = moduleFactory.createEmailLoginModule()
-        
-        controller.completionHandler = { [weak self] email, password in
-            self?.registrationData.email = email
-            self?.registrationData.password = password
-            guard let user = self?.registrationData else { return }
-            self?.didCompleteAuth(with: user, authMode: .signIn)
-        }
-        
-        controller.onBack = { [weak self] in
-            self?.navigationController.popViewController(animated: true)
-        }
-        
+        controller.delegate = self
         navigationController.pushViewController(controller, animated: true)
     }
     
     private func showEmailRegistration() {
         let controller = moduleFactory.createEmailRegistrationModule()
-        
-        controller.completionHandler = { [weak self] email, password in
-            self?.registrationData.email = email
-            self?.registrationData.password = password
-            
-            guard let user = self?.registrationData else { return }
-            self?.didCompleteAuth(with: user, authMode: .signUp)
-        }
-        
-        controller.onBack = { [weak self] in
-            self?.navigationController.popViewController(animated: true)
-        }
-        
+        controller.delegate = self
         navigationController.pushViewController(controller, animated: true)
     }
     
-    //    private func showProfileInfo() {
-    //        let controller = moduleFactory.createProfileInfoModule()
-    //
-    //        controller.completionHandler = { [weak self] name, userPhoto in
-    //            self?.registrationData.name = name
-    //            self?.registrationData.userPhoto = userPhoto
-    //
-    //            guard let user = self?.registrationData else { return }
-    //            self?.didCompleteAuth(with: user, authMode: .signUp)
-    //        }
-    //
-    //        controller.onBack = { [weak self] in
-    //            self?.navigationController.popViewController(animated: true)
-    //        }
-    //
-    //        navigationController.pushViewController(controller, animated: true)
-    //    }
-    
-    private func didCompleteAuth(
-        with user: RegistrationData,
-        authMode: AuthMode
+}
+
+extension AuthCoordinator: AuthViewControllerDelegate {
+    func authViewController(
+        _ controller: AuthViewController,
+        didAuthenticateWith email: String,
+        password: String,
+        mode: AuthMode
     ) {
-        switch authMode {
+        registrationData.email = email
+        registrationData.password = password
+        let userData = registrationData
+        
+        switch mode {
         case .signIn:
-            do {
-                let user = try UserFactory.makeLoginData(from: user)
-                authService.signIn(with: user) { [weak self] result in
-                    if case .success = result {
-                        self?.completionHandler?()
-                        Analytics.logEvent("sign_in_success", parameters: [
-                            "method": "email"
-                        ])
-                    }
-                }
-            } catch {
-                logger.log("Validation error: \(error)")
-            }
-            
+            performSignIn(with: userData)
         case .signUp:
-            do {
-                let user = try UserFactory.makeLoginData(from: user)
-                authService.signUp(with: user) { [weak self] result in
-                    if case .success = result {
-                        self?.completionHandler?()
-                    }
-                }
-            } catch {
-                logger.log("Validation error: \(error)")
-            }
+            performSignUp(with: userData)
         }
+    }
+
+    private func performSignIn(with userData: RegistrationData) {
+        do {
+            let user = try UserFactory.makeLoginData(from: userData)
+            authService.signIn(with: user) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.completionHandler?()
+                    Analytics.logEvent("sign_in_success", parameters: ["method": "email"])
+                case .failure(let error):
+                    self?.logger.log("Sign-In error: \(error)")
+                }
+            }
+        } catch {
+            logger.log("Validation error: \(error)")
+        }
+    }
+
+    private func performSignUp(with userData: RegistrationData) {
+        do {
+            let user = try UserFactory.makeLoginData(from: userData)
+            authService.signUp(with: user) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.completionHandler?()
+                    Analytics.logEvent("sign_up_success", parameters: ["method": "email"])
+                case .failure(let error):
+                    self?.logger.log("Sign-Up error: \(error)")
+                }
+            }
+        } catch {
+            logger.log("Validation error: \(error)")
+        }
+    }
+    
+    func authViewControllerDidTapBack(_ controller: AuthViewController) {
+        navigationController.popViewController(animated: true)
     }
 }

@@ -54,7 +54,6 @@ final class ToDoService: ToDoServiceProtocol {
                     _ = doc[FirebaseToDoKeys.selectedImage] as? String
                     
                     let todo = ToDoItem(
-                        id: doc.documentID,
                         title: title ?? "",
                         description: description,
                         expirationDate: date,

@@ -7,14 +7,18 @@
 
 import UIKit
 
-final class AuthViewController: UIViewController, FlowController {
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewController(_ controller: AuthViewController, didAuthenticateWith email: String, password: String, mode: AuthMode)
+    func authViewControllerDidTapBack(_ controller: AuthViewController)
+}
+
+final class AuthViewController: UIViewController {
 
     // MARK: - Private Properties
     private let mode: AuthMode
     
     // MARK: - Public Properties
-    var completionHandler: ((String, String) -> Void)?
-    var onBack: (() -> Void)?
+    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - UI
     
@@ -114,26 +118,20 @@ final class AuthViewController: UIViewController, FlowController {
     }
     
     private func cancelButtonTapped() {
-        onBack?()
+        delegate?.authViewControllerDidTapBack(self)
     }
     
     private func actionButtonTapped() {
         let isEmailValid = validateEmail()
         let isPasswordValid = validatePassword()
-        
+
         guard let email = emailTextField.text,
               let password = passwordTextField.text else { return }
-        
+
         if isEmailValid && isPasswordValid {
-            switch mode {
-            case .signIn:
-                completionHandler?(email, password)
-            case .signUp:
-                print("\(email) \(password)")
-                completionHandler?(email, password)
-            }
+            delegate?.authViewController(self, didAuthenticateWith: email, password: password, mode: mode)
         } else {
-            print("Bad info")
+            #warning("alert")
         }
     }
     
@@ -141,7 +139,6 @@ final class AuthViewController: UIViewController, FlowController {
         if let email = emailTextField.text,
            !email.isEmpty,
            email.isValidEmail() {
-            print("Good")
             UIView.animate(withDuration: 0.3) {
                 self.emailTextField.hideWarning()
             }
