@@ -57,8 +57,6 @@ final class AppCoordinator: Coordinator {
     
     @objc private func handleLogout() {
         childCoordinators.removeAll()
-        navigationController.popToRootViewController(animated: false)
-
         showAuthFlow()
     }
 }
