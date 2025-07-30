@@ -5,15 +5,16 @@
 //  Created by Artem Kriukov on 05.04.2025.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 import UIKit
 
 final class ToDoListViewController: UIViewController {
     
     private let itemsProvider: ToDoItemsProvider
+    private let toDoService: ToDoService
     private var observer: Any?
     private let logger: Logger
-    
     // MARK: - UI
     
     private lazy var emptyLabel: UILabel = {
@@ -58,9 +59,11 @@ final class ToDoListViewController: UIViewController {
     
     init(
         itemsProvider: ToDoItemsProvider = DefaultToDoItemsProvider(),
+        toDoService: ToDoService = ToDoService(),
         logger: Logger = DependencyContainer.shared.logger
     ) {
         self.itemsProvider = itemsProvider
+        self.toDoService = toDoService
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
     }
@@ -93,7 +96,6 @@ final class ToDoListViewController: UIViewController {
     // MARK: - Private Methods
     
     private func handleNotification(_ notification: Notification) {
-        
         receiveOnMainThread { [weak self] in
             self?.toDoList.reloadData()
         }
@@ -108,6 +110,10 @@ final class ToDoListViewController: UIViewController {
             receiveOnMainThread {
                 self.toDoList.reloadData()
             }
+            
+            Analytics.logEvent("task_created", parameters: [
+                "source": "todo_list"
+            ])
         })
         
         let navController = UINavigationController(rootViewController: newToDoVC)
@@ -124,6 +130,7 @@ final class ToDoListViewController: UIViewController {
 extension ToDoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
+        
         itemsProvider.getAllToDoItems().count
     }
     

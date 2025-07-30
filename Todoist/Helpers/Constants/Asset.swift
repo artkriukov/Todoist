@@ -76,5 +76,10 @@ enum Asset {
         static let defaultUserImage = UIImage(systemName: "person.circle.fill")
         static let defaultBackgroundImage = UIImage(systemName: "photo")
         static let circle = UIImage(systemName: "circle")
+        static let camera = UIImage(systemName: "camera")
+        static let authApple = UIImage(named: "apple")
+        static let authGoogle = UIImage(named: "google")
+        static let authMail = UIImage(named: "mail")
+        static let welcomeImage = UIImage(named: "welcomeImage")
     }
 }

@@ -10,7 +10,8 @@ import UIKit
 final class UserSettingsViewController: UIViewController {
     
     private let logger: Logger
-    
+    private let authService: AuthServiceProtocol
+    var onLogout: (() -> Void)?
     // MARK: - UI
     
     private lazy var userImageStackView = FactoryUI.shared.makeStackView(
@@ -61,7 +62,7 @@ final class UserSettingsViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let element = UILabel()
         element.text = GlobalStrings.name.rawValue.localized()
-        element.font = UIConstants.CustomFont.medium(size: 17)
+        element.font = Asset.CustomFont.medium(size: 17)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -97,10 +98,24 @@ final class UserSettingsViewController: UIViewController {
         return element
     }()
     
+    private lazy var logOutButton: UIButton = {
+        let element = UIButton(type: .system)
+        element.setTitle("Выход", for: .normal)
+        element.addAction(UIAction { [weak self] _ in
+            self?.logOutButtonTapped()
+        }, for: .touchUpInside)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Init
     
-    init(logger: Logger = DependencyContainer.shared.logger) {
+    init(
+        logger: Logger = DependencyContainer.shared.logger,
+        authService: AuthServiceProtocol = AuthService()
+    ) {
         self.logger = logger
+        self.authService = authService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -122,17 +137,21 @@ final class UserSettingsViewController: UIViewController {
     // MARK: - Private Methods
     
     private func changeUserImageButtonTapped() {
-        let actionSheet = FactoryUI.shared.makeChangePhotoAlert(
-            onGalleryTap: { [weak self] in
+        let actionSheet = FactoryUI.shared.makeBottomAlert(
+            alertTitle: ProfileStrings.changePhoto.rawValue.localized(),
+            primaryActionTitle: ProfileStrings.selectFromGallery.rawValue.localized(),
+            secondaryActionTitle: nil,
+            cancelActionTitle: GlobalStrings.cancel.rawValue.localized(),
+            primaryAction: { [weak self] in
                 guard let self else { return }
                 let imagePicker = self.createImagePickerController()
                 self.present(imagePicker, animated: true)
             },
-            onUnsplashTap: {
+            secondaryAction: {
                 print("onUnsplashTap")
             }
+
         )
-        
         present(actionSheet, animated: true)
     }
     
@@ -154,7 +173,10 @@ final class UserSettingsViewController: UIViewController {
         
         let imageData = userImage.image?.jpegData(compressionQuality: 0.8)
         
-        let userSettings = UserSettings(name: userName, imageData: imageData)
+        let userSettings = UserSettings(
+            name: userName,
+            imageData: imageData
+        )
         userSettings.save()
     }
     
@@ -170,6 +192,28 @@ final class UserSettingsViewController: UIViewController {
         imagePickerController.delegate = self
         imagePickerController.sourceType = .photoLibrary
         return imagePickerController
+    }
+    
+    private func logOutButtonTapped() {
+        authService.signOut { [weak self] result in
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    print("Logout triggered")
+                    self?.onLogout?()
+                }
+            case .failure(let error):
+                self?.showAlert(title: "Ошибка", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
@@ -204,6 +248,7 @@ private extension UserSettingsViewController {
         view.addSubview(saveButton)
         
         view.addSubview(logsButton)
+        view.addSubview(logOutButton)
     }
     
     func setupConstraints() {
@@ -240,7 +285,15 @@ private extension UserSettingsViewController {
                 .constraint(equalTo: view.trailingAnchor, constant: -15),
             logsButton.leadingAnchor
                 .constraint(equalTo: view.leadingAnchor, constant: 15),
-            logsButton.heightAnchor.constraint(equalToConstant: 44)
+            logsButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            logOutButton.topAnchor
+                .constraint(equalTo: logsButton.bottomAnchor, constant: 20),
+            logOutButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -15),
+            logOutButton.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 15),
+            logOutButton.heightAnchor.constraint(equalToConstant: 44)
             
         ])
     }

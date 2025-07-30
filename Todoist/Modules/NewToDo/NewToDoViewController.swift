@@ -18,6 +18,7 @@ final class NewToDoViewController: UIViewController {
     private var selectedTime: Date?
     private var expirationDate: Date?
     private var selectedImage: UIImage?
+    private let toDoService: ToDoService
     
     var saveItem: ((ToDoItem) -> Void)?
     var onImageReceived: ((UIImage) -> Void)?
@@ -146,10 +147,12 @@ final class NewToDoViewController: UIViewController {
     // MARK: - Init
     init(
         saveItem: ((ToDoItem) -> Void)? = nil,
-        onImageReceived: ((UIImage) -> Void)? = nil
+        onImageReceived: ((UIImage) -> Void)? = nil,
+        toDoService: ToDoService = ToDoService()
     ) {
         self.saveItem = saveItem
         self.onImageReceived = onImageReceived
+        self.toDoService = toDoService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -183,13 +186,20 @@ final class NewToDoViewController: UIViewController {
             expirationDate: date,
             selectedImage: dataImage
         )
-        saveItem?(newItem)
         
+        saveItemToFirebase(with: newItem)
+        saveItem?(newItem)
         dismiss(animated: true)
     }
     
     private func cancelButtonTapped() {
         dismiss(animated: true)
+    }
+    
+    private func saveItemToFirebase(with item: ToDoItem) {
+        toDoService.createToDo(toDo: item) { _ in
+            print("Данные сохранены в Firebase")
+        }
     }
     
     private func configureNavigationBar() {

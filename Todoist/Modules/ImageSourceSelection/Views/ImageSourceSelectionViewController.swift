@@ -138,6 +138,7 @@ final class ImageSourceSelectionViewController: UIViewController {
     }
     
     private func configureRemoteMode() {
+        images = []
         dataSource = RemoteImageDataSource()
         self.segmentedControl.selectedSegmentIndex = 1
         searchBar.isHidden = false

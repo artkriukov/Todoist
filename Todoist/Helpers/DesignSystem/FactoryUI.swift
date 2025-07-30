@@ -70,7 +70,7 @@ final class FactoryUI {
     }
     
     func makeStyledButton(
-        title: String,
+        title: String? = nil,
         alignment: UIControl.ContentHorizontalAlignment = .leading,
         backgroundColor: UIColor = Asset.Colors.cardBackground,
         contentInsets: NSDirectionalEdgeInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 0),
@@ -78,10 +78,15 @@ final class FactoryUI {
     ) -> UIButton {
         
         var config = UIButton.Configuration.filled()
-        config.title = title
+        config.title = nil
         config.baseBackgroundColor = backgroundColor
-        config.baseForegroundColor = Asset.Colors.grayTextColor
         config.contentInsets = contentInsets
+        
+        let attributes = AttributeContainer([
+            .foregroundColor: Asset.Colors.grayTextColor,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ])
+        config.attributedTitle = AttributedString(title ?? "", attributes: attributes)
         
         let button = UIButton(configuration: config)
         button.layer.cornerRadius = 8
@@ -92,29 +97,43 @@ final class FactoryUI {
         return button
     }
     
-    func makeChangePhotoAlert(
-        onGalleryTap: @escaping () -> Void,
-        onUnsplashTap: @escaping () -> Void
+    func makeBottomAlert(
+        alertTitle: String?,
+        primaryActionTitle: String,
+        secondaryActionTitle: String? = nil,
+        cancelActionTitle: String? = nil,
+        primaryAction: @escaping () -> Void,
+        secondaryAction: (() -> Void)? = nil,
+        cancelAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let actionSheet = UIAlertController(
-            title: ProfileStrings.changePhoto.rawValue.localized(),
+            title: alertTitle,
             message: nil,
             preferredStyle: .actionSheet
         )
-        
+
         actionSheet.addAction(UIAlertAction(
-            title: ProfileStrings.selectFromGallery.rawValue.localized(),
+            title: primaryActionTitle,
             style: .default,
-            handler: { _ in
-                onGalleryTap()
-            })
-        )
-        
-        actionSheet.addAction(UIAlertAction(
-            title: GlobalStrings.cancel.rawValue.localized(),
-            style: .cancel
+            handler: { _ in primaryAction() }
         ))
-        
+
+        if let secondaryTitle = secondaryActionTitle {
+            actionSheet.addAction(UIAlertAction(
+                title: secondaryTitle,
+                style: .default,
+                handler: { _ in secondaryAction?() }
+            ))
+        }
+
+        if let cancelTitle = cancelActionTitle {
+            actionSheet.addAction(UIAlertAction(
+                title: cancelTitle,
+                style: .cancel,
+                handler: { _ in cancelAction?() }
+            ))
+        }
+
         return actionSheet
     }
     
@@ -122,14 +141,14 @@ final class FactoryUI {
         retryAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let alert = UIAlertController(
-            title: "Не удалось загрузить изображения",
-            message: "Проверьте подключение к интернету или повторите попытку позже.",
+            title: AlertStrings.imageLoadFailedTitle.rawValue.localized(),
+            message: AlertStrings.imageLoadFailedMessage.rawValue.localized(),
             preferredStyle: .alert
         )
         
         if let retry = retryAction {
             alert.addAction(UIAlertAction(
-                title: "Повторить",
+                title: AlertStrings.retry.rawValue.localized(),
                 style: .default,
                 handler: { _ in retry() }
             ))

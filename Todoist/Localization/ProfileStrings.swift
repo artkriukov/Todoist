@@ -14,4 +14,8 @@ enum ProfileStrings: String {
     case systemLogs = "system_logs"
     case yourName = "your_name"
     case selectFromGallery
+    case welcomeTitle = "profile_welcomeTitle"
+    case welcomeSubtitle = "profile_welcomeSubtitle"
+    case yourProfile = "profile_yourProfile"
+    case uploadPhoto = "profile_uploadPhoto"
 }

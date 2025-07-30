@@ -17,6 +17,18 @@ packages:
   Kingfisher:
     url: https://github.com/onevcat/Kingfisher.git
     from: 7.0.0
+  FirebaseAuth:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: 10.24.0
+  FirebaseAnalytics:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: 10.24.0
+  FirebaseFirestore:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: 10.24.0
+  FirebaseStorage:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: 10.24.0
 
 targets:
   Todoist:
@@ -39,6 +51,10 @@ targets:
         DYLD_PRINT_STATISTICS: "1"
     dependencies:
       - package: Kingfisher
+      - package: FirebaseAuth
+      - package: FirebaseAnalytics
+      - package: FirebaseFirestore
+      - package: FirebaseStorage
     postCompileScripts:
       - name: SwiftLint
         runOnlyWhenInstalling: false
