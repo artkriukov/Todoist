@@ -11,7 +11,7 @@ final class UserSettingsViewController: UIViewController {
     
     private let logger: Logger
     private let authService: AuthServiceProtocol
-    
+    var onLogout: (() -> Void)?
     // MARK: - UI
     
     private lazy var userImageStackView = FactoryUI.shared.makeStackView(
@@ -195,35 +195,16 @@ final class UserSettingsViewController: UIViewController {
     }
     
     private func logOutButtonTapped() {
-        print(1)
         authService.signOut { [weak self] result in
             switch result {
             case .success:
-                self?.openWelcomeScreen()
+                DispatchQueue.main.async {
+                    print("Logout triggered")
+                    self?.onLogout?()
+                }
             case .failure(let error):
                 self?.showAlert(title: "Ошибка", message: error.localizedDescription)
             }
-        }
-    }
-    
-    private func openWelcomeScreen() {
-        DispatchQueue.main.async {
-            let welcomeVC = WelcomeViewController()
-            let navVC     = UINavigationController(rootViewController: welcomeVC)
-
-            guard let window = UIApplication.shared
-                    .connectedScenes
-                    .compactMap({ ($0 as? UIWindowScene)?.windows.first })
-                    .first
-            else { return }
-
-            window.rootViewController = navVC
-            window.makeKeyAndVisible()
-
-            UIView.transition(with: window,
-                              duration: 0.35,
-                              options: [.transitionFlipFromLeft],
-                              animations: nil)
         }
     }
     

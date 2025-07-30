@@ -21,6 +21,8 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleLogout), name: .didLogoutNotification, object: nil)
+
         let authService = dependencyContainer.authDependencyContainer.authService
         if authService.isSignedIn {
             showMainFlow()
@@ -44,10 +46,19 @@ final class AppCoordinator: Coordinator {
     
     private func showMainFlow() {
         let tabBarController = TabBarController()
+        navigationController.setViewControllers([tabBarController], animated: false)
+        
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = scene.windows.first {
-            window.rootViewController = tabBarController
+            window.rootViewController = navigationController
             window.makeKeyAndVisible()
         }
+    }
+    
+    @objc private func handleLogout() {
+        childCoordinators.removeAll()
+        navigationController.popToRootViewController(animated: false)
+
+        showAuthFlow()
     }
 }

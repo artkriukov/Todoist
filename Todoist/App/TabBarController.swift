@@ -19,6 +19,11 @@ final class TabBarController: UITabBarController {
         let toDoListVC = ToDoListViewController()
         let settingsVC = UserSettingsViewController()
         
+        settingsVC.onLogout = { [weak self] in
+            print("Logout triggered")
+            NotificationCenter.default.post(name: .didLogoutNotification, object: nil)
+        }
+        
         viewControllers = [
             configureNavigationBar(
                 with: toDoListVC,
@@ -50,4 +55,8 @@ final class TabBarController: UITabBarController {
         
         return navController
     }
+}
+
+extension Notification.Name {
+    static let didLogoutNotification = Notification.Name("didLogoutNotification")
 }
