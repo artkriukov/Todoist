@@ -1,28 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "welcomeImage.pdf",
-      "idiom" : "universal"
+      "filename" : "to-do-list-icon-in-comic-style-document-checklist-cartoon-illustration-on-white-isolated-background-notepad-check-mark-splash-effect-business-concept-vector.jpg",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "light"
-        }
-      ],
-      "filename" : "welcomeImage 1.pdf",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "welcomeImageDark.pdf",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

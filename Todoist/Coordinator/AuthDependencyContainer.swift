@@ -7,10 +7,14 @@
 
 import Foundation
 
-struct AuthDependencyContainer {
+final class AuthDependencyContainer {
+    let logger: Logger
     let authService: AuthServiceProtocol
+    let moduleFactory: ModuleFactory
 
     init(logger: Logger) {
+        self.logger = logger
         self.authService = AuthService(logger: logger)
+        self.moduleFactory = ModuleFactory()
     }
 }

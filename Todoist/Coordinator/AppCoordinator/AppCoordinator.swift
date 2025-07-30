@@ -8,10 +8,8 @@
 import UIKit
 
 final class AppCoordinator: Coordinator {
-    
     private let dependencyContainer: DependencyContainer
     private var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
     var completionHandler: CoordinatorHandler?
     
@@ -22,7 +20,6 @@ final class AppCoordinator: Coordinator {
     
     func start() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleLogout), name: .didLogoutNotification, object: nil)
-
         let authService = dependencyContainer.authDependencyContainer.authService
         if authService.isSignedIn {
             showMainFlow()
@@ -32,22 +29,24 @@ final class AppCoordinator: Coordinator {
     }
 
     private func showAuthFlow() {
+        childCoordinators.removeAll()
         let authContainer = dependencyContainer.authDependencyContainer
         let authCoordinator = CoordinatorFactory.createAuthCoordinator(
             navigationController: navigationController,
             authService: authContainer.authService,
-            logger: dependencyContainer.logger
+            logger: dependencyContainer.logger,
+            moduleFactory: authContainer.moduleFactory // Теперь фабрика есть в контейнере!
         )
         childCoordinators.append(authCoordinator)
-        
         authCoordinator.completionHandler = { [weak self] in self?.showMainFlow() }
+        navigationController.setViewControllers([], animated: false) // очистка стека!
         authCoordinator.start()
     }
     
     private func showMainFlow() {
+        childCoordinators.removeAll()
         let tabBarController = TabBarController()
         navigationController.setViewControllers([tabBarController], animated: false)
-        
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = scene.windows.first {
             window.rootViewController = navigationController
@@ -56,9 +55,6 @@ final class AppCoordinator: Coordinator {
     }
     
     @objc private func handleLogout() {
-        childCoordinators.removeAll()
-        navigationController.popToRootViewController(animated: false)
-
         showAuthFlow()
     }
 }

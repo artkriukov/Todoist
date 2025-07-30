@@ -10,6 +10,7 @@ import UIKit
 protocol AuthViewControllerDelegate: AnyObject {
     func authViewController(_ controller: AuthViewController, didAuthenticateWith email: String, password: String, mode: AuthMode)
     func authViewControllerDidTapBack(_ controller: AuthViewController)
+    func authViewController(_ controller: AuthViewController, didEncounterError error: Error)
 }
 
 final class AuthViewController: UIViewController {
@@ -130,8 +131,6 @@ final class AuthViewController: UIViewController {
 
         if isEmailValid && isPasswordValid {
             delegate?.authViewController(self, didAuthenticateWith: email, password: password, mode: mode)
-        } else {
-            #warning("alert")
         }
     }
     
